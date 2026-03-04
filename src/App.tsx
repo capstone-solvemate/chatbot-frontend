@@ -1,13 +1,27 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { type MouseEvent } from "react";
 import AngleDownIcon from "@/assets/images/icons/angle_down.svg"
 import SendIcon from "@/assets/images/icons/send.svg"
 import TicketItemView from "./components/TicketItemView";
 import ChatItemView from "./components/ChatItemView";
+import { CHATBOT_MINIMIZE_EVENT_NAME } from "@/Constants"
+
 
 export default function App() {
   const [minimized, setMinimized] = useState<boolean>(true);
   const [activeTicketIndex, setActiveTicketIndex] = useState<number>(0);
+
+  useEffect(() => {
+    const search = new URLSearchParams(location.search)
+    const parentOrigin = search.get("parent_origin")
+
+    if (parentOrigin) {
+      window.parent.postMessage({
+        type: CHATBOT_MINIMIZE_EVENT_NAME,
+        state: minimized
+      }, parentOrigin)
+    }
+  }, [minimized])
 
   const handleMinimizeButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -25,17 +39,17 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col rounded-xl">
-      <button className={"bg-white flex justify-between px-2 py-1 border-b " + (minimized ? "cursor-pointer border-transparent" : "cursor-default border-black")} onClick={handleTitleClick}>
+    <div role="button" className={"flex flex-col rounded-t-lg bg-white " + (!minimized && "h-96")}>
+      <div className={"flex justify-between px-4 py-2 border-b " + (minimized ? "cursor-pointer border-transparent" : "cursor-default border-black")} onClick={handleTitleClick}>
         <div>Tanya Kami</div>
         {!minimized &&
           <button onClick={handleMinimizeButtonClick} className="cursor-pointer">
             <img src={AngleDownIcon} />
           </button>
         }
-      </button>
+      </div>
       {!minimized &&
-        <div className="flex">
+        <div className="flex grow">
           <div className="shrink-0 flex flex-col border-r p-2 gap-1">
             <TicketItemView selected={activeTicketIndex == 0} onClick={() => { handleTicketItemClick(0) }}>
               Tiket Baru

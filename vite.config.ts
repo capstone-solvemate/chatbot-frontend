@@ -14,4 +14,20 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      input: {
+        app: path.resolve(__dirname, "index.html"),
+        chatbot: path.resolve(__dirname, "parent/parent-scripts.ts")
+      },
+      output: {
+        entryFileNames: (chunk) => {
+          if(chunk.name == "chatbot") {
+            return "scripts/chatbot.js"
+          }
+          return "assets/[name].js"
+        }
+      }
+    }
+  }
 })
