@@ -1,9 +1,11 @@
+import { IkonNotifikasi } from "./IkonNotifikasi";
+
 export default function TampilanNotifikasi() {
   return (
     <div className="relative cursor-pointer">
-      {/* <Bell className="h-5 w-5 text-gray-600" /> */}
+      <IkonNotifikasi className="h-4 w-4 stroke-gray-600" />
 
-      <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+      <span className="absolute -right-3.5 -top-4 flex py-0.5 px-1.5 items-center justify-center rounded-lg bg-red-500 text-xs text-white">
         2
       </span>
     </div>

@@ -1,3 +1,7 @@
+import IkonChat from "./IkonChat";
+import IkonFaq from "./IkonFaq";
+import IkonHome from "./IkonHome";
+import { IkonTiket } from "./IkonTiket";
 import NavItem from "./NavItem";
 import TampilanBrand from "./TampilanBrand";
 import TampilanNotifikasi from "./TampilanNotifikasi";
@@ -13,10 +17,10 @@ export default function Navbar() {
           <TampilanBrand />
 
           <nav className="flex items-center gap-2">
-            <NavItem active>Home</NavItem>
-            <NavItem>FAQ</NavItem>
-            <NavItem>Chat Support</NavItem>
-            <NavItem>My Tickets</NavItem>
+            <NavItem active icon={<IkonHome height={16} />}>Home</NavItem>
+            <NavItem icon={<IkonFaq height={16} />}>FAQ</NavItem>
+            <NavItem icon={<IkonChat height={16} />}>Chat Support</NavItem>
+            <NavItem icon={<IkonTiket height={16} />}>My Tickets</NavItem>
           </nav>
         </div>
 

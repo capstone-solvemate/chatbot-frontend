@@ -1,20 +1,23 @@
-import type React from "react"
+import { type ReactNode } from "react"
 
-interface Props {
-  children: React.ReactNode
+interface NavItemProps {
+  children: ReactNode
+  icon?: ReactNode
   active?: boolean
 }
 
-export default function NavItem({ children, active }: Props) {
+export default function NavItem({ children, icon, active }: NavItemProps) {
   return (
     <button
-      className={`rounded-md cursor-pointer px-3 py-2 text-sm font-medium transition
-      ${active
-          ? "bg-blue-50 text-blue-600"
-          : "text-gray-600 hover:bg-gray-100"
-        }`}
+      className={`
+        flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition
+        ${active
+          ? "bg-blue-50 text-blue-600 stroke-blue-600"
+          : "text-gray-600 hover:bg-gray-100 stroke-gray-600"}
+      `}
     >
-      {children}
+      {icon && <span className="flex items-center">{icon}</span>}
+      <span>{children}</span>
     </button>
   )
 }

@@ -1,3 +1,5 @@
+import { IkonLogout } from "./IkonLogout";
+
 export default function TampilanUserProfile() {
   return (
     <div className="flex items-center gap-3">
@@ -10,8 +12,8 @@ export default function TampilanUserProfile() {
         </p>
       </div>
 
-      <button className="text-gray-500 hover:text-gray-700">
-        {/* <LogOut className="h-5 w-5" /> */}
+      <button className="text-gray-500 cursor-pointer stroke-gray-500 hover:text-gray-700 hover:stroke-gray-700">
+        <IkonLogout className="h-5 w-5" />
       </button>
     </div>
   )
