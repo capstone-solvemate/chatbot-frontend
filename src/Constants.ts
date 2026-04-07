@@ -1,1 +1,0 @@
-export const CHATBOT_MINIMIZE_EVENT_NAME = "epson-chatbot-minimize"
