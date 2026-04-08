@@ -1,5 +1,6 @@
 import Navbar from "~/komponen/Navbar";
 import type { Route } from "./+types/HalamanHome";
+import TampilanCariFaq from "./TampilanCariFaq";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
+      <TampilanCariFaq />
     </>
   );
 }
