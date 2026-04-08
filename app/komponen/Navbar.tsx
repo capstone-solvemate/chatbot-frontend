@@ -9,7 +9,7 @@ import TampilanUserProfile from "./TampilanUserProfile";
 
 export default function Navbar() {
   return (
-    <header className="w-full border-b border-gray-200 bg-white fixed top-0 left-0">
+    <header className="w-full border-b border-gray-200 bg-white fixed top-0 left-0 z-40">
       <div className="mx-auto flex h-16 items-center justify-between px-6">
 
         {/* Left */}
