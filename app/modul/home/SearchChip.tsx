@@ -8,6 +8,7 @@ export default function SearchChip({ children }: Props) {
   return (
     <button
       className="
+        cursor-pointer
         rounded-full
         border
         border-gray-200
