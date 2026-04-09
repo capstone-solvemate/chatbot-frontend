@@ -1,7 +1,7 @@
-import { type ReactNode } from "react"
+import { type ReactNode } from "react";
 
 interface Props {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function SearchChip({ children }: Props) {
@@ -10,6 +10,7 @@ export default function SearchChip({ children }: Props) {
       className="
         cursor-pointer
         rounded-full
+        whitespace-nowrap
         border
         border-gray-200
         bg-white
@@ -23,5 +24,5 @@ export default function SearchChip({ children }: Props) {
     >
       {children}
     </button>
-  )
+  );
 }

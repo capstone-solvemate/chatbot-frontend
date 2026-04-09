@@ -18,7 +18,7 @@ export default function TicketSummaryCard({
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col">
       <h2 className="text-2xl font-medium text-gray-900 mb-6">Your Tickets</h2>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <TicketStatItem
           value={open}
           label="Open"

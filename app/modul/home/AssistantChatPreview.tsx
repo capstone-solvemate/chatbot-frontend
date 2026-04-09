@@ -3,7 +3,7 @@ import AssistantChatBubble from "./AssistantChatBubble";
 
 export default function AssistantChatPreview() {
   return (
-    <div className="bg-linear-to-r from-blue-50 to-blue-100 flex items-center justify-center p-10">
+    <div className="bg-linear-to-r from-blue-50 to-blue-100 md:flex items-center justify-center p-10 hidden">
       <div className="relative flex flex-col gap-4">
         <AssistantChatBubble variant="user">
           How do I reset my password?
