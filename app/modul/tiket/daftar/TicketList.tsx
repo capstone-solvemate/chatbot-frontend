@@ -1,3 +1,4 @@
+import { StatusTiket } from "../StatusTiket";
 import TicketCard from "./TicketCard";
 
 export default function TicketList() {
@@ -8,7 +9,7 @@ export default function TicketList() {
         title="Printer not responding"
         description="The printer on the 3rd floor is not responding to print commands."
         category="Equipment"
-        status="In Progress"
+        status={StatusTiket.InProgress}
         created="Created 2 days ago"
         updated="Updated 1 day ago"
       />
@@ -18,7 +19,7 @@ export default function TicketList() {
         title="Software installation request"
         description="I need Adobe Acrobat Pro installed on my workstation."
         category="Technical"
-        status="Resolved"
+        status={StatusTiket.Resolved}
         created="Created 3 days ago"
         updated="Updated 3 days ago"
       />
@@ -28,7 +29,7 @@ export default function TicketList() {
         title="Print quality issues - streaking"
         description="Prints have horizontal streaks across the page."
         category="Equipment"
-        status="Open"
+        status={StatusTiket.Open}
         created="Created about 9 hours ago"
         updated="Updated about 9 hours ago"
       />
