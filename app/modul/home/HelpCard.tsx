@@ -1,24 +1,26 @@
 import { Button } from "~/komponen/Button";
+import HelpCardItem from "./HelpCardItem";
 
-type HelpCardProps = {
-  onCreateTicket?: () => void;
-};
-
-export default function HelpCard({ onCreateTicket }: HelpCardProps) {
+export default function HelpCard() {
   return (
     <div className="flex flex-col bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
       <h2 className="text-2xl font-medium text-gray-900 mb-2">
-        Need More Help?
+        How to Create a Ticket
       </h2>
 
-      <p className="text-sm text-gray-500 mb-6 max-w-sm">
-        If you couldn't find a solution, create a support ticket and our team
-        will assist you.
-      </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        <HelpCardItem>
+          Start a <strong>chat</strong> with our <strong>AI Assistant</strong>{" "}
+          above
+        </HelpCardItem>
 
-      <Button className="mt-4" onClick={onCreateTicket} leftIcon={<div>+</div>}>
-        Create Ticket
-      </Button>
+        <HelpCardItem>Describe your issue clearly</HelpCardItem>
+
+        <HelpCardItem>
+          If a solution isn't found, the AI will provide a ticket creation link
+          directly in the chat.
+        </HelpCardItem>
+      </div>
     </div>
   );
 }
