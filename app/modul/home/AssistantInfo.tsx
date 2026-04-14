@@ -25,7 +25,7 @@ export default function AssistantInfo() {
         <AssistantFeatureItem text="Solve problems without creating tickets" />
       </ul>
 
-      <Button leftIcon={<IkonChatBubble className="w-5" />}>
+      <Button className="mt-4" leftIcon={<IkonChatBubble className="w-5" />}>
         Start Chat with AI
       </Button>
     </div>

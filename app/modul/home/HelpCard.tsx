@@ -16,7 +16,7 @@ export default function HelpCard({ onCreateTicket }: HelpCardProps) {
         will assist you.
       </p>
 
-      <Button onClick={onCreateTicket} leftIcon={<div>+</div>}>
+      <Button className="mt-4" onClick={onCreateTicket} leftIcon={<div>+</div>}>
         Create Ticket
       </Button>
     </div>
