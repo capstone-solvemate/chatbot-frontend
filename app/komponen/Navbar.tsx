@@ -28,7 +28,13 @@ export default function Navbar() {
               Home
             </NavItem>
             <NavItem icon={<IkonFaq height={16} />}>FAQ</NavItem>
-            <NavItem icon={<IkonChat height={16} />}>Chat Support</NavItem>
+            <NavItem
+              active={pathname.startsWith("/chat")}
+              icon={<IkonChat height={16} />}
+              href="/chat"
+            >
+              Chat Support
+            </NavItem>
             <NavItem
               active={pathname.startsWith("/tiket")}
               icon={<IkonTiket height={16} />}

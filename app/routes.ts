@@ -4,4 +4,5 @@ export default [
   index("modul/home/HalamanHome.tsx"),
   route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
   route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
+  route("chat", "modul/chat/HalamanChat.tsx"),
 ] satisfies RouteConfig;
