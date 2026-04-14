@@ -6,7 +6,7 @@ type Props = {
 export default function FilterChip({ children, active }: Props) {
   return (
     <button
-      className={`px-4 py-2 cursor-pointer rounded-full text-sm transition
+      className={`px-4 py-2 whitespace-nowrap cursor-pointer rounded-full text-sm transition
         ${
           active
             ? "bg-blue-600 text-white shadow"

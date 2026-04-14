@@ -25,22 +25,22 @@ export default function TicketCard({
 
   return (
     <button className="bg-white text-start border border-gray-200 rounded-xl p-6 shadow-sm cursor-pointer hover:border-blue-100 hover:shadow-md hover:shadow-neutral-400">
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 mb-6 sm:mb-2">
         <h3 className="font-semibold text-lg text-gray-900">
           {id} - {title}
         </h3>
 
         <span
-          className={`text-xs px-3 py-1 rounded-full border ${statusStyle[status]}`}
+          className={`text-xs px-3 py-1 rounded-md sm:rounded-full border ${statusStyle[status]}`}
         >
           {status}
         </span>
       </div>
 
-      <p className="text-gray-600 mb-4">{description}</p>
+      <p className="text-gray-600 mb-6 sm:mb-4">{description}</p>
 
-      <div className="flex items-center gap-4 text-sm text-gray-500">
-        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-4 text-sm text-gray-500">
+        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-md sm:rounded-full">
           {category}
         </span>
 
