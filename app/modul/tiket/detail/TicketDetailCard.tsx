@@ -4,11 +4,15 @@ import TicketMeta from "./TicketMeta";
 
 export default function TicketDetailCard() {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-3 sm:space-y-5">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Ticket #001</h1>
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900">
+          Ticket #001
+        </h1>
 
-        <p className="text-gray-700 text-xl mt-1">Printer not responding</p>
+        <p className="text-gray-700 text-base sm:text-xl mt-1">
+          Printer not responding
+        </p>
       </div>
 
       <TicketStatusBadges />
