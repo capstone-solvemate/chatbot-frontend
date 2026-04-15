@@ -12,7 +12,7 @@ export default function HalamanDetailTiket() {
   return (
     <div className="bg-white min-h-screen">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-6 pb-8 pt-32 space-y-6">
+      <div className="max-w-4xl mx-auto px-6 pb-8 pt-28 space-y-6">
         <BackToTicketsLink />
 
         <TicketDetailCard />
