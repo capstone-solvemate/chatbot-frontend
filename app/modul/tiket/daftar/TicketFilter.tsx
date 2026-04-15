@@ -1,4 +1,4 @@
-import IkonFilter from "~/komponen/IkonFilter";
+import IkonFilter from "~/komponen/ikon/IkonFilter";
 import FilterChip from "./FilterChip";
 
 export default function TicketFilter() {

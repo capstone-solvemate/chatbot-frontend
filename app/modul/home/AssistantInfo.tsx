@@ -1,7 +1,7 @@
 import { Button } from "~/komponen/Button";
 import { AssistantFeatureItem } from "./AssistantFeatureItem";
-import IkonSparkles from "~/komponen/IkonSparkles";
-import IkonChatBubble from "~/komponen/IkonChatBubble";
+import IkonSparkles from "~/komponen/ikon/IkonSparkles";
+import IkonChatBubble from "~/komponen/ikon/IkonChatBubble";
 
 export default function AssistantInfo() {
   return (

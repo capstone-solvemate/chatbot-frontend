@@ -1,7 +1,7 @@
-import IkonExclamationCircle from "~/komponen/IkonExclamationCircle";
+import IkonExclamationCircle from "~/komponen/ikon/IkonExclamationCircle";
 import TicketStatItem from "./TicketStatItem";
-import IkonJam from "~/komponen/IkonJam";
-import IkonDone from "~/komponen/IkonDone";
+import IkonJam from "~/komponen/ikon/IkonJam";
+import IkonDone from "~/komponen/ikon/IkonDone";
 import { NavLink } from "react-router";
 
 type TicketSummaryCardProps = {

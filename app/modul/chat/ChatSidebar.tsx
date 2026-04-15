@@ -1,7 +1,7 @@
-import IkonEdit from "~/komponen/IkonEdit";
-import IkonPerlebar from "~/komponen/IkonPerlebar";
+import IkonEdit from "~/komponen/ikon/IkonEdit";
+import IkonPerlebar from "~/komponen/ikon/IkonPerlebar";
 import ChatSidebarItem from "./ChatSidebarItem";
-import IkonChatBubbleBerisi from "~/komponen/IkonChatBubbleBerisi";
+import IkonChatBubbleBerisi from "~/komponen/ikon/IkonChatBubbleBerisi";
 
 export default function ChatSidebar() {
   const dummyChat = new Array(20).fill(null);

@@ -1,4 +1,4 @@
-import IkonCheckCircle from "~/komponen/IkonCheckCircle";
+import IkonCheckCircle from "~/komponen/ikon/IkonCheckCircle";
 
 export default function ResolveButton() {
   return (

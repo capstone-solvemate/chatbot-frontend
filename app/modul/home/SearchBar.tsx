@@ -1,5 +1,5 @@
 import type React from "react";
-import { IkonCari } from "~/komponen/IkonCari";
+import { IkonCari } from "~/komponen/ikon/IkonCari";
 
 type SearchBarProps = React.InputHTMLAttributes<HTMLInputElement>;
 
@@ -15,5 +15,5 @@ export default function SearchBar(props: SearchBarProps) {
         {...props}
       />
     </div>
-  )
+  );
 }

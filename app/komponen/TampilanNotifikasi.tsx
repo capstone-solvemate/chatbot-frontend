@@ -1,4 +1,4 @@
-import { IkonNotifikasi } from "./IkonNotifikasi";
+import { IkonNotifikasi } from "./ikon/IkonNotifikasi";
 
 export default function TampilanNotifikasi() {
   return (
@@ -9,5 +9,5 @@ export default function TampilanNotifikasi() {
         2
       </span>
     </div>
-  )
+  );
 }

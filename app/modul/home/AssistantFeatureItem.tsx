@@ -1,4 +1,4 @@
-import IkonCheck from "~/komponen/IkonCheck";
+import IkonCheck from "~/komponen/ikon/IkonCheck";
 
 type FeatureItemProps = {
   text: string;

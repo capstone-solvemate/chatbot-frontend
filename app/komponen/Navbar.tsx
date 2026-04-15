@@ -1,8 +1,8 @@
 import { useLocation } from "react-router";
-import IkonChat from "./IkonChat";
-import IkonFaq from "./IkonFaq";
-import IkonHome from "./IkonHome";
-import { IkonTiket } from "./IkonTiket";
+import IkonChat from "./ikon/IkonChat";
+import IkonFaq from "./ikon/IkonFaq";
+import IkonHome from "./ikon/IkonHome";
+import { IkonTiket } from "./ikon/IkonTiket";
 import NavItem from "./NavItem";
 import TampilanBrand from "./TampilanBrand";
 import TampilanNotifikasi from "./TampilanNotifikasi";

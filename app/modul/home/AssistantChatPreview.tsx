@@ -1,4 +1,4 @@
-import IkonSparkles from "~/komponen/IkonSparkles";
+import IkonSparkles from "~/komponen/ikon/IkonSparkles";
 import AssistantChatBubble from "./AssistantChatBubble";
 
 export default function AssistantChatPreview() {

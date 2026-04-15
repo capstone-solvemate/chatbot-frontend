@@ -1,11 +1,11 @@
-import type { ReactNode } from "react"
-import { IkonItemFaq } from "~/komponen/IkonItemFaq"
-import { IkonPanahKanan } from "~/komponen/IkonPanahKanan"
+import type { ReactNode } from "react";
+import { IkonItemFaq } from "~/komponen/ikon/IkonItemFaq";
+import { IkonPanahKanan } from "~/komponen/ikon/IkonPanahKanan";
 
 interface Props {
-  title: string
-  description: string
-  icon?: ReactNode
+  title: string;
+  description: string;
+  icon?: ReactNode;
 }
 
 export default function FAQCard({ title, description, icon }: Props) {
@@ -36,14 +36,10 @@ export default function FAQCard({ title, description, icon }: Props) {
       </div>
 
       <div className="flex-1">
-        <h3 className="font-medium text-gray-900">
-          {title}
-        </h3>
+        <h3 className="font-medium text-gray-900">{title}</h3>
 
-        <p className="mt-1 text-sm text-gray-600">
-          {description}
-        </p>
+        <p className="mt-1 text-sm text-gray-600">{description}</p>
       </div>
     </button>
-  )
+  );
 }

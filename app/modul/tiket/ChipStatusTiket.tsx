@@ -1,7 +1,7 @@
-import IkonJam from "~/komponen/IkonJam";
+import IkonJam from "~/komponen/ikon/IkonJam";
 import { StatusTiket, statusTiketToString } from "./StatusTiket";
-import IkonCheckCircle from "~/komponen/IkonCheckCircle";
-import IkonExclamationCircle from "~/komponen/IkonExclamationCircle";
+import IkonCheckCircle from "~/komponen/ikon/IkonCheckCircle";
+import IkonExclamationCircle from "~/komponen/ikon/IkonExclamationCircle";
 
 const statusStyle = {
   [StatusTiket.Open]: "bg-red-100 text-red-700 border-red-200",

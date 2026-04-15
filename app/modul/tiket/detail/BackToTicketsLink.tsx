@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import IkonPanahKiri from "~/komponen/IkonPanahKiri";
+import IkonPanahKiri from "~/komponen/ikon/IkonPanahKiri";
 
 export default function BackToTicketsLink() {
   return (

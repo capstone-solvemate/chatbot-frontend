@@ -1,4 +1,4 @@
-import IkonBot from "~/komponen/IkonBot";
+import IkonBot from "~/komponen/ikon/IkonBot";
 
 export default function TicketAction() {
   return (

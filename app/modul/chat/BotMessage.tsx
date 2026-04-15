@@ -1,4 +1,4 @@
-import IkonBot from "~/komponen/IkonBot";
+import IkonBot from "~/komponen/ikon/IkonBot";
 
 type BotMessageProps = {
   text: string;

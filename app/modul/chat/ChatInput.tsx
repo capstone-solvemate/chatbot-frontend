@@ -1,5 +1,5 @@
-import IkonGambar from "~/komponen/IkonGambar";
-import IkonKirim from "~/komponen/IkonKirim";
+import IkonGambar from "~/komponen/ikon/IkonGambar";
+import IkonKirim from "~/komponen/ikon/IkonKirim";
 
 export default function ChatInput() {
   return (

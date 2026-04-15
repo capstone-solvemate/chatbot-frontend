@@ -1,4 +1,4 @@
-import IkonUser from "~/komponen/IkonUser";
+import IkonUser from "~/komponen/ikon/IkonUser";
 
 type UserMessageProps = {
   text: string;
