@@ -6,6 +6,7 @@ interface ButtonProps {
   href?: string;
   className?: string;
   onClick?: () => void;
+  type?: "button" | "submit";
 }
 
 export function Button({
@@ -14,6 +15,7 @@ export function Button({
   className,
   href,
   onClick,
+  type = "button",
 }: ButtonProps) {
   return (
     <>
@@ -35,6 +37,7 @@ export function Button({
             "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white font-medium shadow hover:bg-blue-700 transition " +
             className
           }
+          type={type}
         >
           {leftIcon && leftIcon}
           {children && children}
