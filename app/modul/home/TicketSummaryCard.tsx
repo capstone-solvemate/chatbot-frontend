@@ -2,6 +2,7 @@ import IkonExclamationCircle from "~/komponen/IkonExclamationCircle";
 import TicketStatItem from "./TicketStatItem";
 import IkonJam from "~/komponen/IkonJam";
 import IkonDone from "~/komponen/IkonDone";
+import { NavLink } from "react-router";
 
 type TicketSummaryCardProps = {
   open: number;
@@ -41,12 +42,12 @@ export default function TicketSummaryCard({
         />
       </div>
 
-      <a
-        href="#"
+      <NavLink
+        to="/tiket"
         className="text-center text-blue-600 hover:text-blue-700 font-medium items-center gap-1"
       >
         View all tickets →
-      </a>
+      </NavLink>
     </div>
   );
 }
