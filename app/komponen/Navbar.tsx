@@ -1,4 +1,4 @@
-import { useLocation } from "react-router";
+import { useLocation, useOutletContext } from "react-router";
 import IkonChat from "./ikon/IkonChat";
 import IkonFaq from "./ikon/IkonFaq";
 import IkonHome from "./ikon/IkonHome";
@@ -11,9 +11,12 @@ import TampilanUserProfile from "./TampilanUserProfile";
 export default function Navbar() {
   const location = useLocation();
   const pathname = location.pathname;
+  const [devMode]: [boolean] = useOutletContext();
 
   return (
-    <header className="w-full border-b border-gray-200 bg-white fixed top-0 left-0 z-40">
+    <header
+      className={`w-full border-b border-gray-200 bg-white fixed ${devMode ? "top-7" : "top-0"} left-0 z-40`}
+    >
       <div className="mx-auto flex h-16 items-center justify-between px-6">
         {/* Left */}
         <div className="flex items-center gap-8">
