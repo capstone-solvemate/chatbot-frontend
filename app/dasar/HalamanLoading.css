@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap");
+
+@keyframes morph-spin {
+  0% {
+    transform: rotate(0deg) scale(1) translateX(-7px) translateY(7px);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1) translateX(7px);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(0.9) translateY(-7px);
+  }
+  100% {
+    transform: rotate(360deg) scale(1) translateX(-7px) translateY(7px);
+  }
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+}
+@keyframes wave-dot {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+@keyframes scan {
+  0% {
+    top: 0;
+    left: -10;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    left: 10;
+    opacity: 0;
+  }
+}
+@keyframes scan2 {
+  0% {
+    top: 100%;
+    left: -10;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    top: 0;
+    left: 10;
+    opacity: 0;
+  }
+}
+@keyframes fill-anim {
+  0% {
+    width: 0%;
+  }
+  40% {
+    width: 60%;
+  }
+  70% {
+    width: 80%;
+  }
+  90% {
+    width: 95%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(58px);
+  }
+  to {
+    transform: rotate(360deg) translateX(58px);
+  }
+}
