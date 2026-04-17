@@ -10,7 +10,7 @@ export default function ChatSidebar() {
 
   return (
     <div
-      className="fixed left-0 w-16 overflow-y-auto shrink-0 border-r bg-white border-gray-200 flex flex-col items-center py-4 gap-6"
+      className="fixed z-40 left-0 w-16 overflow-y-auto shrink-0 border-r bg-white border-gray-200 flex flex-col items-center py-4 gap-6"
       style={{ height: `calc(100vh - ${devMode ? "10.75" : "9"}rem)` }}
     >
       {/* Menu */}

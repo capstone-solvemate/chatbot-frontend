@@ -4,7 +4,7 @@ import IkonKirim from "~/komponen/ikon/IkonKirim";
 export default function ChatInput() {
   return (
     <div
-      className="fixed z-40 bottom-0 left-14 bg-gray-50"
+      className="fixed z-30 bottom-0 left-14 bg-gray-50"
       style={{ width: "calc(100vw - 3.5rem)" }}
     >
       <div className="p-4 pt-0 flex items-center gap-3 w-full max-w-3xl mx-auto">
