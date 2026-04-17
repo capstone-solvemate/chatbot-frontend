@@ -1,7 +1,12 @@
+import type { Route } from "../+types/root";
 import "./HalamanLoading.css";
 
 interface Props {
   devMode?: boolean;
+}
+
+export function meta({}: Route.MetaArgs) {
+  return [{ title: "Epson Chatbot" }];
 }
 
 export default function HalamanLoading({ devMode = false }: Props) {
