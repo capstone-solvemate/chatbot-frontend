@@ -6,6 +6,7 @@ export default function LoginForm() {
   return (
     <div className="w-full flex flex-col gap-4">
       <InputField
+        name="email"
         label="Email Address"
         type="email"
         placeholder="you@company.com"
@@ -13,9 +14,11 @@ export default function LoginForm() {
       />
 
       <InputField
+        name="password"
         label="Password"
         type="password"
         placeholder="••••••••"
+        minLength={8}
         icon={<IkonPassword />}
       />
     </div>

@@ -13,6 +13,7 @@ export default function RoleOption({
 }: Props): React.JSX.Element {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`flex-1 rounded-lg py-2 font-medium border-2 cursor-pointer ${
         active

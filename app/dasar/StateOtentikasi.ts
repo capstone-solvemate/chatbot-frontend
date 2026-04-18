@@ -1,6 +1,8 @@
+import type { InfoPengguna } from "./InfoPengguna";
+
 export class StateOtentikasi {
   constructor(
     public loading: boolean,
-    public pengguna?: string
+    public pengguna?: InfoPengguna
   ) { }
 }

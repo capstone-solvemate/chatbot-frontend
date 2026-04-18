@@ -8,6 +8,7 @@ export default function LayoutPrivate(): React.JSX.Element {
   const [pass, setPass] = useState(false);
   const [_devMode, stateOtentikasi]: [boolean, StateOtentikasi] =
     useOutletContext();
+  const context: any = useOutletContext();
 
   const navigate = useNavigate();
 
@@ -19,5 +20,5 @@ export default function LayoutPrivate(): React.JSX.Element {
     }
   }, [stateOtentikasi]);
 
-  return pass ? <Outlet /> : <HalamanLoading />;
+  return pass ? <Outlet context={context} /> : <HalamanLoading />;
 }

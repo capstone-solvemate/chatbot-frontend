@@ -1,8 +1,12 @@
 import { Button } from "~/komponen/Button";
 
-export default function SubmitButton() {
+interface Props {
+  disabled?: boolean;
+}
+
+export default function SubmitButton({ disabled = false }: Props) {
   return (
-    <Button type="submit" className="mt-6 w-full">
+    <Button type="submit" className="mt-6 w-full" disabled={disabled}>
       Sign In
     </Button>
   );

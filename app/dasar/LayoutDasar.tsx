@@ -6,6 +6,7 @@ import HalamanLoading from "./HalamanLoading";
 import { FetchError, HttpError, KonektorBackend } from "./KonektorBackend";
 import HalamanOffline from "./HalamanOffline";
 import MasterError from "./MasterError";
+import { dtoToInfoPengguna, type InfoPenggunaDto } from "./InfoPenggunaDto";
 
 export default function LayoutDasar(): React.JSX.Element {
   const [devMode, setDevMode] = useState(false);
@@ -41,7 +42,10 @@ export default function LayoutDasar(): React.JSX.Element {
   useEffect(() => {
     const fn = async () => {
       try {
-        await konektorBackend.get("/api/auth/me");
+        const resp = await konektorBackend.get("/api/auth/me");
+        const dto: InfoPenggunaDto = await resp.json();
+        const infoPengguna = dtoToInfoPengguna(dto);
+        setStateOtentikasi(new StateOtentikasi(false, infoPengguna));
       } catch (e: any) {
         if (e instanceof HttpError && e.status === 401) {
           setStateOtentikasi(new StateOtentikasi(false));
@@ -75,6 +79,7 @@ export default function LayoutDasar(): React.JSX.Element {
           context={[
             devMode,
             stateOtentikasi,
+            konektorBackend,
             setMasterNotifikasi,
             setMasterError,
           ]}

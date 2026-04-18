@@ -1,13 +1,22 @@
 import type React from "react";
 
 type Props = {
+  name: string;
   label: string;
   type: string;
   placeholder: string;
   icon?: React.ReactNode;
+  minLength?: number;
 };
 
-export default function InputField({ label, type, placeholder, icon }: Props) {
+export default function InputField({
+  name,
+  label,
+  type,
+  placeholder,
+  icon,
+  minLength,
+}: Props) {
   return (
     <div>
       <label className="text-sm font-medium text-gray-700 mb-1 block">
@@ -18,8 +27,10 @@ export default function InputField({ label, type, placeholder, icon }: Props) {
         <span className="text-gray-400">{icon && icon}</span>
 
         <input
+          name={name}
           type={type}
           placeholder={placeholder}
+          minLength={minLength}
           className="w-full outline-none ml-2"
         />
       </div>
