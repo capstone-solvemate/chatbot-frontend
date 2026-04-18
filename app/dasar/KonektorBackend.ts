@@ -1,5 +1,5 @@
 export class KonektorBackend {
-  constructor() { }
+  constructor(private setDevMode: () => void) { }
 
   private baseUrl: string = import.meta.env.VITE_SITE_URL
 
@@ -52,6 +52,9 @@ export class KonektorBackend {
           body: contentType ? processedData : undefined,
           headers: headers
         })
+        if (response.headers.get('X-Dev-Env-Alert') === '1') {
+          this.setDevMode()
+        }
         if (response.status >= 400) {
           let payload: any = await response.text()
           try {

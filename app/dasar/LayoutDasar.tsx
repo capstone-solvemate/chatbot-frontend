@@ -37,7 +37,7 @@ export default function LayoutDasar(): React.JSX.Element {
 
   const [masterNotifikasi, setMasterNotifikasi] = useState<any | null>(null);
 
-  const konektorBackend = new KonektorBackend();
+  const konektorBackend = new KonektorBackend(() => setDevMode(true));
 
   useEffect(() => {
     const fn = async () => {
