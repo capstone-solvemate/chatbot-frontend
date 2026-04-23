@@ -10,15 +10,16 @@ export default function HelpCard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <HelpCardItem>
-          Start a <strong>chat</strong> with our <strong>AI Assistant</strong>{" "}
-          above
+          Initiate a chat with the <strong>AI Assistant</strong>
         </HelpCardItem>
 
-        <HelpCardItem>Describe your issue clearly</HelpCardItem>
+        <HelpCardItem>
+          <strong>Provide a clear description</strong> of your issue
+        </HelpCardItem>
 
         <HelpCardItem>
-          If a solution isn't found, the AI will provide a ticket creation link
-          directly in the chat.
+          <strong>Receive a ticket</strong> link{" "}
+          <strong>if no solution is found</strong>
         </HelpCardItem>
       </div>
     </div>
