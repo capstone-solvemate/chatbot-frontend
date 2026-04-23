@@ -1,3 +1,4 @@
+import { Button } from "~/komponen/Button";
 import IkonBot from "~/komponen/ikon/IkonBot";
 
 export default function TicketAction() {
@@ -13,9 +14,9 @@ export default function TicketAction() {
           technical team.
         </p>
 
-        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
+        <Button className="px-6 py-2!" href="/tiket/create/0">
           Create a ticket now
-        </button>
+        </Button>
 
         <span className="text-xs text-gray-500 mt-2 block">09:28</span>
       </div>

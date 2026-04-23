@@ -5,6 +5,7 @@ export default [
     layout('dasar/LayoutPrivate.tsx', [
       index("modul/home/HalamanHome.tsx"),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
+      route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
       route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
