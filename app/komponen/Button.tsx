@@ -19,8 +19,7 @@ export function Button({
   type = "button",
   disabled = false,
 }: ButtonProps) {
-  const baseClassName =
-    "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white font-medium shadow hover:bg-blue-700 transition disabled:bg-blue-100 disabled:text-blue-50 disabled:cursor-default ";
+  const baseClassName = `inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white font-medium shadow hover:bg-blue-700 transition disabled:bg-blue-100 disabled:text-blue-50 disabled:cursor-default ${className}`;
 
   return (
     <>
