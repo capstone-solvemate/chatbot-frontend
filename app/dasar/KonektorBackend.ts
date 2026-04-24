@@ -60,6 +60,8 @@ export class KonektorBackend {
         if (response.status >= 400) {
           if (response.status === 419 && !isRetrying) {
             response = await this.send(endpoint, method, data, true)
+          } else if (response.status === 502) {
+            throw new FetchError('bad gateway')
           } else {
             let payload: any = await response.text()
             try {
