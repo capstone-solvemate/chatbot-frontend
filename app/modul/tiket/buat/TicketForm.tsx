@@ -4,8 +4,15 @@ import SelectField from "./SelectField";
 import TextareaField from "./TextAreaField";
 import UploadField from "./UploadField";
 import FormActions from "./FormActions";
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
 
-export default function TicketForm(): React.JSX.Element {
+interface Props {
+  daftarKategori: Kategori[];
+}
+
+export default function TicketForm({
+  daftarKategori,
+}: Props): React.JSX.Element {
   return (
     <form className="space-y-5">
       <InputField
@@ -14,7 +21,14 @@ export default function TicketForm(): React.JSX.Element {
         placeholder="Brief description of your issue"
       />
 
-      <SelectField label="Category" required />
+      <SelectField
+        label="Category"
+        required
+        options={daftarKategori.map((kategori) => ({
+          value: kategori.id.toString(),
+          label: kategori.nama,
+        }))}
+      />
 
       <TextareaField label="Description" required />
 
