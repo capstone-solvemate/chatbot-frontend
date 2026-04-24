@@ -28,7 +28,12 @@ export default function LayoutDasar(): React.JSX.Element {
     if (masterError === null) {
       setMasterErrorStr(null);
     } else {
-      if (masterError instanceof Error) {
+      console.log(masterError);
+      if (masterError instanceof FetchError) {
+        setMasterErrorStr(
+          "There is an internet connection issue or the server is unavailable.",
+        );
+      } else if (masterError instanceof Error) {
         setMasterErrorStr(masterError.message);
       } else {
         setMasterErrorStr("Something went wrong.");
