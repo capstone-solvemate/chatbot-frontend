@@ -33,6 +33,8 @@ export class KonektorBackend {
       else if (typeof data !== 'string') {
         processedData = `${data}`
         contentType = 'text/plain'
+      } else if (data === null || data === undefined) {
+        contentType = null
       } else {
         processedData = data
         contentType = 'text/plain'

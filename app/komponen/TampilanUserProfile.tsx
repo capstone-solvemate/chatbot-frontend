@@ -4,9 +4,13 @@ import type { StateOtentikasi } from "~/dasar/StateOtentikasi";
 
 interface Props {
   stateOtentikasi: StateOtentikasi;
+  promptLogout: () => void;
 }
 
-export default function TampilanUserProfile({ stateOtentikasi }: Props) {
+export default function TampilanUserProfile({
+  stateOtentikasi,
+  promptLogout,
+}: Props) {
   return (
     <div className="flex items-center gap-3">
       <div className="text-right">
@@ -22,7 +26,10 @@ export default function TampilanUserProfile({ stateOtentikasi }: Props) {
         </p>
       </div>
 
-      <button className="text-gray-500 cursor-pointer stroke-gray-500 hover:text-gray-700 hover:stroke-gray-700">
+      <button
+        onClick={promptLogout}
+        className="text-gray-500 cursor-pointer stroke-gray-500 hover:text-gray-700 hover:stroke-gray-700"
+      >
         <IkonLogout className="h-5 w-5" />
       </button>
     </div>

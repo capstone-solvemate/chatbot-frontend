@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
+  color?: ButtonColor;
 }
 
 export function Button({
@@ -18,20 +19,31 @@ export function Button({
   onClick,
   type = "button",
   disabled = false,
+  color = ButtonColor.Blue,
 }: ButtonProps) {
-  const baseClassName = `inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-white font-medium shadow hover:bg-blue-700 transition disabled:bg-blue-100 disabled:text-blue-50 disabled:cursor-default ${className}`;
+  function getColorClass(color: ButtonColor): string {
+    switch (color) {
+      case ButtonColor.Blue:
+        return "bg-blue-600 enabled:hover:bg-blue-700 text-white disabled:bg-blue-100 disabled:text-blue-50";
+      case ButtonColor.White:
+        return "bg-white enabled:hover:bg-gray-200 text-black disabled:text-gray-100";
+      case ButtonColor.Red:
+        return "bg-rose-700 enabled:hover:bg-rose-800 text-white disabled:bg-rose-200 disabled:text-rose-100";
+    }
+  }
+  const baseClassName = `inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg  px-6 py-3 font-medium shadow transition disabled:cursor-default ${getColorClass(color)} ${className}`;
 
   return (
     <>
       {href ? (
-        <NavLink to={href} className={baseClassName + className}>
+        <NavLink to={href} className={baseClassName + " " + className}>
           {leftIcon && leftIcon}
           {children && children}
         </NavLink>
       ) : (
         <button
           onClick={onClick}
-          className={baseClassName + className}
+          className={baseClassName + " " + className}
           type={type}
           disabled={disabled}
         >
@@ -41,4 +53,10 @@ export function Button({
       )}
     </>
   );
+}
+
+export enum ButtonColor {
+  Blue,
+  White,
+  Red,
 }

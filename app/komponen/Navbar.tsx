@@ -18,7 +18,8 @@ import IkonSetting from "./ikon/IkonSetting";
 export default function Navbar() {
   const location = useLocation();
   const pathname = location.pathname;
-  const [devMode, stateOtentikasi]: ContextType = useOutletContext();
+  const [devMode, stateOtentikasi, _a, _b, _c, promptLogout]: ContextType =
+    useOutletContext();
 
   const [peran, setPeran] = useState<PeranPengguna>(
     stateOtentikasi.pengguna!.peran,
@@ -100,7 +101,10 @@ export default function Navbar() {
         {/* Right */}
         <div className="flex items-center gap-6">
           <TampilanNotifikasi />
-          <TampilanUserProfile stateOtentikasi={stateOtentikasi} />
+          <TampilanUserProfile
+            stateOtentikasi={stateOtentikasi}
+            promptLogout={promptLogout}
+          />
         </div>
       </div>
     </header>

@@ -7,6 +7,7 @@ import { FetchError, HttpError, KonektorBackend } from "./KonektorBackend";
 import HalamanOffline from "./HalamanOffline";
 import MasterError from "./MasterError";
 import { dtoToInfoPengguna, type InfoPenggunaDto } from "./InfoPenggunaDto";
+import LogoutConfirmationView from "./LogoutConfirmationView";
 
 export default function LayoutDasar(): React.JSX.Element {
   const [devMode, setDevMode] = useState(false);
@@ -38,6 +39,40 @@ export default function LayoutDasar(): React.JSX.Element {
   const [masterNotifikasi, setMasterNotifikasi] = useState<any | null>(null);
 
   const konektorBackend = new KonektorBackend(() => setDevMode(true));
+
+  const [logoutPrompted, setLogoutPrompted] = useState(false);
+  const promptLogout = () => {
+    setLogoutPrompted(true);
+  };
+
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleCancelLogout = () => {
+    setLogoutPrompted(false);
+  };
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+
+    const reload = () => {
+      location.reload();
+    };
+    try {
+      await konektorBackend.post("/api/auth/logout");
+      reload();
+    } catch (e: any) {
+      if (e instanceof HttpError && e.status === 401) {
+        reload();
+      } else {
+        setMasterError(e);
+      }
+    } finally {
+      setLogoutPrompted(false);
+      setLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     const fn = async () => {
@@ -75,15 +110,25 @@ export default function LayoutDasar(): React.JSX.Element {
       ) : offline ? (
         <HalamanOffline />
       ) : (
-        <Outlet
-          context={[
-            devMode,
-            stateOtentikasi,
-            konektorBackend,
-            setMasterNotifikasi,
-            setMasterError,
-          ]}
-        />
+        <>
+          <Outlet
+            context={[
+              devMode,
+              stateOtentikasi,
+              konektorBackend,
+              setMasterNotifikasi,
+              setMasterError,
+              promptLogout,
+            ]}
+          />
+          {logoutPrompted && (
+            <LogoutConfirmationView
+              loading={loggingOut}
+              onCancel={handleCancelLogout}
+              onConfirm={handleLogout}
+            />
+          )}
+        </>
       )}
     </div>
   );
