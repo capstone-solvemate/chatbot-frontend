@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie'
+
 export class KonektorBackend {
   constructor(private setDevMode: () => void) { }
 
@@ -6,15 +8,15 @@ export class KonektorBackend {
   /**
    * send post request in unauthorized request
    */
-  async postU(endpoint: string, data?: any): Promise<Response> {
-    return await this.send(endpoint, HttpMethod.Post, data, true)
+  async post(endpoint: string, data?: any): Promise<Response> {
+    return await this.send(endpoint, HttpMethod.Post, data)
   }
 
   async get(endpoint: string): Promise<Response> {
     return await this.send(endpoint, HttpMethod.Get)
   }
 
-  private async send(endpoint: string, method: HttpMethod, data?: any, unauthenticated: boolean = false, isRetrying: boolean = false): Promise<Response> {
+  private async send(endpoint: string, method: HttpMethod, data?: any, isRetrying: boolean = false): Promise<Response> {
     let url = endpoint
     if (url.startsWith('/')) {
       url = this.baseUrl.replace(/\/$/, '') + endpoint
@@ -40,14 +42,14 @@ export class KonektorBackend {
     const fetchFn = async (): Promise<Response> => {
       try {
         let headers: any = {}
+        if (method !== HttpMethod.Get) {
+          headers['X-CSRF-TOKEN'] = Cookies.get('csrf_token')
+        }
         if (contentType) {
-          headers = {
-            ...headers,
-            'Content-Type': contentType
-          }
+          headers['Content-Type'] = contentType
         }
 
-        const response = await fetch(url, {
+        let response = await fetch(url, {
           method: httpMethodToString(method),
           body: contentType ? processedData : undefined,
           headers: headers
@@ -56,11 +58,15 @@ export class KonektorBackend {
           this.setDevMode()
         }
         if (response.status >= 400) {
-          let payload: any = await response.text()
-          try {
-            payload = JSON.parse(payload)
-          } catch (_e: any) { }
-          throw new HttpError(response.status, payload)
+          if (response.status === 419 && !isRetrying) {
+            response = await this.send(endpoint, method, data, true)
+          } else {
+            let payload: any = await response.text()
+            try {
+              payload = JSON.parse(payload)
+            } catch (_e: any) { }
+            throw new HttpError(response.status, payload)
+          }
         }
         return response
       } catch (e: any) {

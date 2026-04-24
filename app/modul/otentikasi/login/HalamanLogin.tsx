@@ -27,7 +27,7 @@ export default function HalamanLogin(): React.JSX.Element {
       const loginDto = new LoginDto(data.email, data.password);
 
       if (peran === Peran.Karyawan) {
-        await konektorBackend.postU(
+        await konektorBackend.post(
           "/api/auth/login/employee",
           loginDto.toPlainObj(),
         );
