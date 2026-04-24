@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 import RoleOption from "./RoleOption";
-import { Peran } from "../Peran";
 
 interface Props {
-  peran: Peran;
-  onSetPeran: (peran: Peran) => void;
+  peran: PeranPengguna;
+  onSetPeran: (peran: PeranPengguna) => void;
 }
 
 export default function RoleSelector({ peran, onSetPeran }: Props) {
@@ -14,18 +13,18 @@ export default function RoleSelector({ peran, onSetPeran }: Props) {
 
       <div className="flex gap-3">
         <RoleOption
-          active={peran === Peran.Karyawan}
+          active={peran === PeranPengguna.Karyawan}
           onClick={() => {
-            onSetPeran(Peran.Karyawan);
+            onSetPeran(PeranPengguna.Karyawan);
           }}
         >
           Employee
         </RoleOption>
 
         <RoleOption
-          active={peran === Peran.Admin}
+          active={peran === PeranPengguna.Admin}
           onClick={() => {
-            onSetPeran(Peran.Admin);
+            onSetPeran(PeranPengguna.Admin);
           }}
         >
           Admin

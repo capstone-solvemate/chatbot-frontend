@@ -3,13 +3,13 @@ import RoleSelector from "./RoleSelector";
 import LoginForm from "./LoginForm";
 import SubmitButton from "./SubmitButton";
 import ForgotPasswordLink from "./ForgotPasswordLink";
-import type { Peran } from "../Peran";
 import type { SubmitEvent } from "react";
 import AuthErrorNotification from "./AuthErrorNotification";
+import type { PeranPengguna } from "~/dasar/PeranPengguna";
 
 interface Props {
-  peran: Peran;
-  onSetPeran: (peran: Peran) => void;
+  peran: PeranPengguna;
+  onSetPeran: (peran: PeranPengguna) => void;
   submitting: boolean;
   onSubmit: (data: LoginFormData) => void;
   authError: string | null;
