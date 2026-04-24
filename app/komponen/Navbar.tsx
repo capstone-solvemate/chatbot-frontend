@@ -67,7 +67,13 @@ export default function Navbar() {
                 <NavItem icon={<IkonBot height={16} />}>
                   Chatbot Monitoring
                 </NavItem>
-                <NavItem icon={<IkonSetting height={16} />}>Settings</NavItem>
+                <NavItem
+                  active={pathname.startsWith("/admin/settings")}
+                  href="/admin/settings/kategori"
+                  icon={<IkonSetting height={16} />}
+                >
+                  Settings
+                </NavItem>
               </>
             ) : (
               <>

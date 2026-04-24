@@ -10,7 +10,8 @@ export default [
       route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/LayoutAdmin.tsx', [
-      route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx')
+      route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
+      route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx')
     ]),
     layout('dasar/LayoutGuest.tsx', [
       route("login", "modul/otentikasi/login/HalamanLogin.tsx"),
