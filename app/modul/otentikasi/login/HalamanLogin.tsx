@@ -31,9 +31,13 @@ export default function HalamanLogin(): React.JSX.Element {
           "/api/auth/login/employee",
           loginDto.toPlainObj(),
         );
-        location.reload();
       } else {
+        await konektorBackend.post(
+          "/api/auth/login/admin",
+          loginDto.toPlainObj(),
+        );
       }
+      location.reload();
     } catch (e: any) {
       if (e instanceof HttpError && e.status === 401) {
         setAuthError("Invalid credentials");
