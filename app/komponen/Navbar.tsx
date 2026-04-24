@@ -7,8 +7,13 @@ import NavItem from "./NavItem";
 import TampilanBrand from "./TampilanBrand";
 import TampilanNotifikasi from "./TampilanNotifikasi";
 import TampilanUserProfile from "./TampilanUserProfile";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 
-export default function Navbar() {
+interface Props {
+  peran?: PeranPengguna;
+}
+
+export default function Navbar({ peran = PeranPengguna.Karyawan }: Props) {
   const location = useLocation();
   const pathname = location.pathname;
   const [devMode]: [boolean] = useOutletContext();

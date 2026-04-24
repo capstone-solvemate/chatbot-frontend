@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useOutletContext } from "react-router";
 import HalamanLoading from "./HalamanLoading";
 import type { StateOtentikasi } from "./StateOtentikasi";
+import { PeranPengguna } from "./PeranPengguna";
 
 export default function LayoutGuest(): React.JSX.Element {
   const [pass, setPass] = useState(false);
@@ -14,7 +15,11 @@ export default function LayoutGuest(): React.JSX.Element {
 
   useEffect(() => {
     if (stateOtentikasi.pengguna) {
-      navigate("/");
+      if (stateOtentikasi.pengguna.peran === PeranPengguna.Admin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
     } else {
       setPass(true);
     }
