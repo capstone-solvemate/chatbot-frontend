@@ -5,6 +5,7 @@ import HalamanLoading from "./HalamanLoading";
 import type { StateOtentikasi } from "./StateOtentikasi";
 import { PeranPengguna } from "./PeranPengguna";
 import HalamanDilarang from "./HalamanDilarang";
+import Navbar from "~/komponen/Navbar";
 
 export default function LayoutAdmin(): React.JSX.Element {
   const [pass, setPass] = useState(false);
@@ -27,11 +28,16 @@ export default function LayoutAdmin(): React.JSX.Element {
   }, [stateOtentikasi]);
 
   return pass ? (
-    dilarang ? (
-      <HalamanDilarang ekspektasiPeran={PeranPengguna.Admin} />
-    ) : (
-      <Outlet context={context} />
-    )
+    <div className="min-w-full">
+      <Navbar />
+      <div className="pt-16">
+        {dilarang ? (
+          <HalamanDilarang ekspektasiPeran={PeranPengguna.Admin} />
+        ) : (
+          <Outlet context={context} />
+        )}
+      </div>
+    </div>
   ) : (
     <HalamanLoading />
   );

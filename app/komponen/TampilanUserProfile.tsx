@@ -1,10 +1,12 @@
-import { useOutletContext } from "react-router";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 import { IkonLogout } from "./ikon/IkonLogout";
-import type { ContextType } from "~/dasar/ContextType";
+import type { StateOtentikasi } from "~/dasar/StateOtentikasi";
 
-export default function TampilanUserProfile() {
-  const [_a, stateOtentikasi]: ContextType = useOutletContext();
+interface Props {
+  stateOtentikasi: StateOtentikasi;
+}
 
+export default function TampilanUserProfile({ stateOtentikasi }: Props) {
   return (
     <div className="flex items-center gap-3">
       <div className="text-right">
@@ -12,7 +14,11 @@ export default function TampilanUserProfile() {
           {stateOtentikasi.pengguna?.nama || ""}
         </p>
         <p className="text-xs text-gray-500">
-          Employee ID: EMP{stateOtentikasi.pengguna?.id ?? 0}
+          {stateOtentikasi.pengguna?.peran === PeranPengguna.Admin ? (
+            <>Support Team</>
+          ) : (
+            <>Employee ID: EMP{stateOtentikasi.pengguna?.id ?? 0}</>
+          )}
         </p>
       </div>
 

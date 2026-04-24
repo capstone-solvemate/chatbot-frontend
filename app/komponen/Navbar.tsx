@@ -8,15 +8,26 @@ import TampilanBrand from "./TampilanBrand";
 import TampilanNotifikasi from "./TampilanNotifikasi";
 import TampilanUserProfile from "./TampilanUserProfile";
 import { PeranPengguna } from "~/dasar/PeranPengguna";
+import type { ContextType } from "~/dasar/ContextType";
+import { useEffect, useState } from "react";
+import IkonDashboard from "./ikon/IkonDashboard";
+import IkonKnowledgeBase from "./ikon/IkonKnowledgeBase";
+import IkonBot from "./ikon/IkonBot";
+import IkonSetting from "./ikon/IkonSetting";
 
-interface Props {
-  peran?: PeranPengguna;
-}
-
-export default function Navbar({ peran = PeranPengguna.Karyawan }: Props) {
+export default function Navbar() {
   const location = useLocation();
   const pathname = location.pathname;
-  const [devMode]: [boolean] = useOutletContext();
+  const [devMode, stateOtentikasi]: ContextType = useOutletContext();
+
+  const [peran, setPeran] = useState<PeranPengguna>(
+    stateOtentikasi.pengguna!.peran,
+  );
+  useEffect(() => {
+    if (stateOtentikasi.pengguna) {
+      setPeran(stateOtentikasi.pengguna.peran);
+    }
+  }, [stateOtentikasi]);
 
   return (
     <header
@@ -28,35 +39,68 @@ export default function Navbar({ peran = PeranPengguna.Karyawan }: Props) {
           <TampilanBrand />
 
           <nav className="lg:flex items-center gap-2 hidden">
-            <NavItem
-              href="/"
-              active={pathname === "/"}
-              icon={<IkonHome height={16} />}
-            >
-              Home
-            </NavItem>
-            <NavItem icon={<IkonFaq height={16} />}>FAQ</NavItem>
-            <NavItem
-              active={pathname.startsWith("/chat")}
-              icon={<IkonChat height={16} />}
-              href="/chat"
-            >
-              Chat Support
-            </NavItem>
-            <NavItem
-              active={pathname.startsWith("/tiket")}
-              icon={<IkonTiket height={16} />}
-              href="/tiket"
-            >
-              My Tickets
-            </NavItem>
+            {peran === PeranPengguna.Admin ? (
+              <>
+                <NavItem
+                  href="/admin/dashboard"
+                  active={pathname.startsWith("/admin/dashboard")}
+                  icon={<IkonDashboard height={16} />}
+                >
+                  Dashboard
+                </NavItem>
+                <NavItem
+                  active={pathname.startsWith("/admin/tiket")}
+                  icon={<IkonTiket height={16} />}
+                  href="/admin/tiket"
+                >
+                  Tickets
+                </NavItem>
+                <NavItem
+                  active={pathname.startsWith("/admin/knowledge-base")}
+                  icon={<IkonKnowledgeBase height={16} />}
+                  href="/admin/knowledge-base"
+                >
+                  Knowledge Base
+                </NavItem>
+                <NavItem icon={<IkonFaq height={16} />}>FAQ Management</NavItem>
+                <NavItem icon={<IkonBot height={16} />}>
+                  Chatbot Monitoring
+                </NavItem>
+                <NavItem icon={<IkonSetting height={16} />}>Settings</NavItem>
+              </>
+            ) : (
+              <>
+                <NavItem
+                  href="/"
+                  active={pathname === "/"}
+                  icon={<IkonHome height={16} />}
+                >
+                  Home
+                </NavItem>
+                <NavItem icon={<IkonFaq height={16} />}>FAQ</NavItem>
+                <NavItem
+                  active={pathname.startsWith("/chat")}
+                  icon={<IkonChat height={16} />}
+                  href="/chat"
+                >
+                  Chat Support
+                </NavItem>
+                <NavItem
+                  active={pathname.startsWith("/tiket")}
+                  icon={<IkonTiket height={16} />}
+                  href="/tiket"
+                >
+                  My Tickets
+                </NavItem>
+              </>
+            )}
           </nav>
         </div>
 
         {/* Right */}
         <div className="flex items-center gap-6">
           <TampilanNotifikasi />
-          <TampilanUserProfile />
+          <TampilanUserProfile stateOtentikasi={stateOtentikasi} />
         </div>
       </div>
     </header>
