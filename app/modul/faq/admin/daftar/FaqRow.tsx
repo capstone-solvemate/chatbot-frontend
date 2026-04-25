@@ -5,9 +5,10 @@ import IkonHapus from "~/komponen/ikon/IkonHapus";
 type FaqRowProps = {
   question: string;
   answer: string;
+  onEdit: () => void;
 };
 
-export default function FaqRow({ question, answer }: FaqRowProps) {
+export default function FaqRow({ question, answer, onEdit }: FaqRowProps) {
   return (
     <div className="border-b last:border-b-0 border-gray-200 px-5 py-5 flex justify-between gap-6">
       <div className="flex-1 min-w-0">
@@ -21,6 +22,7 @@ export default function FaqRow({ question, answer }: FaqRowProps) {
           className="px-3! py-1.5! text-xs gap-1!"
           color={ButtonColor.White}
           leftIcon={<IkonEdit className="h-4" />}
+          onClick={onEdit}
         >
           Edit
         </Button>

@@ -29,6 +29,8 @@ export function Button({
         return "bg-white enabled:hover:bg-gray-200 text-black disabled:text-gray-100";
       case ButtonColor.Red:
         return "bg-rose-700 enabled:hover:bg-rose-800 text-white disabled:bg-rose-200 disabled:text-rose-100";
+      case ButtonColor.Gray:
+        return "bg-gray-400 enabled:hover:bg-gray-300 text-white disabled:bg-gray-100 disabled:text-gray-50";
     }
   }
   const baseClassName = `inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg  px-6 py-3 font-medium shadow transition disabled:cursor-default ${getColorClass(color)} ${className}`;
@@ -59,4 +61,5 @@ export enum ButtonColor {
   Blue,
   White,
   Red,
+  Gray,
 }

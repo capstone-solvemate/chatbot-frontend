@@ -9,4 +9,4 @@
 @utility min-h-default {
   min-height: calc(100vh - 4rem);
 }
-@source inline("inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow transition disabled:cursor-default bg-blue-600 enabled:hover:bg-blue-700 text-white disabled:bg-blue-100 disabled:text-blue-50 bg-white enabled:hover:bg-gray-200 text-black disabled:text-gray-100 bg-rose-700 enabled:hover:bg-rose-800 text-white disabled:bg-rose-200 disabled:text-rose-100");
+@source inline("inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium shadow transition disabled:cursor-default bg-blue-600 enabled:hover:bg-blue-700 text-white disabled:bg-blue-100 disabled:text-blue-50 bg-white enabled:hover:bg-gray-200 text-black disabled:text-gray-100 bg-rose-700 enabled:hover:bg-rose-800 text-white disabled:bg-rose-200 disabled:text-rose-100 bg-gray-400 enabled:hover:bg-gray-300 text-white disabled:bg-gray-100 disabled:text-gray-50");
