@@ -2,7 +2,7 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 
 export default [
   layout('dasar/LayoutDasar.tsx', [
-    layout('dasar/LayoutKaryawan.tsx', [
+    layout('dasar/LayoutKaryawanLegacy.tsx', [
       index("modul/home/HalamanHome.tsx"),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),

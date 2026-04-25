@@ -10,9 +10,8 @@ import HalamanLoading from "./HalamanLoading";
 import type { StateOtentikasi } from "./StateOtentikasi";
 import { PeranPengguna } from "./PeranPengguna";
 import HalamanDilarang from "./HalamanDilarang";
-import Navbar from "~/komponen/Navbar";
 
-export default function LayoutKaryawan(): React.JSX.Element {
+export default function LayoutKaryawanLegacy(): React.JSX.Element {
   const location = useLocation();
   const pathname = location.pathname;
 
@@ -43,16 +42,11 @@ export default function LayoutKaryawan(): React.JSX.Element {
   }, [stateOtentikasi]);
 
   return pass ? (
-    <div className="min-w-full">
-      <Navbar />
-      <div className="pt-16">
-        {dilarang ? (
-          <HalamanDilarang ekspektasiPeran={PeranPengguna.Karyawan} />
-        ) : (
-          <Outlet context={context} />
-        )}
-      </div>
-    </div>
+    dilarang ? (
+      <HalamanDilarang ekspektasiPeran={PeranPengguna.Karyawan} />
+    ) : (
+      <Outlet context={context} />
+    )
   ) : (
     <HalamanLoading />
   );
