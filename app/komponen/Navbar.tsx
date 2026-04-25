@@ -63,7 +63,13 @@ export default function Navbar() {
                 >
                   Knowledge Base
                 </NavItem>
-                <NavItem icon={<IkonFaq height={16} />}>FAQ Management</NavItem>
+                <NavItem
+                  active={pathname.startsWith("/admin/faq")}
+                  href="/admin/faq"
+                  icon={<IkonFaq height={16} />}
+                >
+                  FAQ Management
+                </NavItem>
                 <NavItem icon={<IkonBot height={16} />}>
                   Chatbot Monitoring
                 </NavItem>
