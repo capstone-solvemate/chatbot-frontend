@@ -38,6 +38,7 @@ const FaqFormCard = forwardRef<HTMLDivElement, Props>(
       if (oldFaq !== null) {
         setQuestion(oldFaq.question);
         setAnswer(oldFaq.answer);
+        setIdKategori(oldFaq.idKategori);
       }
 
       setIsEditing(oldFaq !== null);
@@ -103,6 +104,8 @@ const FaqFormCard = forwardRef<HTMLDivElement, Props>(
         };
         if (!isEditing) {
           await konektorBackend.post("/api/admin/faqs", reqData);
+        } else {
+          await konektorBackend.put(`/api/admin/faqs/${oldFaq!.id}`, reqData);
         }
         onClose(true);
       } catch (e: any) {

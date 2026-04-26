@@ -12,6 +12,10 @@ export class KonektorBackend {
     return await this.send(endpoint, HttpMethod.Post, data)
   }
 
+  async put(endpoint: string, data?: any): Promise<Response> {
+    return await this.send(endpoint, HttpMethod.Put, data)
+  }
+
   async get(endpoint: string): Promise<Response> {
     return await this.send(endpoint, HttpMethod.Get)
   }
