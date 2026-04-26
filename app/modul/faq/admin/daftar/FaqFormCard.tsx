@@ -223,6 +223,7 @@ const FaqFormCard = forwardRef<HTMLDivElement, Props>(
           {/* Actions */}
           <div className="flex items-center gap-3 pt-2">
             <Button
+              disabled={isSubmitting}
               type="submit"
               className="text-sm px-10! py-1.5!"
               color={isValid ? ButtonColor.Blue : ButtonColor.Gray}
