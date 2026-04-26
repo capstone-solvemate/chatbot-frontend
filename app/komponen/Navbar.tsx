@@ -90,7 +90,13 @@ export default function Navbar() {
                 >
                   Home
                 </NavItem>
-                <NavItem icon={<IkonFaq height={16} />}>FAQ</NavItem>
+                <NavItem
+                  active={pathname.startsWith("/faq")}
+                  href="/faq"
+                  icon={<IkonFaq height={16} />}
+                >
+                  FAQ
+                </NavItem>
                 <NavItem
                   active={pathname.startsWith("/chat")}
                   icon={<IkonChat height={16} />}

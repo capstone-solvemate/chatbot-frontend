@@ -9,6 +9,9 @@ export default [
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
       route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
+    layout('dasar/LayoutKaryawan.tsx', [
+      route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
+    ]),
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
