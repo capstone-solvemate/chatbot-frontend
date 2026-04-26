@@ -12,6 +12,7 @@ import { dtoToFaq } from "../admin/daftar/converters";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
 import type { Route } from "./+types/HalamanFaq";
+import DetailFaq from "./DetailFaq";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Frequently Asked Questions" }];
@@ -20,6 +21,8 @@ export function meta({}: Route.MetaArgs) {
 export default function FaqPage() {
   const [loading, setLoading] = useState(true);
   const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
+
+  const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
 
   const mapKategori = new Map<number, Kategori>();
   const [daftarKategori, _setDaftarKategori] = useState<Kategori[]>([]);
@@ -86,8 +89,12 @@ export default function FaqPage() {
           filterKategori={filterKategori}
           onSelectKategori={(kategori) => setFilterKategori(kategori)}
         />
-        <FaqList faqs={faqs} />
+        <FaqList faqs={faqs} onSelectFaq={(faq) => setFaqDipilih(faq)} />
       </section>
+
+      {faqDipilih && (
+        <DetailFaq faq={faqDipilih} onClose={() => setFaqDipilih(null)} />
+      )}
     </main>
   ) : (
     <HalamanLoading />
