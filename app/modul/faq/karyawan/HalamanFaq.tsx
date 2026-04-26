@@ -11,6 +11,11 @@ import type { GetFaqsResponseDto } from "../admin/daftar/GetFaqsResponseDto";
 import { dtoToFaq } from "../admin/daftar/converters";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import type { Route } from "./+types/HalamanFaq";
+
+export function meta({}: Route.MetaArgs) {
+  return [{ title: "Frequently Asked Questions" }];
+}
 
 export default function FaqPage() {
   const [loading, setLoading] = useState(true);
