@@ -7,6 +7,11 @@ import { useEffect, useState } from "react";
 import type { FormState } from "../FormState";
 import FaqFormCard from "./FaqFormCard";
 import { Faq } from "../../Faq";
+import HalamanLoading from "~/dasar/HalamanLoading";
+import { useOutletContext } from "react-router";
+import type { ContextType } from "~/dasar/ContextType";
+import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
+import { dtoToFaq } from "./converters";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "FAQ Management" }];
@@ -15,17 +20,28 @@ export function meta({}: Route.MetaArgs) {
 export default function HalamanDaftarFaqAdmin() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [totalFaqs, setTotalFaqs] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
+    useOutletContext();
+
+  async function getData() {
+    try {
+      const response = await konektorBackend.get("/api/admin/faqs");
+      const data = (await response.json()) as GetFaqsResponseDto;
+
+      const faqsBaru = data.faqs.map((dtoFaq) => dtoToFaq(dtoFaq));
+      setFaqs(faqsBaru);
+
+      setTotalFaqs(data.total);
+    } catch (e: any) {
+      setMasterError(e);
+    }
+  }
 
   useEffect(() => {
-    setFaqs([
-      new Faq(
-        1,
-        1,
-        "How do I connect to the network printer?",
-        "Go to Settings > Devices > Printers & Scanners > Add a printer.",
-      ),
-    ]);
-    setTotalFaqs(1);
+    getData().finally(() => {
+      setLoading(false);
+    });
   }, []);
 
   const [formState, setFormState] = useState<FormState | null>(null);
@@ -42,7 +58,7 @@ export default function HalamanDaftarFaqAdmin() {
     setFormState({ oldFaq: faq });
   }
 
-  return (
+  return !loading ? (
     <main className="bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
       <PageHeader />
 
@@ -62,5 +78,7 @@ export default function HalamanDaftarFaqAdmin() {
         <FaqTableCard totalFaqs={totalFaqs} faqs={faqs} onEdit={handleEdit} />
       </div>
     </main>
+  ) : (
+    <HalamanLoading />
   );
 }
