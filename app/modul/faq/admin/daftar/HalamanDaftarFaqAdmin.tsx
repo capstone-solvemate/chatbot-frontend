@@ -3,7 +3,7 @@ import FaqTableCard from "./FaqTableCard";
 import type { Route } from "./+types/HalamanDaftarFaqAdmin";
 import { Button } from "~/komponen/Button";
 import IkonTambah from "~/komponen/ikon/IkonTambah";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormState } from "../FormState";
 import FaqFormCard from "./FaqFormCard";
 import { Faq } from "../../Faq";
@@ -12,6 +12,8 @@ import { useOutletContext } from "react-router";
 import type { ContextType } from "~/dasar/ContextType";
 import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
 import { dtoToFaq } from "./converters";
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
+import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "FAQ Management" }];
@@ -23,8 +25,23 @@ export default function HalamanDaftarFaqAdmin() {
   const [loading, setLoading] = useState(true);
   const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
     useOutletContext();
+  const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
 
-  async function getData() {
+  const formRef = useRef<any>(null);
+
+  async function getDaftarKategori() {
+    try {
+      const response = await konektorBackend.get("/api/admin/categories");
+      const dto: any[] = await response.json();
+      const daftarKategoriBaru = dto.map((dtoItem) => dtoToKategori(dtoItem));
+      setDaftarKategori(daftarKategoriBaru);
+    } catch (e: any) {
+      setMasterError(e);
+      throw e;
+    }
+  }
+
+  async function getFaqs() {
     try {
       const response = await konektorBackend.get("/api/admin/faqs");
       const data = (await response.json()) as GetFaqsResponseDto;
@@ -39,8 +56,10 @@ export default function HalamanDaftarFaqAdmin() {
   }
 
   useEffect(() => {
-    getData().finally(() => {
-      setLoading(false);
+    getDaftarKategori().then(() => {
+      getFaqs().finally(() => {
+        setLoading(false);
+      });
     });
   }, []);
 
@@ -50,20 +69,37 @@ export default function HalamanDaftarFaqAdmin() {
     setFormState({ oldFaq: null });
   }
 
-  function hideForm() {
+  function handleCloseForm(refreshRequired: boolean) {
     setFormState(null);
+    if (refreshRequired) {
+      getFaqs();
+    }
   }
 
   function handleEdit(faq: Faq) {
     setFormState({ oldFaq: faq });
   }
 
+  useEffect(() => {
+    if (formRef && formRef.current) {
+      formRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [formState]);
+
   return !loading ? (
     <main className="bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
       <PageHeader />
 
       {formState ? (
-        <FaqFormCard oldFaq={formState.oldFaq} onCancel={hideForm} />
+        <FaqFormCard
+          daftarKategori={daftarKategori}
+          ref={formRef}
+          oldFaq={formState.oldFaq}
+          onClose={handleCloseForm}
+        />
       ) : (
         <Button
           className="mt-5 text-sm! ps-2! pe-3! py-2! gap-1!"
