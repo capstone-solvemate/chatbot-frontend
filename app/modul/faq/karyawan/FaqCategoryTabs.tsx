@@ -22,6 +22,7 @@ export default function FaqCategoryTabs({
 
       {daftarKategori.map((kategori) => (
         <FaqCategoryTab
+          key={kategori.id}
           kategori={kategori}
           active={filterKategori?.id === kategori.id}
           onClick={() => onSelectKategori(kategori)}

@@ -2,7 +2,7 @@ import FaqHeader from "./FaqHeader";
 import FaqSearch from "./FaqSearch";
 import FaqCategoryTabs from "./FaqCategoryTabs";
 import FaqList from "./FaqList";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import type { Faq } from "../Faq";
 import { useOutletContext } from "react-router";
@@ -13,6 +13,7 @@ import HalamanLoading from "~/dasar/HalamanLoading";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
 import type { Route } from "./+types/HalamanFaq";
 import DetailFaq from "./DetailFaq";
+import type { GetFaqsRequestDto } from "../admin/dto/GetFaqsRequestDto";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Frequently Asked Questions" }];
@@ -24,12 +25,15 @@ export default function FaqPage() {
 
   const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
 
-  const mapKategori = new Map<number, Kategori>();
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const mapKategori = useRef(new Map<number, Kategori>());
   const [daftarKategori, _setDaftarKategori] = useState<Kategori[]>([]);
   function setDaftarKategori(data: Kategori[]) {
-    mapKategori.clear();
+    mapKategori.current.clear();
     for (const kategori of data) {
-      mapKategori.set(kategori.id, kategori);
+      mapKategori.current.set(kategori.id, kategori);
     }
 
     _setDaftarKategori(data);
@@ -42,12 +46,16 @@ export default function FaqPage() {
 
   async function getFaqs() {
     try {
-      const response = await konektorBackend.get("/api/faqs");
+      const reqData: GetFaqsRequestDto = {
+        idkategori: filterKategori?.id || null,
+        query: debouncedSearch.trim() ? debouncedSearch.trim() : null,
+      };
+      const response = await konektorBackend.get("/api/faqs", reqData);
       const data = (await response.json()) as GetFaqsResponseDto;
 
       const faqsBaru = data.faqs.map((dtoFaq) => dtoToFaq(dtoFaq));
       for (const faq of faqsBaru) {
-        const kategoriTerkait = mapKategori.get(faq.idKategori);
+        const kategoriTerkait = mapKategori.current.get(faq.idKategori);
         if (kategoriTerkait) {
           faq.kategori = kategoriTerkait;
         }
@@ -72,6 +80,10 @@ export default function FaqPage() {
   }
 
   useEffect(() => {
+    getFaqs();
+  }, [filterKategori]);
+
+  useEffect(() => {
     getDaftarKategori().then(() => {
       getFaqs().finally(() => {
         setLoading(false);
@@ -79,11 +91,23 @@ export default function FaqPage() {
     });
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    getFaqs();
+  }, [debouncedSearch]);
+
   return !loading ? (
     <main className="min-h-default bg-gray-50">
       <section className="mx-auto max-w-4xl px-6 py-10">
         <FaqHeader />
-        <FaqSearch />
+        <FaqSearch search={search} onSearchChange={setSearch} />
         <FaqCategoryTabs
           daftarKategori={daftarKategori}
           filterKategori={filterKategori}

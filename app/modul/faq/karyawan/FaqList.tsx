@@ -17,6 +17,11 @@ export default function FaqList({ faqs, onSelectFaq }: Props) {
           onClick={() => onSelectFaq(faq)}
         />
       ))}
+      {faqs.length === 0 && (
+        <div className="p-6 text-center italic text-gray-600 border border-gray-300 rounded-xl">
+          No Data
+        </div>
+      )}
     </div>
   );
 }
