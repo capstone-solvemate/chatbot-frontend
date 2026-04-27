@@ -1,17 +1,28 @@
 import FaqToolbar from "./FaqToolbar";
 import FaqRow from "./FaqRow";
 import type { Faq } from "../../Faq";
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
 
 interface Props {
+  daftarKategori: Kategori[];
+  filterKategori: Kategori | null;
+  onSelectFilterKategori: (id: number) => void;
   totalFaqs: number;
   faqs: Faq[];
+  search: string;
+  onChangeSearch: (search: string) => void;
   onEdit: (faq: Faq) => void;
   onHapus: (faq: Faq) => void;
 }
 
 export default function FaqTableCard({
+  daftarKategori,
+  filterKategori,
+  onSelectFilterKategori,
   faqs,
   totalFaqs,
+  search,
+  onChangeSearch,
   onEdit,
   onHapus,
 }: Props) {
@@ -22,7 +33,13 @@ export default function FaqTableCard({
           All FAQs ({totalFaqs})
         </h2>
 
-        <FaqToolbar />
+        <FaqToolbar
+          daftarKategori={daftarKategori}
+          filterKategori={filterKategori}
+          onSelectFilterKategori={onSelectFilterKategori}
+          search={search}
+          onChangeSearch={onChangeSearch}
+        />
       </div>
 
       <div>
@@ -35,6 +52,9 @@ export default function FaqTableCard({
             onHapus={() => onHapus(faq)}
           />
         ))}
+        {faqs.length === 0 && (
+          <div className="p-4 text-center text-gray-500 italic">No Data</div>
+        )}
       </div>
     </section>
   );

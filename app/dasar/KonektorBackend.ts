@@ -16,8 +16,8 @@ export class KonektorBackend {
     return await this.send(endpoint, HttpMethod.Put, data)
   }
 
-  async get(endpoint: string): Promise<Response> {
-    return await this.send(endpoint, HttpMethod.Get)
+  async get(endpoint: string, data?: Record<string, any>): Promise<Response> {
+    return await this.send(endpoint, HttpMethod.Get, data)
   }
 
   async delete(endpoint: string): Promise<Response> {
@@ -32,6 +32,7 @@ export class KonektorBackend {
 
     let contentType: string | null = null
     let processedData: string = ''
+    let urlQueryStr: string = ''
 
     if (method === HttpMethod.Post || method === HttpMethod.Put) {
       if (typeof data === 'object') {
@@ -47,6 +48,20 @@ export class KonektorBackend {
         processedData = data
         contentType = 'text/plain'
       }
+    } else if (method === HttpMethod.Get) {
+      if (typeof data === 'object') {
+        const keys = Object.keys(data)
+
+        const omittedData: Record<string, any> = {}
+        for (const key of keys) {
+          if (data[key] !== undefined && data[key] !== null) {
+            omittedData[key] = data[key]
+          }
+        }
+
+        const searchParams = new URLSearchParams(omittedData)
+        urlQueryStr = searchParams.toString()
+      }
     }
 
     const fetchFn = async (): Promise<Response> => {
@@ -59,11 +74,13 @@ export class KonektorBackend {
           headers['Content-Type'] = contentType
         }
 
-        let response = await fetch(url, {
-          method: httpMethodToString(method),
-          body: contentType ? processedData : undefined,
-          headers: headers
-        })
+        let response = await fetch(
+          url + (urlQueryStr ? `?${urlQueryStr}` : ''),
+          {
+            method: httpMethodToString(method),
+            body: contentType ? processedData : undefined,
+            headers: headers
+          })
         if (response.headers.get('X-Dev-Env-Alert') === '1') {
           this.setDevMode()
         }

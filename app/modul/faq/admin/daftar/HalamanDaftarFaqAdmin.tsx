@@ -12,9 +12,10 @@ import { useOutletContext } from "react-router";
 import type { ContextType } from "~/dasar/ContextType";
 import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
 import { dtoToFaq } from "./converters";
-import type { Kategori } from "~/modul/settings/kategori/Kategori";
+import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
 import FaqDeleteConfirmation from "./FaqDeleteConfirmation";
+import type { GetFaqsRequestDto } from "../dto/GetFaqsRequestDto";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "FAQ Management" }];
@@ -26,12 +27,17 @@ export default function HalamanDaftarFaqAdmin() {
   const [loading, setLoading] = useState(true);
   const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
     useOutletContext();
+
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
+  const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
 
   const [faqAkanDihapus, setFaqAkanDihapus] = useState<Faq | null>(null);
   const [menghapus, setMenghapus] = useState(false);
 
   const formRef = useRef<any>(null);
+
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   async function getDaftarKategori() {
     try {
@@ -47,7 +53,11 @@ export default function HalamanDaftarFaqAdmin() {
 
   async function getFaqs() {
     try {
-      const response = await konektorBackend.get("/api/admin/faqs");
+      const reqData: GetFaqsRequestDto = {
+        idkategori: filterKategori?.id || null,
+        query: debouncedSearch.trim() ? debouncedSearch.trim() : null,
+      };
+      const response = await konektorBackend.get("/api/admin/faqs", reqData);
       const data = (await response.json()) as GetFaqsResponseDto;
 
       const faqsBaru = data.faqs.map((dtoFaq) => dtoToFaq(dtoFaq));
@@ -58,6 +68,20 @@ export default function HalamanDaftarFaqAdmin() {
       setMasterError(e);
     }
   }
+
+  function handleSelectFilterKategori(id: number) {
+    if (id < 1) {
+      setFilterKategori(null);
+    } else {
+      setFilterKategori(
+        daftarKategori.find((kategori) => kategori.id === id) || null,
+      );
+    }
+  }
+
+  useEffect(() => {
+    getFaqs();
+  }, [filterKategori]);
 
   useEffect(() => {
     getDaftarKategori().then(() => {
@@ -113,6 +137,18 @@ export default function HalamanDaftarFaqAdmin() {
     }
   }
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    getFaqs();
+  }, [debouncedSearch]);
+
   return !loading ? (
     <main className="bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
       <PageHeader />
@@ -136,10 +172,15 @@ export default function HalamanDaftarFaqAdmin() {
 
       <div className="mt-6">
         <FaqTableCard
+          daftarKategori={daftarKategori}
+          filterKategori={filterKategori}
           totalFaqs={totalFaqs}
+          onSelectFilterKategori={handleSelectFilterKategori}
           faqs={faqs}
           onEdit={handleEdit}
           onHapus={handleHapus}
+          search={search}
+          onChangeSearch={setSearch}
         />
       </div>
 
