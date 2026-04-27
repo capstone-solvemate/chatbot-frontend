@@ -1,4 +1,8 @@
-export default function IkonTutup() {
+import type React from "react";
+
+type IconProps = React.SVGProps<SVGSVGElement>;
+
+export default function IkonTutup(props: IconProps): React.JSX.Element {
   return (
     <svg
       width="16"

@@ -6,9 +6,15 @@ interface Props {
   totalFaqs: number;
   faqs: Faq[];
   onEdit: (faq: Faq) => void;
+  onHapus: (faq: Faq) => void;
 }
 
-export default function FaqTableCard({ faqs, totalFaqs, onEdit }: Props) {
+export default function FaqTableCard({
+  faqs,
+  totalFaqs,
+  onEdit,
+  onHapus,
+}: Props) {
   return (
     <section className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
       <div className="border-b border-gray-200 px-5 py-4 flex items-center justify-between">
@@ -26,6 +32,7 @@ export default function FaqTableCard({ faqs, totalFaqs, onEdit }: Props) {
             question={faq.question}
             answer={faq.answer}
             onEdit={() => onEdit(faq)}
+            onHapus={() => onHapus(faq)}
           />
         ))}
       </div>

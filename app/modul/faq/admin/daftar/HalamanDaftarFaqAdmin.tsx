@@ -14,6 +14,7 @@ import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
 import { dtoToFaq } from "./converters";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import FaqDeleteConfirmation from "./FaqDeleteConfirmation";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "FAQ Management" }];
@@ -26,6 +27,9 @@ export default function HalamanDaftarFaqAdmin() {
   const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
     useOutletContext();
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
+
+  const [faqAkanDihapus, setFaqAkanDihapus] = useState<Faq | null>(null);
+  const [menghapus, setMenghapus] = useState(false);
 
   const formRef = useRef<any>(null);
 
@@ -80,6 +84,10 @@ export default function HalamanDaftarFaqAdmin() {
     setFormState({ oldFaq: faq });
   }
 
+  function handleHapus(faq: Faq) {
+    setFaqAkanDihapus(faq);
+  }
+
   useEffect(() => {
     if (formRef && formRef.current) {
       formRef.current.scrollIntoView({
@@ -88,6 +96,22 @@ export default function HalamanDaftarFaqAdmin() {
       });
     }
   }, [formState]);
+
+  async function handleKonfirmasiHapus() {
+    if (!faqAkanDihapus) return;
+    if (menghapus) return;
+    setMenghapus(true);
+
+    try {
+      await konektorBackend.delete(`/api/admin/faqs/${faqAkanDihapus!.id}`);
+      getFaqs();
+    } catch (e: any) {
+      setMasterError(e);
+    } finally {
+      setMenghapus(false);
+      setFaqAkanDihapus(null);
+    }
+  }
 
   return !loading ? (
     <main className="bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
@@ -111,8 +135,24 @@ export default function HalamanDaftarFaqAdmin() {
       )}
 
       <div className="mt-6">
-        <FaqTableCard totalFaqs={totalFaqs} faqs={faqs} onEdit={handleEdit} />
+        <FaqTableCard
+          totalFaqs={totalFaqs}
+          faqs={faqs}
+          onEdit={handleEdit}
+          onHapus={handleHapus}
+        />
       </div>
+
+      {faqAkanDihapus && (
+        <FaqDeleteConfirmation
+          onCancel={() => {
+            setFaqAkanDihapus(null);
+          }}
+          onConfirm={handleKonfirmasiHapus}
+          faq={faqAkanDihapus}
+          isDeleting={menghapus}
+        />
+      )}
     </main>
   ) : (
     <HalamanLoading />

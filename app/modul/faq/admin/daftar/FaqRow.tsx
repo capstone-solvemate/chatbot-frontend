@@ -6,9 +6,15 @@ type FaqRowProps = {
   question: string;
   answer: string;
   onEdit: () => void;
+  onHapus: () => void;
 };
 
-export default function FaqRow({ question, answer, onEdit }: FaqRowProps) {
+export default function FaqRow({
+  question,
+  answer,
+  onEdit,
+  onHapus,
+}: FaqRowProps) {
   return (
     <div className="border-b last:border-b-0 border-gray-200 px-5 py-5 flex justify-between gap-6">
       <div className="flex-1 min-w-0">
@@ -31,6 +37,7 @@ export default function FaqRow({ question, answer, onEdit }: FaqRowProps) {
           className="px-3! py-1.5! text-xs gap-1! text-red-600!"
           color={ButtonColor.White}
           leftIcon={<IkonHapus className="h-4" />}
+          onClick={onHapus}
         >
           Delete
         </Button>

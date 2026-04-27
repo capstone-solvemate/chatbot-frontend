@@ -20,6 +20,10 @@ export class KonektorBackend {
     return await this.send(endpoint, HttpMethod.Get)
   }
 
+  async delete(endpoint: string): Promise<Response> {
+    return await this.send(endpoint, HttpMethod.Delete)
+  }
+
   private async send(endpoint: string, method: HttpMethod, data?: any, isRetrying: boolean = false): Promise<Response> {
     let url = endpoint
     if (url.startsWith('/')) {
