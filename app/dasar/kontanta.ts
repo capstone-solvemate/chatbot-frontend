@@ -1,0 +1,1 @@
+export const NAMA_SISTEM = "EPSOLVE"

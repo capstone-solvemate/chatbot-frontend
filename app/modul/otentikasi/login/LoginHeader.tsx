@@ -1,3 +1,4 @@
+import { NAMA_SISTEM } from "~/dasar/kontanta";
 import LogoBrand2 from "~/komponen/LogoBrand2";
 
 export default function LoginHeader() {
@@ -8,7 +9,7 @@ export default function LoginHeader() {
       </div>
 
       <h1 className="text-2xl font-semibold text-gray-900 mt-4">
-        Smart Helpdesk
+        {NAMA_SISTEM}
       </h1>
       <p className="text-gray-500 mt-1">Sign in to your account</p>
     </div>
