@@ -37,8 +37,14 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 items-center justify-between px-6">
         {/* Left */}
         <div className="flex items-center gap-8">
-          <TampilanBrand />
-
+          <div className="flex items-center gap-2">
+            <TampilanBrand />
+            {peran === PeranPengguna.Admin && (
+              <div className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
+                Admin
+              </div>
+            )}
+          </div>
           <nav className="lg:flex items-center gap-2 hidden">
             {peran === PeranPengguna.Admin ? (
               <>
