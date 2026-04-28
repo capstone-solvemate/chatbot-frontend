@@ -7,18 +7,20 @@ type Props = {
   placeholder: string;
   icon?: React.ReactNode;
   minLength?: number;
+  className?: string;
 };
 
-export default function InputField({
+export default function InputFieldOtentikasi({
   name,
   label,
   type,
   placeholder,
   icon,
   minLength,
+  className = "",
 }: Props) {
   return (
-    <div>
+    <div className={className}>
       <label className="text-sm font-medium text-gray-700 mb-1 block">
         {label}
       </label>

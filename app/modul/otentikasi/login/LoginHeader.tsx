@@ -1,5 +1,7 @@
 import { NAMA_SISTEM } from "~/dasar/kontanta";
 import LogoBrand2 from "~/komponen/LogoBrand2";
+import JudulOtentikasi from "../JudulOtentikasi";
+import SubJudulOtentikasi from "../SubJudulOtentikasi";
 
 export default function LoginHeader() {
   return (
@@ -8,10 +10,8 @@ export default function LoginHeader() {
         <LogoBrand2 className="w-9 h-9" />
       </div>
 
-      <h1 className="text-2xl font-semibold text-gray-900 mt-4">
-        {NAMA_SISTEM}
-      </h1>
-      <p className="text-gray-500 mt-1">Sign in to your account</p>
+      <JudulOtentikasi>{NAMA_SISTEM}</JudulOtentikasi>
+      <SubJudulOtentikasi>Sign in to your account</SubJudulOtentikasi>
     </div>
   );
 }

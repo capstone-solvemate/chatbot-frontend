@@ -19,6 +19,7 @@ export default [
     ]),
     layout('dasar/LayoutGuest.tsx', [
       route("login", "modul/otentikasi/login/HalamanLogin.tsx"),
+      route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
     ])
   ])
 ] satisfies RouteConfig;

@@ -1,11 +1,11 @@
 import IkonEmail from "~/komponen/ikon/IkonEmail";
-import InputField from "./InputField";
+import InputFieldOtentikasi from "../InputFieldOtentikasi";
 import IkonPassword from "~/komponen/ikon/IkonPassword";
 
 export default function LoginForm() {
   return (
     <div className="w-full flex flex-col gap-4">
-      <InputField
+      <InputFieldOtentikasi
         name="email"
         label="Email Address"
         type="email"
@@ -13,7 +13,7 @@ export default function LoginForm() {
         icon={<IkonEmail />}
       />
 
-      <InputField
+      <InputFieldOtentikasi
         name="password"
         label="Password"
         type="password"
