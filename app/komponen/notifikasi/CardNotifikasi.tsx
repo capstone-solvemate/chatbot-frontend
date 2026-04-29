@@ -1,7 +1,11 @@
 import { Notifikasi } from "~/dasar/notifikasi/Notifikasi";
 import ItemNotifikasi from "./ItemNotifikasi";
 
-export default function CardNotifikasi() {
+type Props = {
+  daftarNotifikasi: Notifikasi[];
+};
+
+export default function CardNotifikasi({ daftarNotifikasi }: Props) {
   return (
     <div
       className={`
@@ -25,31 +29,14 @@ export default function CardNotifikasi() {
 
       {/* Notifications */}
       <div>
-        <ItemNotifikasi
-          notifikasi={
-            new Notifikasi(
-              0,
-              0,
-              "Ticket #001 Update",
-              "Ticket #001 is being processed by our team",
-              new Date(),
-              null,
-            )
-          }
-        />
-
-        <ItemNotifikasi
-          notifikasi={
-            new Notifikasi(
-              0,
-              0,
-              "Ticket #002 Resolved",
-              "Ticket #002 has been resolved",
-              new Date(),
-              new Date(),
-            )
-          }
-        />
+        {daftarNotifikasi.map((notifikasi) => (
+          <ItemNotifikasi notifikasi={notifikasi} />
+        ))}
+        {daftarNotifikasi.length === 0 && (
+          <div className="p-4 cursor-default italic text-gray-400 text-sm text-center">
+            No notifications yet
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -61,10 +48,13 @@ export default function CardNotifikasi() {
             px-3
             font-medium
             text-blue-600
-            hover:bg-gray-50
+            disabled:text-gray-300
+            enabled:hover:bg-gray-50
             transition
             cursor-pointer
+            disabled:cursor-default
           "
+          disabled={daftarNotifikasi.length === 0}
         >
           Mark all as read
         </button>

@@ -8,12 +8,17 @@ import HalamanOffline from "./HalamanOffline";
 import MasterError from "./MasterError";
 import { dtoToInfoPengguna, type InfoPenggunaDto } from "./InfoPenggunaDto";
 import LogoutConfirmationView from "./LogoutConfirmationView";
+import type { StateNotifikasi } from "./notifikasi/StateNotifikasi";
+import type { GetNotifikasiResponseDto } from "./notifikasi/GetNotifikasiResponseDto";
+import { dtoToNotifikasi } from "./notifikasi/converters";
 
 export default function LayoutDasar(): React.JSX.Element {
   const [devMode, setDevMode] = useState(false);
   const [stateOtentikasi, setStateOtentikasi] = useState(
     new StateOtentikasi(true),
   );
+  const [stateNotifikasi, setStateNotifikasi] =
+    useState<StateNotifikasi | null>(null);
   const [offline, setOffline] = useState(false);
 
   const [loading, setLoading] = useState(true);
@@ -79,6 +84,17 @@ export default function LayoutDasar(): React.JSX.Element {
     }
   };
 
+  async function getNotifikasi() {
+    const resp = await konektorBackend.get("/api/notifikasi");
+    const respData: GetNotifikasiResponseDto = await resp.json();
+    const notifikasi = respData.notifikasi.map((dto) => dtoToNotifikasi(dto));
+    const stateNotifikasi: StateNotifikasi = {
+      jumlahBelumDibaca: respData.jumlahBelumDibaca,
+      notifikasi: notifikasi,
+    };
+    setStateNotifikasi(stateNotifikasi);
+  }
+
   useEffect(() => {
     const fn = async () => {
       try {
@@ -86,6 +102,8 @@ export default function LayoutDasar(): React.JSX.Element {
         const dto: InfoPenggunaDto = await resp.json();
         const infoPengguna = dtoToInfoPengguna(dto);
         setStateOtentikasi(new StateOtentikasi(false, infoPengguna));
+
+        await getNotifikasi();
       } catch (e: any) {
         if (e instanceof HttpError && e.status === 401) {
           setStateOtentikasi(new StateOtentikasi(false));
@@ -124,6 +142,7 @@ export default function LayoutDasar(): React.JSX.Element {
               setMasterNotifikasi,
               setMasterError,
               promptLogout,
+              stateNotifikasi,
             ]}
           />
           {logoutPrompted && (

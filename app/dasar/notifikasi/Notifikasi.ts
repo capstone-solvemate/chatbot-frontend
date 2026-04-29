@@ -1,6 +1,6 @@
 export class Notifikasi {
   constructor(
-    public id: number,
+    public id: bigint,
     public idPengguna: number,
     public judul: string,
     public deskripsi: string,

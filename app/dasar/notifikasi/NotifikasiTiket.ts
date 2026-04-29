@@ -2,7 +2,7 @@ import { Notifikasi } from "./Notifikasi";
 
 export class NotifikasiTiket extends Notifikasi {
   constructor(
-    id: number,
+    id: bigint,
     idPengguna: number,
     judul: string,
     deskripsi: string,
