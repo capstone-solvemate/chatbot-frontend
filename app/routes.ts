@@ -15,7 +15,8 @@ export default [
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
-      route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx')
+      route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
+      route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx'),
     ]),
     layout('dasar/LayoutGuest.tsx', [
       route("login", "modul/otentikasi/login/HalamanLogin.tsx"),
