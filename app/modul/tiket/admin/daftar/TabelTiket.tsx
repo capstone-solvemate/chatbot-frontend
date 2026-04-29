@@ -5,12 +5,19 @@ import TableAdmin from "~/komponen/admin/TableAdmin";
 import TableHeaderAdmin from "~/komponen/admin/TableHeaderAdmin";
 import TableHeadColAdmin from "~/komponen/admin/TableHeadColAdmin";
 import TableColAdmin from "~/komponen/admin/TableColAdmin";
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
 
-export default function TabelTiket(): React.JSX.Element {
+type Props = {
+  daftarKategori: Kategori[];
+};
+
+export default function TabelTiket({
+  daftarKategori,
+}: Props): React.JSX.Element {
   return (
     <section className="mt-4">
       <CardListAdmin>
-        <FilterTiket />
+        <FilterTiket daftarKategori={daftarKategori} />
 
         <TableAdmin className="mt-8">
           <TableHeaderAdmin>
