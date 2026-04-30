@@ -1,11 +1,14 @@
 import IkonGambar from "~/komponen/ikon/IkonGambar";
 import IkonKirim from "~/komponen/ikon/IkonKirim";
 
-export default function ChatInput() {
+type Props = {
+  expandSidebar: boolean;
+};
+
+export default function ChatInput({ expandSidebar }: Props) {
   return (
     <div
-      className="fixed z-30 bottom-0 left-14 bg-gray-50"
-      style={{ width: "calc(100vw - 3.5rem)" }}
+      className={`fixed z-30 bottom-0 left-0 bg-gray-50 w-full ${expandSidebar ? "ps-64" : "ps-0"} transition-all ease-out`}
     >
       <div className="p-4 pt-0 flex items-center gap-3 w-full max-w-3xl mx-auto">
         <div className="flex-1 flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-2">
