@@ -1,5 +1,6 @@
 export enum ForgotPasswordState {
   AskingEmail,
-  VerifyingEmail,
-  CreatingNewPassword
+  VerifyingOtp,
+  CreatingNewPassword,
+  Success,
 }
