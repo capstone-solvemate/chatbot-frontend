@@ -1,35 +1,61 @@
 import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import TicketAction from "./TicketAction";
+import type { PesanChat } from "./PesanChat";
 
-export default function ChatMessages() {
+type Props = {
+  daftarPesanChat: PesanChat[];
+  isSending: boolean;
+  tiketDisarankan: boolean;
+};
+
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export default function ChatMessages({
+  daftarPesanChat,
+  isSending,
+  tiketDisarankan,
+}: Props) {
   return (
     <div className="w-full max-w-3xl mx-auto flex-1 px-8 py-6 space-y-6">
-      <BotMessage
-        text="Hello! I'm your AI assistant. I can help you with equipment issues, technical questions, and printing problems. How can I assist you today?"
-        time="05:07 PM"
-      />
+      {daftarPesanChat.map((pesanChat) =>
+        pesanChat.chatAsisten ? (
+          <BotMessage
+            key={pesanChat.id}
+            text={pesanChat.pesan}
+            time={formatTime(pesanChat.tanggalDibuat)}
+          />
+        ) : (
+          <UserMessage
+            key={pesanChat.id}
+            text={pesanChat.pesan}
+            time={formatTime(pesanChat.tanggalDibuat)}
+          />
+        ),
+      )}
 
-      <UserMessage text="My printer is not working" time="09:25" />
+      {/* Typing indicator saat menunggu jawaban asisten dari WebSocket */}
+      {isSending && (
+        <div className="flex gap-3 items-start max-w-xl">
+          <div className="w-10 h-10 shrink-0 rounded-full bg-blue-600 flex items-center justify-center text-white">
+            <span className="text-xs font-medium">AI</span>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500">
+            <span className="flex gap-1 items-center">
+              <span className="animate-bounce [animation-delay:0ms]">·</span>
+              <span className="animate-bounce [animation-delay:150ms]">·</span>
+              <span className="animate-bounce [animation-delay:300ms]">·</span>
+            </span>
+          </div>
+        </div>
+      )}
 
-      <BotMessage
-        text="I understand you're having trouble with your printer. Let me help you troubleshoot this issue. First, can you tell me what error message you're seeing on the printer display?"
-        time="09:25"
-      />
-
-      <UserMessage text="It shows error code E-01" time="09:26" />
-
-      <BotMessage
-        text="Error code E-01 typically indicates a paper jam or sensor issue. Here are some steps you can try: 1. Turn off the printer 2. Open all trays and check for any stuck paper 3. Close all trays properly 4. Turn the printer back on Have you tried these steps?"
-        time="09:26"
-      />
-
-      <UserMessage
-        text="Yes, I tried all of that but the error persists"
-        time="09:28"
-      />
-
-      <TicketAction />
+      {tiketDisarankan && <TicketAction />}
     </div>
   );
 }

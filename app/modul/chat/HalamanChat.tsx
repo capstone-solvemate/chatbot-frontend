@@ -1,10 +1,14 @@
 import PageHeader from "./PageHeader";
 import Navbar from "~/komponen/Navbar";
 import type { Route } from "./+types/HalamanChat";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatSidebar from "./ChatSidebar";
-import ChatMessages from "./ChatMessages";
-import ChatInput from "./ChatInput";
+import { useOutletContext } from "react-router";
+import type { ContextType } from "~/dasar/ContextType";
+import type { Chat } from "./Chat";
+import HalamanLoading from "~/dasar/HalamanLoading";
+import { dtoToChat } from "./dto/converters";
+import TampilanPesanChat from "./TampilanPesanChat";
 
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
@@ -18,6 +22,24 @@ export default function HalamanChat() {
     oldExpandSidebarConfig === "1",
   );
 
+  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
+    useOutletContext();
+
+  const [loading, setLoading] = useState(true);
+  const [daftarChat, setDaftarChat] = useState<Chat[]>([]);
+  const [chatAktif, setChatAktif] = useState<Chat | null>(null);
+
+  async function getDaftarChat() {
+    try {
+      const response = await konektorBackend.get("/api/chat");
+      const dto: any[] = await response.json();
+      setDaftarChat(dto.map((item) => dtoToChat(item)));
+    } catch (e: any) {
+      setMasterError(e);
+      throw e;
+    }
+  }
+
   function toggleExpandSidebar() {
     _setExpandSidebar((oldValue) => {
       const newValue = !oldValue;
@@ -26,7 +48,19 @@ export default function HalamanChat() {
     });
   }
 
-  return (
+  // Dipanggil oleh TampilanPesanChat saat chat baru berhasil dibuat
+  function handleChatCreated(chat: Chat) {
+    setChatAktif(chat);
+    setDaftarChat((prev) => [chat, ...prev]);
+  }
+
+  useEffect(() => {
+    getDaftarChat().finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
+  return !loading ? (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
@@ -34,18 +68,26 @@ export default function HalamanChat() {
         <PageHeader onToggleExpand={toggleExpandSidebar} />
 
         <div className="flex rounded-xl">
-          <ChatSidebar expand={expandSidebar} />
+          <ChatSidebar
+            daftarChat={daftarChat}
+            expand={expandSidebar}
+            chatAktifId={chatAktif?.id ?? null}
+            onSelectChat={(chat) => setChatAktif(chat)}
+            onNewChat={() => setChatAktif(null)}
+          />
           <div
             className={`${expandSidebar ? "w-64" : "w-0"} shrink-0 transition-all ease-out`}
-          ></div>
+          />
 
-          <div className="grow pb-16">
-            <div></div>
-            <ChatMessages />
-            <ChatInput expandSidebar={expandSidebar} />
-          </div>
+          <TampilanPesanChat
+            chat={chatAktif}
+            expandSidebar={expandSidebar}
+            onChatCreated={handleChatCreated}
+          />
         </div>
       </div>
     </div>
+  ) : (
+    <HalamanLoading />
   );
 }
