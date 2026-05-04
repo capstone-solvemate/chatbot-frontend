@@ -38,7 +38,7 @@ export class KonektorBackend {
     let processedData: string = ''
     let urlQueryStr: string = ''
 
-    if (method === HttpMethod.Post || method === HttpMethod.Put) {
+    if (method === HttpMethod.Post || method === HttpMethod.Put || method === HttpMethod.Patch) {
       if (typeof data === 'object') {
         contentType = 'application/json; charset=utf-8'
         processedData = JSON.stringify(data)
