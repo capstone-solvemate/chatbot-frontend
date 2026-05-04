@@ -1,38 +1,40 @@
-import { StatusTiket } from "../StatusTiket";
+// modul/tiket/daftar/TicketList.tsx
+import type { Tiket } from "../Tiket";
 import TicketCard from "./TicketCard";
 
-export default function TicketList() {
+type Props = {
+  tikets: Tiket[];
+};
+
+function formatRelative(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60_000);
+  if (diffMins < 60) return `${diffMins} minutes ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours} hours ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays} days ago`;
+}
+
+export default function TicketList({ tikets }: Props) {
+  if (tikets.length === 0) {
+    return <p className="text-center text-gray-500 py-12">No tickets found.</p>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <TicketCard
-        id="#001"
-        title="Printer not responding"
-        description="The printer on the 3rd floor is not responding to print commands."
-        category="Equipment"
-        status={StatusTiket.InProgress}
-        created="Created 2 days ago"
-        updated="Updated 1 day ago"
-      />
-
-      <TicketCard
-        id="#002"
-        title="Software installation request"
-        description="I need Adobe Acrobat Pro installed on my workstation."
-        category="Technical"
-        status={StatusTiket.Resolved}
-        created="Created 3 days ago"
-        updated="Updated 3 days ago"
-      />
-
-      <TicketCard
-        id="#003"
-        title="Print quality issues - streaking"
-        description="Prints have horizontal streaks across the page."
-        category="Equipment"
-        status={StatusTiket.Open}
-        created="Created about 9 hours ago"
-        updated="Updated about 9 hours ago"
-      />
+      {tikets.map((tiket) => (
+        <TicketCard
+          key={tiket.id}
+          id={tiket.id}
+          title={tiket.judul}
+          description={tiket.deskripsi}
+          category={tiket.kategori}
+          status={tiket.status}
+          created={`Created ${formatRelative(tiket.dibuatPada)}`}
+          updated={`Updated ${formatRelative(tiket.diperbaruiPada)}`}
+        />
+      ))}
     </div>
   );
 }

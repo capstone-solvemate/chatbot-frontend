@@ -14,3 +14,12 @@ export function statusTiketToString(status: StatusTiket): string {
       return "Resolved";
   }
 }
+
+export function stringToStatusTiket(status: string): StatusTiket {
+  switch (status) {
+    case "Open": return StatusTiket.Open;
+    case "In Progress": return StatusTiket.InProgress;
+    case "Done": return StatusTiket.Resolved;
+    default: return StatusTiket.Open;
+  }
+}

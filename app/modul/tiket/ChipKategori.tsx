@@ -1,5 +1,7 @@
+import type { Kategori } from "../settings/kategori/Kategori";
+
 interface Props {
-  kategori: string;
+  kategori: Kategori;
   size?: "base" | "sm";
 }
 
@@ -8,7 +10,7 @@ export default function ChipKategori({ kategori, size = "base" }: Props) {
     <span
       className={`px-3 py-1 bg-blue-50 text-blue-700 rounded-md sm:rounded-full ${size === "sm" ? "text-sm" : "text-base"}`}
     >
-      {kategori}
+      {kategori.nama}
     </span>
   );
 }
