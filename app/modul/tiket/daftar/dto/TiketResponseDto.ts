@@ -5,7 +5,7 @@ export type TiketResponseDto = {
   idPembuat: number;
   idChat: string;
   idKategori: number;
-  status: "open" | "in_progress" | "done";
+  status: string;
   dibuatPada: string;
   diperbaruiPada: string;
 };

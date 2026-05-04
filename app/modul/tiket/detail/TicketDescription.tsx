@@ -1,11 +1,10 @@
-export default function TicketDescription() {
+type Props = { deskripsi: string };
+
+export default function TicketDescription({ deskripsi }: Props) {
   return (
     <div>
       <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-
-      <p className="text-gray-700">
-        The printer on the 3rd floor is not responding to print commands.
-      </p>
+      <p className="text-gray-700">{deskripsi}</p>
     </div>
   );
 }

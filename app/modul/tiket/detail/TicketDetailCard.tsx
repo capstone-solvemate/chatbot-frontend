@@ -1,29 +1,32 @@
+import type { Tiket } from "../Tiket";
 import TicketStatusBadges from "./TicketStatusBadges";
 import TicketDescription from "./TicketDescription";
 import TicketMeta from "./TicketMeta";
 
-export default function TicketDetailCard() {
+type Props = { tiket: Tiket };
+
+export default function TicketDetailCard({ tiket }: Props) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-3 sm:space-y-5">
       <div>
         <h1 className="text-xl sm:text-3xl font-bold text-gray-900">
-          Ticket #001
+          Ticket #{tiket.id}
         </h1>
-
-        <p className="text-gray-700 text-base sm:text-xl mt-1">
-          Printer not responding
-        </p>
+        <p className="text-gray-700 text-base sm:text-xl mt-1">{tiket.judul}</p>
       </div>
 
-      <TicketStatusBadges />
+      <TicketStatusBadges status={tiket.status} kategori={tiket.kategori} />
 
       <hr className="border-gray-200" />
 
-      <TicketDescription />
+      <TicketDescription deskripsi={tiket.deskripsi} />
 
       <hr className="border-gray-200" />
 
-      <TicketMeta />
+      <TicketMeta
+        dibuatPada={tiket.dibuatPada}
+        diperbaruiPada={tiket.diperbaruiPada}
+      />
     </div>
   );
 }

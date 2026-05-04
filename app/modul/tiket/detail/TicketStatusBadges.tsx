@@ -1,13 +1,18 @@
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import ChipKategori from "../ChipKategori";
 import ChipStatusTiket from "../ChipStatusTiket";
-import { StatusTiket } from "../StatusTiket";
+import type { StatusTiket } from "../StatusTiket";
 
-export default function TicketStatusBadges() {
+type Props = {
+  status: StatusTiket;
+  kategori: Kategori | null;
+};
+
+export default function TicketStatusBadges({ status, kategori }: Props) {
   return (
     <div className="flex gap-3">
-      <ChipStatusTiket size="sm" status={StatusTiket.InProgress} withIcon />
-
-      <ChipKategori size="sm" kategori="Equipment" />
+      <ChipStatusTiket size="sm" status={status} withIcon />
+      {kategori && <ChipKategori size="sm" kategori={kategori} />}
     </div>
   );
 }
