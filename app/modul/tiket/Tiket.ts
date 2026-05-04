@@ -11,6 +11,8 @@ export class Tiket {
     public status: StatusTiket,
     public dibuatPada: Date,
     public diperbaruiPada: Date,
-    public kategori: Kategori | null = null
+    public kategori: Kategori | null = null,
+    public idPembuat: string | null = null,
+    public namaPembuat: string | null = null
   ) { }
 }
