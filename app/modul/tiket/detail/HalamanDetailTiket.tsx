@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useOutletContext, useParams } from "react-router";
 import type { Route } from "./+types/HalamanDetailTiket";
 import type { ContextType } from "~/dasar/ContextType";
-import type { TiketResponseDto } from "../daftar/dto/TiketResponseDto";
-import { dtoToTiket } from "../daftar/dto/converters";
-import { Tiket } from "../Tiket";
+import type { TiketDetailResponseDto } from "../daftar/dto/TiketResponseDto";
+import { dtoToTiket, dtoToPesanTiket } from "../daftar/dto/converters";
+import type { Tiket } from "../Tiket";
+import type { PesanTiket } from "../PesanTiket";
 import BackToTicketsLink from "./BackToTicketsLink";
 import TicketDetailCard from "./TicketDetailCard";
 import ConversationCard from "./ConversationCard";
@@ -25,6 +26,7 @@ export default function HalamanDetailTiket() {
     useOutletContext();
 
   const [tiket, setTiket] = useState<Tiket | null>(null);
+  const [pesanTiket, setPesanTiket] = useState<PesanTiket[]>([]); // ← baru
   const [loading, setLoading] = useState(true);
 
   const mapKategori = useRef(new Map<number, Kategori>());
@@ -39,8 +41,7 @@ export default function HalamanDetailTiket() {
     try {
       const response = await konektorBackend.get("/api/categories");
       const dto: any[] = await response.json();
-      const daftarKategoriBaru = dto.map((dtoItem) => dtoToKategori(dtoItem));
-      setDaftarKategori(daftarKategoriBaru);
+      setDaftarKategori(dto.map((d) => dtoToKategori(d)));
     } catch (e: any) {
       setMasterError(e);
       throw e;
@@ -52,16 +53,22 @@ export default function HalamanDetailTiket() {
       const response = await konektorBackend.get(`/api/tiket/${idtiket}`);
       const body = (await response.json()) as {
         success: true;
-        data: TiketResponseDto;
+        data: TiketDetailResponseDto; // ← pakai TiketDetailResponseDto
       };
-      const tiket = dtoToTiket(body.data);
-      tiket.kategori = mapKategori.current.get(tiket.idKategori) || null;
-      setTiket(tiket);
+      const tiketBaru = dtoToTiket(body.data);
+      tiketBaru.kategori =
+        mapKategori.current.get(tiketBaru.idKategori) || null;
+      setTiket(tiketBaru);
+      setPesanTiket(body.data.pesanTiket.map(dtoToPesanTiket)); // ← ekstrak pesan
     } catch (e: any) {
       setMasterError(e);
     } finally {
       setLoading(false);
     }
+  }
+
+  function handlePesanTerkirim(pesanBaru: PesanTiket) {
+    setPesanTiket((prev) => [...prev, pesanBaru]);
   }
 
   useEffect(() => {
@@ -79,7 +86,11 @@ export default function HalamanDetailTiket() {
         {tiket && (
           <>
             <TicketDetailCard tiket={tiket} />
-            <ConversationCard idChat={tiket.idChat} />
+            <ConversationCard
+              idTiket={tiket.id}
+              pesanTiket={pesanTiket}
+              onPesanTerkirim={handlePesanTerkirim}
+            />
           </>
         )}
       </div>

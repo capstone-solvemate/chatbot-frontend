@@ -1,3 +1,11 @@
+export type PesanTiketResponseDto = {
+  id: string;
+  idTiket: string;
+  idPembuat: number;
+  pesan: string;
+  dibuatPada: string;
+};
+
 export type TiketResponseDto = {
   id: string;
   judul: string;
@@ -8,4 +16,8 @@ export type TiketResponseDto = {
   status: string;
   dibuatPada: string;
   diperbaruiPada: string;
+};
+
+export type TiketDetailResponseDto = TiketResponseDto & {
+  pesanTiket: PesanTiketResponseDto[];
 };

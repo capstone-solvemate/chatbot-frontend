@@ -1,7 +1,8 @@
 // modul/tiket/daftar/converters.ts
 import { Tiket } from "../../Tiket";
-import type { TiketResponseDto } from "./TiketResponseDto";
+import type { PesanTiketResponseDto, TiketResponseDto } from "./TiketResponseDto";
 import { stringToStatusTiket } from "../../StatusTiket";
+import { PesanTiket } from "../../PesanTiket";
 
 
 export function dtoToTiket(dto: TiketResponseDto): Tiket {
@@ -14,5 +15,15 @@ export function dtoToTiket(dto: TiketResponseDto): Tiket {
     stringToStatusTiket(dto.status),
     new Date(dto.dibuatPada),
     new Date(dto.diperbaruiPada),
+  );
+}
+
+export function dtoToPesanTiket(dto: PesanTiketResponseDto): PesanTiket {
+  return new PesanTiket(
+    dto.id,
+    dto.idTiket,
+    dto.idPembuat,
+    dto.pesan,
+    new Date(dto.dibuatPada),
   );
 }
