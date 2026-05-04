@@ -4,13 +4,13 @@ export default [
   layout('dasar/LayoutDasar.tsx', [
     layout('dasar/LayoutKaryawanLegacy.tsx', [
       index("modul/home/HalamanHome.tsx"),
-      route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
       route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/LayoutKaryawan.tsx', [
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
+      route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
     ]),
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
