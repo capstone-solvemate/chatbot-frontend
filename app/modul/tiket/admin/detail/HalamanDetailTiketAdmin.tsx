@@ -4,40 +4,47 @@ import type { ContextType } from "~/dasar/ContextType";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import type {
   TiketAdminDetail,
-  StatusTiket,
+  StatusTiketAngka,
   PesanChat,
   PesanTiket,
 } from "./dto/TiketAdminDetail";
-import type { TiketAdminDetailResponseDto } from "./dto/TiketAdminDetailResponseDto";
-import { dtoToTiketAdminDetail } from "./dto/converters";
+import type {
+  TiketAdminDetailResponseDto,
+  PesanTiketResponseDto,
+} from "./dto/TiketAdminDetailResponseDto";
+import { dtoToTiketAdminDetail, dtoToPesanTiket } from "./dto/converters";
 import type { Route } from "./+types/HalamanDetailTiketAdmin";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Ticket Detail" }];
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Status config ────────────────────────────────────────────────────────────
 
-const STATUS_OPTIONS: { value: StatusTiket; label: string }[] = [
-  { value: "open", label: "Open" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "done", label: "Done" },
+const STATUS_OPTIONS: { value: StatusTiketAngka; label: string }[] = [
+  { value: 1, label: "Open" },
+  { value: 2, label: "In Progress" },
+  { value: 3, label: "Done" },
 ];
 
-function labelStatus(status: StatusTiket): string {
-  return STATUS_OPTIONS.find((s) => s.value === status)?.label ?? status;
+function labelStatus(status: StatusTiketAngka): string {
+  return (
+    STATUS_OPTIONS.find((s) => s.value === status)?.label ?? String(status)
+  );
 }
 
-function statusBadgeClass(status: StatusTiket): string {
+function statusBadgeClass(status: StatusTiketAngka): string {
   switch (status) {
-    case "open":
+    case 1:
       return "bg-blue-100 text-blue-700 border-blue-200";
-    case "in_progress":
+    case 2:
       return "bg-yellow-100 text-yellow-700 border-yellow-200";
-    case "done":
+    case 3:
       return "bg-green-100 text-green-700 border-green-200";
   }
 }
+
+// ─── Formatters ───────────────────────────────────────────────────────────────
 
 function formatWaktu(iso: string): string {
   return new Date(iso).toLocaleTimeString("id-ID", {
@@ -62,7 +69,7 @@ function BubbleChatHistori({ pesan }: { pesan: PesanChat }) {
   const waktu = formatWaktu(pesan.waktu);
 
   if (!pesan.dariAsisten) {
-    // Dari karyawan — kanan, biru
+    // Karyawan → kanan, biru
     return (
       <div className="flex justify-end">
         <div className="max-w-[72%]">
@@ -75,7 +82,7 @@ function BubbleChatHistori({ pesan }: { pesan: PesanChat }) {
     );
   }
 
-  // Dari AI — kiri, putih
+  // AI → kiri, putih
   return (
     <div className="flex justify-start">
       <div className="max-w-[75%]">
@@ -90,11 +97,6 @@ function BubbleChatHistori({ pesan }: { pesan: PesanChat }) {
 
 // ─── Bubble Pesan Tiket (Support) ─────────────────────────────────────────────
 
-/**
- * Membedakan karyawan vs admin berdasarkan idPembuat:
- * - idPembuat === idPembuatTiket → pesan dari karyawan (kiri)
- * - idPembuat !== idPembuatTiket → pesan dari admin (kanan)
- */
 function BubblePesanTiket({
   pesan,
   idPembuatTiket,
@@ -106,6 +108,7 @@ function BubblePesanTiket({
   const dariKaryawan = pesan.idPembuat === idPembuatTiket;
 
   if (dariKaryawan) {
+    // Karyawan → kiri, putih
     return (
       <div className="flex justify-start">
         <div className="max-w-[75%]">
@@ -118,7 +121,7 @@ function BubblePesanTiket({
     );
   }
 
-  // Admin — kanan, biru + avatar
+  // Admin → kanan, biru + avatar
   return (
     <div className="flex justify-end items-end gap-2">
       <div className="max-w-[72%]">
@@ -322,27 +325,53 @@ export default function HalamanDetailTiketAdmin() {
     getTiketDetail();
   }, [id]);
 
-  // NOTE: Endpoint ubah status & kirim pesan belum ada di dokumentasi API.
-  // Sesuaikan path di bawah ketika endpoint tersedia dari backend.
-  async function handleUbahStatus(status: StatusTiket) {
-    if (!tiket || menyimpanStatus) return;
+  /**
+   * PATCH /api/tiket/:id/status
+   * Body: { status: 1 | 2 | 3 }
+   * Response 200: { success: true } — tidak mengembalikan data tiket.
+   * Update state lokal langsung setelah sukses.
+   */
+  async function handleUbahStatus(statusBaru: StatusTiketAngka) {
+    if (!tiket || menyimpanStatus || statusBaru === tiket.status) return;
     setMenyimpanStatus(true);
+    // Optimistic update
+    const statusLama = tiket.status;
+    setTiket({ ...tiket, status: statusBaru });
     try {
-      await konektorBackend.put(`/api/tiket/${id}/status`, { status });
-      setTiket({ ...tiket, status });
+      await konektorBackend.patch(`/api/tiket/${id}/status`, {
+        status: statusBaru,
+      });
     } catch (e: any) {
+      // Rollback jika gagal
+      setTiket({ ...tiket, status: statusLama });
       setMasterError(e);
     } finally {
       setMenyimpanStatus(false);
     }
   }
 
+  /**
+   * POST /api/tiket/:id/pesan
+   * Body: { pesan: string }
+   * Response 201: { success: true, data: PesanTiketResponseDto }
+   * Append pesan baru langsung dari response — tidak perlu full refresh.
+   */
   async function handleKirimBalasan(teks: string) {
     if (!tiket || mengirimBalasan) return;
     setMengirimBalasan(true);
     try {
-      await konektorBackend.post(`/api/tiket/${id}/pesan`, { pesan: teks });
-      await getTiketDetail();
+      const response = await konektorBackend.post(`/api/tiket/${id}/pesan`, {
+        pesan: teks,
+      });
+      const body = (await response.json()) as {
+        success: boolean;
+        data: PesanTiketResponseDto;
+      };
+      const pesanBaru = dtoToPesanTiket(body.data);
+      setTiket({
+        ...tiket,
+        pesanTiket: [...tiket.pesanTiket, pesanBaru],
+      });
     } catch (e: any) {
       setMasterError(e);
     } finally {
@@ -405,15 +434,26 @@ export default function HalamanDetailTiketAdmin() {
               <div
                 className={`inline-flex items-center px-2.5 py-1 rounded-md border text-xs font-medium mb-2 ${statusBadgeClass(tiket.status)}`}
               >
+                {menyimpanStatus && (
+                  <svg
+                    className="animate-spin w-3 h-3 mr-1.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                )}
                 {labelStatus(tiket.status)}
               </div>
               <select
                 value={tiket.status}
                 onChange={(e) =>
-                  handleUbahStatus(e.target.value as StatusTiket)
+                  handleUbahStatus(Number(e.target.value) as StatusTiketAngka)
                 }
                 disabled={menyimpanStatus}
-                className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-60"
+                className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-60 cursor-pointer"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>

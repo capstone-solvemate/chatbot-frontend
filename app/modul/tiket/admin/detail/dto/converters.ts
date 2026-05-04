@@ -1,9 +1,19 @@
-import type { TiketAdminDetail, PesanChat, PesanTiket } from "./TiketAdminDetail";
+import type { TiketAdminDetail, PesanChat, PesanTiket, StatusTiketAngka } from "./TiketAdminDetail";
 import type {
   TiketAdminDetailResponseDto,
   PesanChatResponseDto,
   PesanTiketResponseDto,
 } from "./TiketAdminDetailResponseDto";
+
+const STATUS_STRING_TO_ANGKA: Record<string, StatusTiketAngka> = {
+  open: 1,
+  in_progress: 2,
+  done: 3,
+};
+
+export function statusStringToAngka(s: string): StatusTiketAngka {
+  return STATUS_STRING_TO_ANGKA[s] ?? 1;
+}
 
 export function dtoToPesanChat(dto: PesanChatResponseDto): PesanChat {
   return {
@@ -33,7 +43,7 @@ export function dtoToTiketAdminDetail(dto: TiketAdminDetailResponseDto): TiketAd
     emailPembuat: dto.emailPembuat,
     idChat: dto.idChat,
     idKategori: dto.idKategori,
-    status: dto.status,
+    status: statusStringToAngka(dto.status),
     dibuatPada: dto.dibuatPada,
     diperbaruiPada: dto.diperbaruiPada,
     pesanTiket: dto.pesanTiket.map(dtoToPesanTiket),

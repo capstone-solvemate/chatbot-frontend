@@ -16,6 +16,10 @@ export class KonektorBackend {
     return await this.send(endpoint, HttpMethod.Put, data)
   }
 
+  async patch(endpoint: string, data?: any): Promise<Response> {
+    return await this.send(endpoint, HttpMethod.Patch, data)
+  }
+
   async get(endpoint: string, data?: Record<string, any>): Promise<Response> {
     return await this.send(endpoint, HttpMethod.Get, data)
   }
@@ -114,7 +118,8 @@ enum HttpMethod {
   Get,
   Post,
   Put,
-  Delete
+  Delete,
+  Patch
 }
 
 function httpMethodToString(method: HttpMethod): string {
@@ -125,6 +130,8 @@ function httpMethodToString(method: HttpMethod): string {
       return 'POST'
     case HttpMethod.Put:
       return 'PUT'
+    case HttpMethod.Patch:
+      return 'PATCH'
     case HttpMethod.Delete:
       return 'DELETE'
   }

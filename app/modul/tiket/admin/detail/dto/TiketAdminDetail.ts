@@ -1,4 +1,8 @@
-export type StatusTiket = "open" | "in_progress" | "done";
+/** 1 = open, 2 = in_progress, 3 = done */
+export type StatusTiketAngka = 1 | 2 | 3;
+
+/** String representasi status untuk keperluan display */
+export type StatusTiketString = "open" | "in_progress" | "done";
 
 export interface PesanChat {
   id: string;
@@ -24,7 +28,7 @@ export interface TiketAdminDetail {
   emailPembuat: string;
   idChat: string;
   idKategori: number;
-  status: StatusTiket;
+  status: StatusTiketAngka;
   dibuatPada: string;
   diperbaruiPada: string;
   pesanTiket: PesanTiket[];
