@@ -54,7 +54,6 @@ export default function TampilanPesanChat({
 
     if (!chat) {
       setDaftarPesanChat([PESAN_SAMBUTAN]);
-      setTiketDisarankan(false);
       return;
     }
 
@@ -87,6 +86,11 @@ export default function TampilanPesanChat({
       }
     };
   }, [chat?.id]);
+
+  useEffect(() => {
+    setTiketDisarankan(chat !== null);
+    console.log(chat !== null);
+  }, [chat]);
 
   function konekWebSocket(idChat: string) {
     const wsBaseUrl = (import.meta.env.VITE_SITE_URL as string)
@@ -227,7 +231,7 @@ export default function TampilanPesanChat({
         <ChatMessages
           daftarPesanChat={daftarPesanChat}
           isSending={isSending}
-          tiketDisarankan={tiketDisarankan}
+          chat={chat}
         />
       )}
 

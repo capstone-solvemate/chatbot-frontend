@@ -2,11 +2,12 @@ import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import TicketAction from "./TicketAction";
 import type { PesanChat } from "./PesanChat";
+import type { Chat } from "./Chat";
 
 type Props = {
   daftarPesanChat: PesanChat[];
   isSending: boolean;
-  tiketDisarankan: boolean;
+  chat: Chat | null;
 };
 
 function formatTime(date: Date): string {
@@ -19,7 +20,7 @@ function formatTime(date: Date): string {
 export default function ChatMessages({
   daftarPesanChat,
   isSending,
-  tiketDisarankan,
+  chat,
 }: Props) {
   return (
     <div className="w-full max-w-3xl mx-auto flex-1 px-8 py-6 space-y-6">
@@ -55,7 +56,7 @@ export default function ChatMessages({
         </div>
       )}
 
-      {tiketDisarankan && <TicketAction />}
+      {chat && <TicketAction idChat={chat!.id} />}
     </div>
   );
 }

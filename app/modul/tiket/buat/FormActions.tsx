@@ -1,4 +1,4 @@
-export default function FormActions() {
+export default function FormActions({ submitting }: { submitting?: boolean }) {
   return (
     <div className="flex justify-end gap-3 pt-2">
       <button
@@ -7,12 +7,16 @@ export default function FormActions() {
       >
         Cancel
       </button>
-
       <button
         type="submit"
-        className="px-4 py-2 text-sm bg-gray-400 text-white rounded-md"
+        disabled={submitting}
+        className={`px-4 py-2 text-sm text-white rounded-md transition-colors ${
+          submitting
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
       >
-        Submit Ticket
+        {submitting ? "Submitting..." : "Submit Ticket"}
       </button>
     </div>
   );

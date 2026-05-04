@@ -1,7 +1,11 @@
 import { Button } from "~/komponen/Button";
 import IkonBot from "~/komponen/ikon/IkonBot";
 
-export default function TicketAction() {
+type Props = {
+  idChat: string;
+};
+
+export default function TicketAction({ idChat }: Props) {
   return (
     <div className="flex gap-3 items-start max-w-xl">
       <div className="w-10 h-10 shrink-0 rounded-full bg-blue-600 flex items-center justify-center text-white">
@@ -14,7 +18,7 @@ export default function TicketAction() {
           technical team.
         </p>
 
-        <Button className="px-6 py-2!" href="/tiket/create/0">
+        <Button className="px-6 py-2!" href={`/tiket/create/${idChat}`}>
           Create a ticket now
         </Button>
 
