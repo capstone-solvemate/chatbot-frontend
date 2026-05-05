@@ -14,6 +14,8 @@ import type {
 } from "./dto/TiketAdminDetailResponseDto";
 import { dtoToTiketAdminDetail, dtoToPesanTiket } from "./dto/converters";
 import type { Route } from "./+types/HalamanDetailTiketAdmin";
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
+import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Ticket Detail" }];
@@ -24,7 +26,7 @@ export function meta({}: Route.MetaArgs) {
 const STATUS_OPTIONS: { value: StatusTiketAngka; label: string }[] = [
   { value: 1, label: "Open" },
   { value: 2, label: "In Progress" },
-  { value: 3, label: "Done" },
+  { value: 3, label: "Resolved" },
 ];
 
 function labelStatus(status: StatusTiketAngka): string {
@@ -306,6 +308,24 @@ export default function HalamanDetailTiketAdmin() {
   const [menyimpanStatus, setMenyimpanStatus] = useState(false);
   const [mengirimBalasan, setMengirimBalasan] = useState(false);
 
+  const mapKategori = useRef(new Map<number, Kategori>());
+  function setDaftarKategori(data: Kategori[]) {
+    mapKategori.current.clear();
+    for (const kategori of data) {
+      mapKategori.current.set(kategori.id, kategori);
+    }
+  }
+  async function getDaftarKategori() {
+    try {
+      const response = await konektorBackend.get("/api/admin/categories");
+      const dto: any[] = await response.json();
+      setDaftarKategori(dto.map((d) => dtoToKategori(d)));
+    } catch (e: any) {
+      setMasterError(e);
+      throw e;
+    }
+  }
+
   async function getTiketDetail() {
     try {
       const response = await konektorBackend.get(`/api/tiket/${id}/admin`);
@@ -313,7 +333,9 @@ export default function HalamanDetailTiketAdmin() {
         success: boolean;
         data: TiketAdminDetailResponseDto;
       };
-      setTiket(dtoToTiketAdminDetail(body.data));
+      const tiketBaru = dtoToTiketAdminDetail(body.data);
+      tiketBaru.kategori = mapKategori.current.get(tiketBaru.idKategori);
+      setTiket(tiketBaru);
     } catch (e: any) {
       setMasterError(e);
     } finally {
@@ -322,7 +344,7 @@ export default function HalamanDetailTiketAdmin() {
   }
 
   useEffect(() => {
-    getTiketDetail();
+    getDaftarKategori().then(() => getTiketDetail());
   }, [id]);
 
   /**
@@ -422,7 +444,7 @@ export default function HalamanDetailTiketAdmin() {
                 Ticket ID
               </p>
               <p className="text-sm font-mono font-medium text-gray-800">
-                #{tiket.id}
+                #{tiket.id.padStart(3, "0")}
               </p>
             </div>
 
@@ -481,7 +503,9 @@ export default function HalamanDetailTiketAdmin() {
               <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
                 Category
               </p>
-              <p className="text-sm text-gray-800">#{tiket.idKategori}</p>
+              <p className="text-sm text-gray-800">
+                {tiket.kategori?.nama || ""}
+              </p>
             </div>
 
             {/* Created */}

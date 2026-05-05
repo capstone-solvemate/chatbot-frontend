@@ -1,3 +1,5 @@
+import type { Kategori } from "~/modul/settings/kategori/Kategori";
+
 /** 1 = open, 2 = in_progress, 3 = done */
 export type StatusTiketAngka = 1 | 2 | 3;
 
@@ -33,4 +35,5 @@ export interface TiketAdminDetail {
   diperbaruiPada: string;
   pesanTiket: PesanTiket[];
   historiChat: PesanChat[];
+  kategori?: Kategori
 }

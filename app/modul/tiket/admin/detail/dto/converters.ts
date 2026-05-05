@@ -6,9 +6,9 @@ import type {
 } from "./TiketAdminDetailResponseDto";
 
 const STATUS_STRING_TO_ANGKA: Record<string, StatusTiketAngka> = {
-  open: 1,
-  in_progress: 2,
-  done: 3,
+  'Open': 1,
+  'In Progress': 2,
+  'Done': 3,
 };
 
 export function statusStringToAngka(s: string): StatusTiketAngka {
