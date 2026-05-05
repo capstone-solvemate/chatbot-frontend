@@ -15,6 +15,7 @@ import HalamanLoading from "~/dasar/HalamanLoading";
 import Navbar from "~/komponen/Navbar";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { StatusTiket } from "../StatusTiket";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Detail Tiket" }];
@@ -71,6 +72,12 @@ export default function HalamanDetailTiket() {
     setPesanTiket((prev) => [...prev, pesanBaru]);
   }
 
+  function handleResolved() {
+    setTiket((prev) =>
+      prev ? { ...prev, status: StatusTiket.Resolved } : prev,
+    );
+  }
+
   useEffect(() => {
     getDaftarKategori().then(() => getTiket());
   }, [idtiket]);
@@ -89,7 +96,9 @@ export default function HalamanDetailTiket() {
             <ConversationCard
               idTiket={tiket.id}
               pesanTiket={pesanTiket}
+              status={tiket.status}
               onPesanTerkirim={handlePesanTerkirim}
+              onResolved={handleResolved}
             />
           </>
         )}

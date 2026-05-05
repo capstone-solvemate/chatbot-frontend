@@ -9,17 +9,22 @@ import { useOutletContext } from "react-router";
 import type { ContextType } from "~/dasar/ContextType";
 import type { PesanTiketResponseDto } from "../daftar/dto/TiketResponseDto";
 import { dtoToPesanTiket } from "../daftar/dto/converters";
+import { StatusTiket } from "../StatusTiket";
 
 type Props = {
   idTiket: string;
   pesanTiket: PesanTiket[];
+  status: StatusTiket;
   onPesanTerkirim: (pesan: PesanTiket) => void;
+  onResolved: () => void;
 };
 
 export default function ConversationCard({
   idTiket,
   pesanTiket,
+  status,
   onPesanTerkirim,
+  onResolved,
 }: Props) {
   const [
     _a,
@@ -45,6 +50,11 @@ export default function ConversationCard({
     }
   }
 
+  async function handleResolve() {
+    await konektorBackend.patch(`/api/tiket/${idTiket}/status`, { status: 3 });
+    onResolved();
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
       <ConversationHeader />
@@ -67,7 +77,10 @@ export default function ConversationCard({
 
       <hr className="border-gray-200" />
       <MessageInput onKirim={handleKirim} />
-      <ResolveButton />
+      <ResolveButton
+        onResolve={handleResolve}
+        isResolved={status === StatusTiket.Resolved}
+      />
     </div>
   );
 }
