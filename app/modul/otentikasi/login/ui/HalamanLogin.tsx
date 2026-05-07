@@ -4,7 +4,7 @@ import LoginCard from "./LoginCard";
 import { useEffect, useState } from "react";
 import { HttpError } from "~/dasar/KonektorBackend";
 import { useOutletContext } from "react-router";
-import { LoginDto } from "./LoginDto";
+import type { LoginDto } from "~/modul/otentikasi/login/data/LoginDto";
 import type { ContextType } from "~/dasar/ContextType";
 import {
   PeranPengguna,
@@ -45,18 +45,15 @@ export default function HalamanLogin(): React.JSX.Element {
     setSubmitting(true);
 
     try {
-      const loginDto = new LoginDto(data.email, data.password);
+      const loginDto: LoginDto = {
+        email: data.email,
+        password: data.password,
+      };
 
       if (peran === PeranPengguna.Karyawan) {
-        await konektorBackend.post(
-          "/api/auth/login/employee",
-          loginDto.toPlainObj(),
-        );
+        await konektorBackend.post("/api/auth/login/employee", loginDto);
       } else {
-        await konektorBackend.post(
-          "/api/auth/login/admin",
-          loginDto.toPlainObj(),
-        );
+        await konektorBackend.post("/api/auth/login/admin", loginDto);
       }
       location.reload();
     } catch (e: any) {

@@ -21,7 +21,7 @@ export default [
       route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx'),
     ]),
     layout('dasar/LayoutGuest.tsx', [
-      route("login", "modul/otentikasi/login/HalamanLogin.tsx"),
+      route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx"),
       route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
     ])
   ])

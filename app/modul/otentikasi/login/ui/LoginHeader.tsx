@@ -1,7 +1,7 @@
 import { NAMA_SISTEM } from "~/dasar/kontanta";
 import LogoBrand2 from "~/komponen/LogoBrand2";
-import JudulOtentikasi from "../JudulOtentikasi";
-import SubJudulOtentikasi from "../SubJudulOtentikasi";
+import JudulOtentikasi from "../../JudulOtentikasi";
+import SubJudulOtentikasi from "../../SubJudulOtentikasi";
 
 export default function LoginHeader() {
   return (

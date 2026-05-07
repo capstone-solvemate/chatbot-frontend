@@ -1,5 +1,5 @@
 import IkonEmail from "~/komponen/ikon/IkonEmail";
-import InputFieldOtentikasi from "../InputFieldOtentikasi";
+import InputFieldOtentikasi from "../../InputFieldOtentikasi";
 import IkonPassword from "~/komponen/ikon/IkonPassword";
 
 export default function LoginForm() {

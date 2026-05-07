@@ -5,8 +5,8 @@ import SubmitButton from "./SubmitButton";
 import type { SubmitEvent } from "react";
 import AuthErrorNotification from "./AuthErrorNotification";
 import type { PeranPengguna } from "~/dasar/PeranPengguna";
-import CardOtentikasi from "../CardOtentikasi";
-import LinkOtentikasi from "../LinkOtentikasi";
+import CardOtentikasi from "../../CardOtentikasi";
+import LinkOtentikasi from "../../LinkOtentikasi";
 
 interface Props {
   peran: PeranPengguna;
