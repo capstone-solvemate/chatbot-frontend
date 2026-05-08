@@ -3,14 +3,14 @@ import type { Route } from "./+types/HalamanLogin";
 import LoginCard from "./LoginCard";
 import { useEffect, useState } from "react";
 import { HttpError } from "~/dasar/KonektorBackend";
-import { useOutletContext } from "react-router";
 import type { LoginDto } from "~/modul/otentikasi/login/data/LoginDto";
-import type { ContextType } from "~/dasar/ContextType";
 import {
   PeranPengguna,
   peranPenggunaToString,
   stringToPeranPengguna,
 } from "~/dasar/PeranPengguna";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 const KEY_PERAN_LOGIN = "peran_login";
 
@@ -19,8 +19,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function HalamanLogin(): React.JSX.Element {
-  const [_dm, _so, konektorBackend, _sn, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
   const [peran, setPeran] = useState(PeranPengguna.Karyawan);
   const [submitting, setSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);

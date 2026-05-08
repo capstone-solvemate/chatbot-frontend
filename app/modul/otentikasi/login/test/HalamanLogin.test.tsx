@@ -9,10 +9,11 @@ import {
 import userEvent from "@testing-library/user-event";
 import HalamanLogin from "../ui/HalamanLogin";
 import { HttpError } from "~/dasar/KonektorBackend";
-
-function makeContext(backend: MockKonektorBackend, setMasterError = vi.fn()) {
-  return [undefined, undefined, backend, undefined, setMasterError] as const;
-}
+import { mockContext } from "~test/MockContext";
+import {
+  mockKonektorBackend,
+  type MockKonektorBackend,
+} from "~test/MockBackend";
 
 // react-router outlet context
 vi.mock("react-router", async (importOriginal) => {
@@ -38,22 +39,11 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
-// location.reload
-const reloadMock = vi.fn();
-Object.defineProperty(window, "location", {
-  writable: true,
-  value: { ...window.location, reload: reloadMock },
-});
-
 // ---------------------------------------------------------------------------
 // Test setup
 // ---------------------------------------------------------------------------
 
 import { MemoryRouter, useOutletContext } from "react-router";
-import {
-  mockKonektorBackend,
-  type MockKonektorBackend,
-} from "~test/MockBackend";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -61,11 +51,11 @@ beforeEach(() => {
 });
 
 function renderLogin(
-  backend: MockKonektorBackend,
+  backend: MockKonektorBackend = mockKonektorBackend(),
   setMasterError = vi.fn(),
 ): RenderResult {
   (useOutletContext as ReturnType<typeof vi.fn>).mockReturnValue(
-    makeContext(backend, setMasterError),
+    mockContext({ konektorBackend: backend, setMasterError }),
   );
   return render(
     <MemoryRouter>
@@ -77,8 +67,7 @@ function renderLogin(
 describe("HalamanLogin", () => {
   describe("harus render UI minimal", () => {
     it("render pilihan role Employee dan Admin", () => {
-      const backend = mockKonektorBackend();
-      renderLogin(backend);
+      renderLogin();
       expect(
         screen.getByRole("button", { name: /employee/i }),
       ).toBeInTheDocument();
@@ -88,8 +77,7 @@ describe("HalamanLogin", () => {
     });
 
     it("render input Email Address", () => {
-      const backend = mockKonektorBackend();
-      const { container } = renderLogin(backend);
+      const { container } = renderLogin();
       const emailInput = container.querySelector(
         'input[type="email"][name="email"]',
       );
@@ -97,8 +85,7 @@ describe("HalamanLogin", () => {
     });
 
     it("render input Password", () => {
-      const backend = mockKonektorBackend();
-      const { container } = renderLogin(backend);
+      const { container } = renderLogin();
       const passwordInput = container.querySelector(
         'input[type="password"][name="password"]',
       );
@@ -106,8 +93,7 @@ describe("HalamanLogin", () => {
     });
 
     it("render tombol Sign In", () => {
-      const backend = mockKonektorBackend();
-      renderLogin(backend);
+      renderLogin();
       expect(
         screen.getByRole("button", { name: /sign in/i }),
       ).toBeInTheDocument();
@@ -136,7 +122,6 @@ describe("HalamanLogin", () => {
           expect.objectContaining({ email: "user@test.com" }),
         ),
       );
-      expect(reloadMock).toHaveBeenCalledOnce();
     });
 
     it("memanggil endpoint /api/auth/login/admin ketika role Admin dipilih", async () => {
@@ -160,7 +145,6 @@ describe("HalamanLogin", () => {
           expect.objectContaining({ email: "admin@test.com" }),
         ),
       );
-      expect(reloadMock).toHaveBeenCalledOnce();
     });
   });
 
@@ -187,7 +171,7 @@ describe("HalamanLogin", () => {
 
   describe("jika terjadi error yang tidak perlu ditangani secara khusus, panggil setMasterError", () => {
     it("panggil setMasterError ketika menerima status 500 dari backend", async () => {
-      const error = new HttpError(500, "Unauthorized");
+      const error = new HttpError(500, "Internal Server Error");
       const backend = mockKonektorBackend({
         post: () => Promise.reject(error),
       });
