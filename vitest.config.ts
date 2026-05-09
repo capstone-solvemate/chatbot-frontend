@@ -7,6 +7,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./test/setup.ts'],
+    reporters: 'tree'
   },
   resolve: {
     tsconfigPaths: true,
