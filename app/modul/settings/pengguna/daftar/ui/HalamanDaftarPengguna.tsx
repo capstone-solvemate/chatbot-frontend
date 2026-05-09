@@ -120,9 +120,7 @@ export default function HalamanDaftarPengguna() {
             <Button
               className="text-sm! ps-2! pe-3! py-2! gap-1! shrink-0"
               leftIcon={<IkonTambah className="h-5" />}
-              onClick={() => {
-                /* TODO: open form */
-              }}
+              href="/admin/settings/pengguna/tambah"
             >
               Add User
             </Button>

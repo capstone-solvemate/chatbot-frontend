@@ -30,7 +30,8 @@ export default [
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       layout('modul/settings/SettingsLayout.tsx', [
-        route('admin/settings/pengguna', 'modul/settings/pengguna/daftar/ui/HalamanDaftarPengguna.tsx')
+        route('admin/settings/pengguna', 'modul/settings/pengguna/daftar/ui/HalamanDaftarPengguna.tsx'),
+        route('admin/settings/pengguna/tambah', 'modul/settings/pengguna/tambah/ui/HalamanTambahPengguna.tsx')
       ])
     ]),
   ])
