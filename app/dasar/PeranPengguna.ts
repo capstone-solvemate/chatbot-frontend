@@ -45,3 +45,23 @@ export function stringToPeranPengguna(peranStr: string, bahasa: 'id' | 'en' = 'i
     return null
   }
 }
+
+export function peranPenggunaToInt(peran: PeranPengguna): number {
+  switch (peran) {
+    case PeranPengguna.Karyawan:
+      return 1;
+    case PeranPengguna.Admin:
+      return 2;
+  }
+}
+
+export function intToPeranPengguna(value: number): PeranPengguna | null {
+  switch (value) {
+    case 1:
+      return PeranPengguna.Karyawan;
+    case 2:
+      return PeranPengguna.Admin;
+    default:
+      return null;
+  }
+}

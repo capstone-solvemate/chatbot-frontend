@@ -27,6 +27,11 @@ export default [
   layout('dasar/layout/LayoutDasarV2.tsx', [
     layout('dasar/layout/LayoutGuestV2.tsx', [
       route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
-    ])
+    ]),
+    layout('dasar/layout/LayoutAdminV2.tsx', [
+      layout('modul/settings/SettingsLayout.tsx', [
+        route('admin/settings/pengguna', 'modul/settings/pengguna/daftar/ui/HalamanDaftarPengguna.tsx')
+      ])
+    ]),
   ])
 ] satisfies RouteConfig;
