@@ -17,7 +17,7 @@ export default [
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
       route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
       route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
-      route('admin/knowledge-base', 'modul/knowledgebase/HalamanDaftarKnowledgeBaseAdmin.tsx'),
+      route('admin/knowledge-base', 'modul/knowledgebase/ui/HalamanDaftarKnowledgeBaseAdmin.tsx'),
       route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx'),
     ]),
     layout('dasar/LayoutGuest.tsx', [

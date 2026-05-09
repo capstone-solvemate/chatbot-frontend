@@ -1,23 +1,23 @@
-import { KnowledgeBaseStatus } from "./KnowledgeBase";
+import { StatusKnowledgeBase } from "../data/StatusKnowledgeBase";
 
 interface Props {
-  status: KnowledgeBaseStatus;
+  status: StatusKnowledgeBase;
 }
 
-export default function KnowledgeBaseStatusBadge({ status }: Props) {
+export default function StatusKnowledgeBaseBadge({ status }: Props) {
   const config: Record<
-    KnowledgeBaseStatus,
+    StatusKnowledgeBase,
     { label: string; className: string }
   > = {
-    [KnowledgeBaseStatus.SelesaiDiproses]: {
+    [StatusKnowledgeBase.SelesaiDiproses]: {
       label: "Processed",
       className: "bg-green-100 text-green-700",
     },
-    [KnowledgeBaseStatus.SedangDiproses]: {
+    [StatusKnowledgeBase.SedangDiproses]: {
       label: "Processing",
       className: "bg-yellow-100 text-yellow-700",
     },
-    [KnowledgeBaseStatus.BelumDiproses]: {
+    [StatusKnowledgeBase.BelumDiproses]: {
       label: "Pending",
       className: "bg-gray-100 text-gray-600",
     },
@@ -29,7 +29,7 @@ export default function KnowledgeBaseStatusBadge({ status }: Props) {
     <span
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ${className}`}
     >
-      {status === KnowledgeBaseStatus.SedangDiproses && (
+      {status === StatusKnowledgeBase.SedangDiproses && (
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
       )}
       {label}

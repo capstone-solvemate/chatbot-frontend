@@ -1,4 +1,4 @@
-import { KnowledgeBase } from "./KnowledgeBase";
+import { KnowledgeBase } from "../data/KnowledgeBase";
 
 interface Props {
   dokumen: KnowledgeBase;
