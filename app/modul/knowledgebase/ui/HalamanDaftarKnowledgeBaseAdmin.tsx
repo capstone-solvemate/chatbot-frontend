@@ -20,7 +20,10 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
   const [dokumens, setDokumens] = useState<KnowledgeBase[]>([]);
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filterKategori, setFilterKategori] = useState<number | null>(null);
 
   const [dokumenAkanDihapus, setDokumenAkanDihapus] =
     useState<KnowledgeBase | null>(null);
@@ -32,9 +35,22 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
   const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
     useOutletContext();
 
+  // — Debounce search 500ms —
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
   async function getDokumens() {
     try {
-      const response = await konektorBackend.get("/api/admin/knowledge-base");
+      const params: Record<string, any> = {};
+      if (debouncedSearch.trim()) params.judul = debouncedSearch.trim();
+      if (filterKategori !== null) params.idKategori = filterKategori;
+
+      const response = await konektorBackend.get(
+        "/api/admin/knowledge-base",
+        params,
+      );
       const dto: KnowledgeBaseResponseDto[] = await response.json();
       setDokumens(dto.map(dtoToKnowledgeBase));
     } catch (e: any) {
@@ -56,11 +72,17 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
     return daftarKategori.find((k) => k.id === idKategori)?.nama ?? null;
   }
 
+  // Initial load
   useEffect(() => {
     Promise.all([getDokumens(), getDaftarKategori()]).finally(() =>
       setLoading(false),
     );
   }, []);
+
+  // Re-fetch saat search atau filter berubah
+  useEffect(() => {
+    if (!loading) getDokumens();
+  }, [debouncedSearch, filterKategori]);
 
   // Scroll ke form saat muncul
   useEffect(() => {
@@ -71,9 +93,7 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
   function handleCloseForm(refreshRequired: boolean) {
     setShowUploadForm(false);
-    if (refreshRequired) {
-      getDokumens();
-    }
+    if (refreshRequired) getDokumens();
   }
 
   async function handleKonfirmasiHapus() {
@@ -94,12 +114,8 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
   function formatDate(date: Date | null): string {
     if (!date) return "-";
-    return date.toLocaleDateString("en-CA"); // format YYYY-MM-DD
+    return date.toLocaleDateString("en-CA"); // YYYY-MM-DD
   }
-
-  const filteredDokumens = dokumens.filter((d) =>
-    d.judul.toLowerCase().includes(search.toLowerCase()),
-  );
 
   if (loading) return <HalamanLoading />;
 
@@ -149,35 +165,74 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
       {/* Table Card */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-        {/* Card Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-700">Documents</h2>
-          <div className="relative">
-            <svg
-              className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        {/* Card Header - Search & Filter */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 gap-3">
+          <h2 className="text-sm font-semibold text-gray-700 shrink-0">
+            Documents
+          </h2>
+
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Search */}
+            <div className="relative">
+              <svg
+                className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search documents..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 pr-4 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 w-52"
               />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search documents..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 w-56"
-            />
+            </div>
+
+            {/* Filter Kategori */}
+            <div className="relative">
+              <select
+                value={filterKategori ?? ""}
+                onChange={(e) =>
+                  setFilterKategori(
+                    e.target.value === "" ? null : Number(e.target.value),
+                  )
+                }
+                className="pl-3 pr-8 py-1.5 text-sm border border-gray-200 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 bg-white text-gray-700 cursor-pointer"
+              >
+                <option value="">All Category</option>
+                {daftarKategori.map((k) => (
+                  <option key={k.id} value={k.id}>
+                    {k.nama}
+                  </option>
+                ))}
+              </select>
+              <svg
+                className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
           </div>
         </div>
 
         {/* List */}
-        {filteredDokumens.length === 0 ? (
+        {dokumens.length === 0 ? (
           <div className="py-16 text-center">
             <svg
               className="w-10 h-10 mx-auto text-gray-200 mb-3"
@@ -193,14 +248,14 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
               />
             </svg>
             <p className="text-sm text-gray-400">
-              {search
+              {search || filterKategori
                 ? "No documents match your search."
                 : "No documents uploaded yet."}
             </p>
           </div>
         ) : (
           <ul className="divide-y divide-gray-100">
-            {filteredDokumens.map((dokumen) => {
+            {dokumens.map((dokumen) => {
               const namaKategori = getNamaKategori(dokumen.idKategori);
               return (
                 <li
@@ -231,7 +286,7 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
                       {dokumen.judul}
                     </p>
 
-                    {/* Baris 2: Badge kategori + badge PDF + status */}
+                    {/* Baris 2: badge kategori + tipe file + ukuran + status */}
                     <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       {namaKategori && (
                         <span className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded">
@@ -239,7 +294,10 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
                         </span>
                       )}
                       <span className="inline-block px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-600 rounded">
-                        PDF
+                        {dokumen.tipeFile}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {dokumen.ukuranBerkasFormatted}
                       </span>
                       <KnowledgeBaseStatusBadge status={dokumen.status} />
                     </div>
@@ -299,11 +357,10 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
         )}
 
         {/* Footer count */}
-        {filteredDokumens.length > 0 && (
+        {dokumens.length > 0 && (
           <div className="px-5 py-3 border-t border-gray-100 text-xs text-gray-400">
-            {filteredDokumens.length} document
-            {filteredDokumens.length !== 1 ? "s" : ""}
-            {search ? ` matching "${search}"` : " total"}
+            {dokumens.length} document{dokumens.length !== 1 ? "s" : ""}
+            {search || filterKategori ? " found" : " total"}
           </div>
         )}
       </div>
