@@ -5,8 +5,7 @@ import FaqList from "./FaqList";
 import { useEffect, useRef, useState } from "react";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import type { Faq } from "../Faq";
-import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
+import { useLoaderData, useNavigation } from "react-router";
 import type { GetFaqsResponseDto } from "../admin/daftar/GetFaqsResponseDto";
 import { dtoToFaq } from "../admin/daftar/converters";
 import HalamanLoading from "~/dasar/HalamanLoading";
@@ -21,27 +20,71 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: "Frequently Asked Questions" }];
 }
 
-export default function FaqPage() {
-  const [loading, setLoading] = useState(true);
-  const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  const { KonektorBackend } = await import("~/dasar/KonektorBackend");
+  const konektorBackend = new KonektorBackend(() => {});
 
-  const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
-  const [jawabanSurvei, setJawabanSurvei] = useState<boolean | null>(null);
+  const [kategorisRes, faqsRes] = await Promise.all([
+    konektorBackend.get("/api/categories"),
+    konektorBackend.get("/api/faqs", {} as GetFaqsRequestDto),
+  ]);
 
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const kategorisDto: any[] = await kategorisRes.json();
+  const faqsData = (await faqsRes.json()) as GetFaqsResponseDto;
 
-  const mapKategori = useRef(new Map<number, Kategori>());
-  const [daftarKategori, _setDaftarKategori] = useState<Kategori[]>([]);
-  function setDaftarKategori(data: Kategori[]) {
-    mapKategori.current.clear();
-    for (const kategori of data) {
-      mapKategori.current.set(kategori.id, kategori);
-    }
-    _setDaftarKategori(data);
+  const daftarKategori = kategorisDto.map((dto) => dtoToKategori(dto));
+
+  const mapKategori = new Map<number, Kategori>();
+  for (const k of daftarKategori) {
+    mapKategori.set(k.id, k);
   }
 
-  const [faqs, setFaqs] = useState<Faq[]>([]);
+  const faqs = faqsData.faqs.map((dtoFaq) => {
+    const faq = dtoToFaq(dtoFaq);
+    const kategoriTerkait = mapKategori.get(faq.idKategori);
+    if (kategoriTerkait) faq.kategori = kategoriTerkait;
+    return faq;
+  });
+
+  return { daftarKategori, faqs };
+}
+
+export default function FaqPage() {
+  const data = useLoaderData<typeof clientLoader>();
+  const navigation = useNavigation();
+
+  if (!data || navigation.state === "loading") return <HalamanLoading />;
+
+  return (
+    <FaqPageContent
+      initialKategori={data.daftarKategori}
+      initialFaqs={data.faqs}
+    />
+  );
+}
+
+function FaqPageContent({
+  initialKategori,
+  initialFaqs,
+}: {
+  initialKategori: Kategori[];
+  initialFaqs: Faq[];
+}) {
+  const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
+  const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
+  const [jawabanSurvei, setJawabanSurvei] = useState<boolean | null>(null);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [faqs, setFaqs] = useState<Faq[]>(initialFaqs);
+
+  const mapKategori = useRef(new Map<number, Kategori>());
+  const [daftarKategori] = useState<Kategori[]>(() => {
+    mapKategori.current.clear();
+    for (const k of initialKategori) {
+      mapKategori.current.set(k.id, k);
+    }
+    return initialKategori;
+  });
 
   const konektorBackend = useKonektorBackend();
   const { setMasterError } = useMasterError();
@@ -55,13 +98,12 @@ export default function FaqPage() {
       const response = await konektorBackend.get("/api/faqs", reqData);
       const data = (await response.json()) as GetFaqsResponseDto;
 
-      const faqsBaru = data.faqs.map((dtoFaq) => dtoToFaq(dtoFaq));
-      for (const faq of faqsBaru) {
+      const faqsBaru = data.faqs.map((dtoFaq) => {
+        const faq = dtoToFaq(dtoFaq);
         const kategoriTerkait = mapKategori.current.get(faq.idKategori);
-        if (kategoriTerkait) {
-          faq.kategori = kategoriTerkait;
-        }
-      }
+        if (kategoriTerkait) faq.kategori = kategoriTerkait;
+        return faq;
+      });
 
       setFaqs(faqsBaru);
     } catch (e: any) {
@@ -69,26 +111,12 @@ export default function FaqPage() {
     }
   }
 
-  async function getDaftarKategori() {
-    try {
-      const response = await konektorBackend.get("/api/categories");
-      const dto: any[] = await response.json();
-      const daftarKategoriBaru = dto.map((dtoItem) => dtoToKategori(dtoItem));
-      setDaftarKategori(daftarKategoriBaru);
-    } catch (e: any) {
-      setMasterError(e);
-      throw e;
-    }
-  }
-
   async function handleSelectFaq(faq: Faq) {
     setFaqDipilih(faq);
-    setJawabanSurvei(null); // reset state survei sebelum data baru datang
+    setJawabanSurvei(null);
 
-    // POST lihat — fire and forget, tidak perlu tunggu
     konektorBackend.post(`/api/faqs/${faq.id}/lihat`).catch(() => {});
 
-    // GET survei — update state saat response datang
     konektorBackend
       .get(`/api/faqs/${faq.id}/survei`)
       .then((res) => res.json())
@@ -98,31 +126,29 @@ export default function FaqPage() {
       .catch(() => setJawabanSurvei(null));
   }
 
-  useEffect(() => {
-    getFaqs();
-  }, [filterKategori]);
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    getDaftarKategori().then(() => {
-      getFaqs().finally(() => {
-        setLoading(false);
-      });
-    });
-  }, []);
+    if (!isMounted.current) return;
+    getFaqs();
+  }, [filterKategori]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
-
     return () => clearTimeout(timer);
   }, [search]);
 
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
     getFaqs();
   }, [debouncedSearch]);
 
-  return !loading ? (
+  return (
     <main className="min-h-default bg-gray-50">
       <section className="mx-auto max-w-4xl px-6 py-10">
         <FaqHeader />
@@ -145,7 +171,5 @@ export default function FaqPage() {
         />
       )}
     </main>
-  ) : (
-    <HalamanLoading />
   );
 }
