@@ -3,7 +3,6 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 export default [
   layout('dasar/LayoutDasar.tsx', [
     layout('dasar/LayoutKaryawanLegacy.tsx', [
-      index("modul/home/HalamanHome.tsx"),
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
       route("chat", "modul/chat/HalamanChat.tsx"),
@@ -26,6 +25,7 @@ export default [
       route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
     ]),
     layout('dasar/layout/LayoutKaryawanV2.tsx', [
+      index("modul/home/HalamanHome.tsx"),
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [

@@ -6,9 +6,10 @@ interface Props {
   title: string;
   description: string;
   icon?: ReactNode;
+  onClick: () => void;
 }
 
-export default function FAQCard({ title, description, icon }: Props) {
+export default function FAQCard({ title, description, icon, onClick }: Props) {
   return (
     <button
       className="
@@ -27,6 +28,7 @@ export default function FAQCard({ title, description, icon }: Props) {
         transition
         hover:shadow-md
       "
+      onClick={onClick}
     >
       <div className="flex justify-between gap-4">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
@@ -38,7 +40,7 @@ export default function FAQCard({ title, description, icon }: Props) {
       <div className="flex-1">
         <h3 className="font-medium text-gray-900">{title}</h3>
 
-        <p className="mt-1 text-sm text-gray-600">{description}</p>
+        <p className="mt-1 text-sm text-gray-600 line-clamp-2">{description}</p>
       </div>
     </button>
   );
