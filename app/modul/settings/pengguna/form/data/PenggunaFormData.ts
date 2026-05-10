@@ -3,4 +3,5 @@ export type PenggunaFormData = {
   email: string;
   password: string;
   peran: number[]; // array of PeranPengguna int values
+  isActive: boolean;
 };

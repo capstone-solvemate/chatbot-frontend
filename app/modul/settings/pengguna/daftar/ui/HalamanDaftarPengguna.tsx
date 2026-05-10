@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import type { Route } from "./+types/HalamanDaftarPengguna";
 import type { OutletContext } from "~/dasar/OutletContext";
 import HalamanLoading from "~/dasar/HalamanLoading";
@@ -11,6 +11,8 @@ import type { PenggunaResponseDto } from "../data/dto/PenggunaResponseDto";
 import { dtoToPengguna } from "../data/dto/converters";
 import { IkonCari } from "~/komponen/ikon/IkonCari";
 import PeranBadge from "./PeranBadge";
+import { peranPenggunaToInt } from "~/dasar/PeranPengguna";
+import type { EditPenggunaDto } from "../../edit/data/dto/EditPenggunaDto";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "User Management" }];
@@ -21,8 +23,11 @@ export default function HalamanDaftarPengguna() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  // ID pengguna yang sedang dalam proses toggle aktif/nonaktif
+  const [togglingId, setTogglingId] = useState<number | null>(null);
 
   const { konektorBackend, setMasterError }: OutletContext = useOutletContext();
+  const navigate = useNavigate();
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
 
@@ -53,6 +58,32 @@ export default function HalamanDaftarPengguna() {
     const timer = setTimeout(() => setDebouncedSearch(search), 500);
     return () => clearTimeout(timer);
   }, [search]);
+
+  // ── Toggle aktif / nonaktif ────────────────────────────────────────────────
+
+  async function handleToggleAktif(p: Pengguna) {
+    if (togglingId !== null) return;
+    setTogglingId(p.id);
+    try {
+      const dto: EditPenggunaDto = {
+        nama: p.nama,
+        email: p.email,
+        peran: p.peran.map(peranPenggunaToInt),
+        is_active: !p.isActive,
+      };
+      await konektorBackend.put(`/api/admin/pengguna/${p.id}`, dto);
+      // Update lokal tanpa refetch penuh
+      setPengguna((prev) =>
+        prev.map((item) =>
+          item.id === p.id ? { ...item, isActive: !p.isActive } : item,
+        ),
+      );
+    } catch (e: any) {
+      setMasterError(e);
+    } finally {
+      setTogglingId(null);
+    }
+  }
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -93,9 +124,7 @@ export default function HalamanDaftarPengguna() {
             <Button
               className="text-sm! ps-2! pe-3! py-2! gap-1! shrink-0"
               leftIcon={<IkonTambah className="h-5" />}
-              onClick={() => {
-                /* TODO: open form */
-              }}
+              onClick={() => navigate("/admin/settings/pengguna/tambah")}
             >
               Add User
             </Button>
@@ -193,24 +222,29 @@ export default function HalamanDaftarPengguna() {
                       <div className="flex items-center gap-2">
                         <button
                           className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-100 transition-colors"
-                          onClick={() => {
-                            /* TODO: open edit form */
-                          }}
+                          onClick={() =>
+                            navigate(`/admin/settings/pengguna/${p.id}/edit`, {
+                              state: { pengguna: p },
+                            })
+                          }
                         >
                           <IkonEdit className="h-3.5 w-3.5" />
                           Edit
                         </button>
-                        {/* Toggle aktif/nonaktif — disabled sampai API tersedia */}
                         <button
-                          disabled
-                          title="Coming soon"
-                          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-xs transition-colors opacity-40 cursor-not-allowed ${
+                          onClick={() => handleToggleAktif(p)}
+                          disabled={togglingId !== null}
+                          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                             p.isActive
-                              ? "border-orange-100 text-orange-600"
-                              : "border-green-100 text-green-600"
+                              ? "border-orange-100 text-orange-600 hover:bg-orange-50"
+                              : "border-green-100 text-green-600 hover:bg-green-50"
                           }`}
                         >
-                          {p.isActive ? "Deactivate" : "Activate"}
+                          {togglingId === p.id
+                            ? "..."
+                            : p.isActive
+                              ? "Deactivate"
+                              : "Activate"}
                         </button>
                       </div>
                     </td>
