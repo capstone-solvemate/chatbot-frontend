@@ -15,7 +15,7 @@ import type {
 import { dtoToTiketAdminDetail, dtoToPesanTiket } from "./dto/converters";
 import type { Route } from "./+types/HalamanDetailTiketAdmin";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Ticket Detail" }];

@@ -13,7 +13,7 @@ import type { ContextType } from "~/dasar/ContextType";
 import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
 import { dtoToFaq } from "./converters";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import FaqDeleteConfirmation from "./FaqDeleteConfirmation";
 import type { GetFaqsRequestDto } from "../dto/GetFaqsRequestDto";
 

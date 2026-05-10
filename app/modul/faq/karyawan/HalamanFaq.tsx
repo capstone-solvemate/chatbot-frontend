@@ -10,7 +10,7 @@ import type { ContextType } from "~/dasar/ContextType";
 import type { GetFaqsResponseDto } from "../admin/daftar/GetFaqsResponseDto";
 import { dtoToFaq } from "../admin/daftar/converters";
 import HalamanLoading from "~/dasar/HalamanLoading";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Route } from "./+types/HalamanFaq";
 import DetailFaq from "./DetailFaq";
 import type { GetFaqsRequestDto } from "../admin/dto/GetFaqsRequestDto";

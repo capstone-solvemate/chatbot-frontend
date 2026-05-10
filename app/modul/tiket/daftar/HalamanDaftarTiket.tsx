@@ -11,7 +11,7 @@ import { dtoToTiket } from "./dto/converters";
 import type { Tiket } from "../Tiket";
 import { StatusTiket } from "../StatusTiket";
 import type { TiketResponseDto } from "./dto/TiketResponseDto";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 
 export type FilterStatus = StatusTiket | "all";

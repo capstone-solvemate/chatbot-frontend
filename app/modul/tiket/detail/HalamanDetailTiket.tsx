@@ -14,7 +14,7 @@ import ConversationCard from "./ConversationCard";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import Navbar from "~/komponen/Navbar";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import { StatusTiket } from "../StatusTiket";
 
 export function meta({}: Route.MetaArgs) {

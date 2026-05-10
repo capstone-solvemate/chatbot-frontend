@@ -7,7 +7,7 @@ import HalamanLoading from "~/dasar/HalamanLoading";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { useOutletContext } from "react-router";
 import type { ContextType } from "~/dasar/ContextType";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Tiket } from "~/modul/tiket/Tiket";
 import type { GetTiketRequestDto } from "../../dto/GetTiketRequestDto";
 import { dtoToTiket } from "../../daftar/dto/converters";

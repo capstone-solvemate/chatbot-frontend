@@ -10,7 +10,7 @@ import KnowledgeBaseStatusBadge from "./KnowledgeBaseStatusBadge";
 import KnowledgeBaseDeleteConfirmation from "./KnowledgeBaseDeleteConfirmation";
 import KnowledgeBaseUploadFormCard from "./KnowledgeBaseUploadFormCard";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Knowledge Base Management" }];

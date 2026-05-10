@@ -6,7 +6,7 @@ import HalamanLoading from "~/dasar/HalamanLoading";
 import { useOutletContext, useNavigate } from "react-router";
 import type { ContextType } from "~/dasar/ContextType";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { BuatTiketRequestDto } from "./dto/BuatTiketRequestDto";
 
 export function meta({}: Route.MetaArgs) {

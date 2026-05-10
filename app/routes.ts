@@ -18,7 +18,6 @@ export default [
       route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
       route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
       route('admin/knowledge-base', 'modul/knowledgebase/ui/HalamanDaftarKnowledgeBaseAdmin.tsx'),
-      route('admin/settings/kategori', 'modul/settings/kategori/daftar/HalamanDaftarKategori.tsx'),
     ]),
     layout('dasar/LayoutGuest.tsx', [
       route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
@@ -30,6 +29,8 @@ export default [
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       layout('modul/settings/SettingsLayout.tsx', [
+        route('admin/settings/kategori', 'modul/settings/kategori/ui/HalamanKategori.tsx'),
+
         route('admin/settings/pengguna', 'modul/settings/pengguna/daftar/ui/HalamanDaftarPengguna.tsx'),
         route('admin/settings/pengguna/tambah', 'modul/settings/pengguna/tambah/ui/HalamanTambahPengguna.tsx'),
         route('admin/settings/pengguna/:id/edit', 'modul/settings/pengguna/edit/ui/HalamanEditPengguna.tsx')

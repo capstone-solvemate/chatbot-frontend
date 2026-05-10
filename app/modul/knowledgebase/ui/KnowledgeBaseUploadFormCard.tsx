@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
-import { dtoToKategori } from "~/modul/settings/kategori/daftar/converters";
+import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 
 interface ValidationError {
   field: string;
