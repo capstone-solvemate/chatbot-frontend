@@ -5,6 +5,8 @@ import type { ContextType } from "~/dasar/ContextType";
 import { useOutletContext } from "react-router";
 import type { SubmitFaqDto } from "../dto/SubmitFaqDto";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 interface Props {
   daftarKategori: Kategori[];
@@ -31,8 +33,8 @@ const FaqFormCard = forwardRef<HTMLDivElement, Props>(
     const [isEditing, setIsEditing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-      useOutletContext();
+    const konektorBackend = useKonektorBackend();
+    const { setMasterError } = useMasterError();
 
     useEffect(() => {
       if (oldFaq !== null) {
