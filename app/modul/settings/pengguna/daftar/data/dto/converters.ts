@@ -11,5 +11,6 @@ export function dtoToPengguna(dto: PenggunaResponseDto): Pengguna {
     dto.peran
       .map((p) => intToPeranPengguna(p))
       .filter((p): p is PeranPengguna => p !== null),
+    dto.isActive
   );
 }

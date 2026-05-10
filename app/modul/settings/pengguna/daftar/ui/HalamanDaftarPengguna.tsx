@@ -6,15 +6,11 @@ import HalamanLoading from "~/dasar/HalamanLoading";
 import { Button } from "~/komponen/Button";
 import IkonTambah from "~/komponen/ikon/IkonTambah";
 import IkonEdit from "~/komponen/ikon/IkonEdit";
-import IkonHapus from "~/komponen/ikon/IkonHapus";
 import type { Pengguna } from "../../data/Pengguna";
 import type { PenggunaResponseDto } from "../data/dto/PenggunaResponseDto";
 import { dtoToPengguna } from "../data/dto/converters";
 import { IkonCari } from "~/komponen/ikon/IkonCari";
 import PeranBadge from "./PeranBadge";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
-import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "User Management" }];
@@ -26,12 +22,7 @@ export default function HalamanDaftarPengguna() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [penggunaAkanDihapus, setPenggunaAkanDihapus] =
-    useState<Pengguna | null>(null);
-  const [menghapus, setMenghapus] = useState(false);
-
-  const konektorBackend = useKonektorBackend();
-  const { setMasterError } = useMasterError();
+  const { konektorBackend, setMasterError }: OutletContext = useOutletContext();
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
 
@@ -63,30 +54,12 @@ export default function HalamanDaftarPengguna() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // ── Delete ─────────────────────────────────────────────────────────────────
-
-  async function handleKonfirmasiHapus() {
-    if (!penggunaAkanDihapus || menghapus) return;
-    setMenghapus(true);
-    try {
-      await konektorBackend.delete(
-        `/api/admin/users/${penggunaAkanDihapus.id}`,
-      );
-      getDaftarPengguna();
-    } catch (e: any) {
-      setMasterError(e);
-    } finally {
-      setMenghapus(false);
-      setPenggunaAkanDihapus(null);
-    }
-  }
-
   // ── Render ─────────────────────────────────────────────────────────────────
 
   if (loading) return <HalamanLoading />;
 
   return (
-    <main className="bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
+    <main className="grow bg-gray-50 text-gray-800 px-6 py-6 min-h-default">
       {/* Page header */}
       <div className="mb-5">
         <h1 className="text-2xl font-bold text-gray-800">User Management</h1>
@@ -120,7 +93,9 @@ export default function HalamanDaftarPengguna() {
             <Button
               className="text-sm! ps-2! pe-3! py-2! gap-1! shrink-0"
               leftIcon={<IkonTambah className="h-5" />}
-              href="/admin/settings/pengguna/tambah"
+              onClick={() => {
+                /* TODO: open form */
+              }}
             >
               Add User
             </Button>
@@ -135,6 +110,7 @@ export default function HalamanDaftarPengguna() {
                 <th className="text-left font-medium px-5 py-3">Name</th>
                 <th className="text-left font-medium px-5 py-3">Email</th>
                 <th className="text-left font-medium px-5 py-3">Role</th>
+                <th className="text-left font-medium px-5 py-3">Status</th>
                 <th className="text-left font-medium px-5 py-3">Actions</th>
               </tr>
             </thead>
@@ -142,7 +118,7 @@ export default function HalamanDaftarPengguna() {
               {pengguna.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="text-center text-gray-400 py-12 text-sm"
                   >
                     No users found.
@@ -157,18 +133,33 @@ export default function HalamanDaftarPengguna() {
                     {/* Name */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        {/* Avatar initial */}
-                        <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-semibold shrink-0">
+                        <div
+                          className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 ${
+                            p.isActive
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
                           {p.nama.charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-medium text-gray-700">
+                        <span
+                          className={`font-medium ${
+                            p.isActive ? "text-gray-700" : "text-gray-400"
+                          }`}
+                        >
                           {p.nama}
                         </span>
                       </div>
                     </td>
 
                     {/* Email */}
-                    <td className="px-5 py-3.5 text-gray-500">{p.email}</td>
+                    <td
+                      className={`px-5 py-3.5 ${
+                        p.isActive ? "text-gray-500" : "text-gray-400"
+                      }`}
+                    >
+                      {p.email}
+                    </td>
 
                     {/* Role badges */}
                     <td className="px-5 py-3.5">
@@ -177,6 +168,24 @@ export default function HalamanDaftarPengguna() {
                           <PeranBadge key={r} peran={r} />
                         ))}
                       </div>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-5 py-3.5">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          p.isActive
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            p.isActive ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                        />
+                        {p.isActive ? "Active" : "Inactive"}
+                      </span>
                     </td>
 
                     {/* Actions */}
@@ -191,12 +200,17 @@ export default function HalamanDaftarPengguna() {
                           <IkonEdit className="h-3.5 w-3.5" />
                           Edit
                         </button>
+                        {/* Toggle aktif/nonaktif — disabled sampai API tersedia */}
                         <button
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-100 text-xs text-red-500 hover:bg-red-50 transition-colors"
-                          onClick={() => setPenggunaAkanDihapus(p)}
+                          disabled
+                          title="Coming soon"
+                          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-xs transition-colors opacity-40 cursor-not-allowed ${
+                            p.isActive
+                              ? "border-orange-100 text-orange-600"
+                              : "border-green-100 text-green-600"
+                          }`}
                         >
-                          <IkonHapus className="h-3.5 w-3.5" />
-                          Delete
+                          {p.isActive ? "Deactivate" : "Activate"}
                         </button>
                       </div>
                     </td>
@@ -214,16 +228,6 @@ export default function HalamanDaftarPengguna() {
           </div>
         )}
       </div>
-
-      {/* Delete confirmation */}
-      {penggunaAkanDihapus && (
-        <DeleteConfirmationModal
-          pengguna={penggunaAkanDihapus}
-          isDeleting={menghapus}
-          onConfirm={handleKonfirmasiHapus}
-          onCancel={() => setPenggunaAkanDihapus(null)}
-        />
-      )}
     </main>
   );
 }
