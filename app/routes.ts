@@ -32,7 +32,7 @@ export default [
       layout('modul/settings/SettingsLayout.tsx', [
         route('admin/settings/pengguna', 'modul/settings/pengguna/daftar/ui/HalamanDaftarPengguna.tsx'),
         route('admin/settings/pengguna/tambah', 'modul/settings/pengguna/tambah/ui/HalamanTambahPengguna.tsx'),
-        route('/admin/settings/pengguna/:id/edit', 'modul/settings/pengguna/edit/ui/HalamanEditPengguna.tsx')
+        route('admin/settings/pengguna/:id/edit', 'modul/settings/pengguna/edit/ui/HalamanEditPengguna.tsx')
       ])
     ]),
   ])
