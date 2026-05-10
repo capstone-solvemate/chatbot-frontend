@@ -9,7 +9,6 @@ export default [
       route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/LayoutKaryawan.tsx', [
-      route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
     ]),
     layout('dasar/LayoutAdmin.tsx', [
@@ -25,6 +24,9 @@ export default [
   layout('dasar/layout/LayoutDasarV2.tsx', [
     layout('dasar/layout/LayoutGuestV2.tsx', [
       route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
+    ]),
+    layout('dasar/layout/LayoutKaryawanV2.tsx', [
+      route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),

@@ -8,5 +8,6 @@ export class Faq {
     public answer: string,
     public jumlahDilihat: number = 0,
     public jumlahHelpful: number = 0,
+    public kategori: Kategori | null = null
   ) { }
 }

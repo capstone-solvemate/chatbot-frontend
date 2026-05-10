@@ -14,6 +14,8 @@ import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Route } from "./+types/HalamanFaq";
 import DetailFaq from "./DetailFaq";
 import type { GetFaqsRequestDto } from "../admin/dto/GetFaqsRequestDto";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Frequently Asked Questions" }];
@@ -24,6 +26,7 @@ export default function FaqPage() {
   const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
 
   const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
+  const [jawabanSurvei, setJawabanSurvei] = useState<boolean | null>(null);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -35,14 +38,13 @@ export default function FaqPage() {
     for (const kategori of data) {
       mapKategori.current.set(kategori.id, kategori);
     }
-
     _setDaftarKategori(data);
   }
 
   const [faqs, setFaqs] = useState<Faq[]>([]);
 
-  const [_a, _b, konektorBackend, _d, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   async function getFaqs() {
     try {
@@ -79,6 +81,23 @@ export default function FaqPage() {
     }
   }
 
+  async function handleSelectFaq(faq: Faq) {
+    setFaqDipilih(faq);
+    setJawabanSurvei(null); // reset state survei sebelum data baru datang
+
+    // POST lihat — fire and forget, tidak perlu tunggu
+    konektorBackend.post(`/api/faqs/${faq.id}/lihat`).catch(() => {});
+
+    // GET survei — update state saat response datang
+    konektorBackend
+      .get(`/api/faqs/${faq.id}/survei`)
+      .then((res) => res.json())
+      .then((data: { jawaban: boolean | null }) =>
+        setJawabanSurvei(data.jawaban),
+      )
+      .catch(() => setJawabanSurvei(null));
+  }
+
   useEffect(() => {
     getFaqs();
   }, [filterKategori]);
@@ -113,11 +132,17 @@ export default function FaqPage() {
           filterKategori={filterKategori}
           onSelectKategori={(kategori) => setFilterKategori(kategori)}
         />
-        <FaqList faqs={faqs} onSelectFaq={(faq) => setFaqDipilih(faq)} />
+        <FaqList faqs={faqs} onSelectFaq={handleSelectFaq} />
       </section>
 
       {faqDipilih && (
-        <DetailFaq faq={faqDipilih} onClose={() => setFaqDipilih(null)} />
+        <DetailFaq
+          faq={faqDipilih}
+          jawabanSurvei={jawabanSurvei}
+          onJawabanSurveiChange={setJawabanSurvei}
+          onClose={() => setFaqDipilih(null)}
+          konektorBackend={konektorBackend}
+        />
       )}
     </main>
   ) : (
