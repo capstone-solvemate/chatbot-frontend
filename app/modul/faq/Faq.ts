@@ -6,6 +6,7 @@ export class Faq {
     public idKategori: number,
     public question: string,
     public answer: string,
-    public kategori: Kategori | null = null
+    public jumlahDilihat: number = 0,
+    public jumlahHelpful: number = 0,
   ) { }
 }

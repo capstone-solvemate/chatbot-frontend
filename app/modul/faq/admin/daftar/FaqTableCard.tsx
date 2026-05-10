@@ -49,6 +49,8 @@ export default function FaqTableCard({
             key={faq.question}
             question={faq.question}
             answer={faq.answer}
+            jumlahDilihat={faq.jumlahDilihat} // tambah ini
+            jumlahHelpful={faq.jumlahHelpful} // tambah ini
             onEdit={() => onEdit(faq)}
             onHapus={() => onHapus(faq)}
           />

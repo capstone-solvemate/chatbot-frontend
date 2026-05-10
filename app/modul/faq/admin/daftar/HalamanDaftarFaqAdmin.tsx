@@ -8,14 +8,14 @@ import type { FormState } from "../FormState";
 import FaqFormCard from "./FaqFormCard";
 import { Faq } from "../../Faq";
 import HalamanLoading from "~/dasar/HalamanLoading";
-import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
 import type { GetFaqsResponseDto } from "./GetFaqsResponseDto";
-import { dtoToFaq } from "./converters";
+import { dtoAdminToFaq } from "./converters";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import FaqDeleteConfirmation from "./FaqDeleteConfirmation";
 import type { GetFaqsRequestDto } from "../dto/GetFaqsRequestDto";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "FAQ Management" }];
@@ -25,8 +25,9 @@ export default function HalamanDaftarFaqAdmin() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [totalFaqs, setTotalFaqs] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
   const [filterKategori, setFilterKategori] = useState<Kategori | null>(null);
@@ -60,7 +61,7 @@ export default function HalamanDaftarFaqAdmin() {
       const response = await konektorBackend.get("/api/admin/faqs", reqData);
       const data = (await response.json()) as GetFaqsResponseDto;
 
-      const faqsBaru = data.faqs.map((dtoFaq) => dtoToFaq(dtoFaq));
+      const faqsBaru = data.faqs.map((dtoFaq) => dtoAdminToFaq(dtoFaq));
       setFaqs(faqsBaru);
 
       setTotalFaqs(data.total);

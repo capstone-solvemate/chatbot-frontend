@@ -14,7 +14,6 @@ export default [
     ]),
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
-      route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
       route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
       route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
       route('admin/knowledge-base', 'modul/knowledgebase/ui/HalamanDaftarKnowledgeBaseAdmin.tsx'),
@@ -28,6 +27,7 @@ export default [
       route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
+      route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
       layout('modul/settings/SettingsLayout.tsx', [
         route('admin/settings/kategori', 'modul/settings/kategori/ui/HalamanKategori.tsx'),
 
