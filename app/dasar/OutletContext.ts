@@ -3,11 +3,14 @@ import type { StateNotifikasi } from "./notifikasi/StateNotifikasi"
 import type { StateOtentikasi } from "./StateOtentikasi"
 
 export type OutletContext = {
-  devMode: boolean, // dev mode
+  devMode: boolean,
   stateOtentikasi: StateOtentikasi,
   konektorBackend: KonektorBackend,
-  setMasterNotifikasi: (notifikasi: any | null) => void, // setMasterNotification
-  setMasterError: (error: any | null) => void, // setMasterError
-  promptLogout: () => void, // prompt logout
-  stateNotifikasi: StateNotifikasi | null // state notifikasi
+  setMasterNotifikasi: (notifikasi: any | null) => void,
+  setMasterError: (error: any | null) => void,
+  promptLogout: () => void,
+  stateNotifikasi: StateNotifikasi | null,
+  loadMoreNotifikasi: () => Promise<void>,
+  markNotifikasiAsRead: (id: bigint) => Promise<void>,
+  markAllNotifikasiAsRead: () => Promise<void>,
 }

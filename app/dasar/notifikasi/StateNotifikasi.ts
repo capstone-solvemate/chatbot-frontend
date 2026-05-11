@@ -2,5 +2,6 @@ import type { Notifikasi } from "./Notifikasi"
 
 export type StateNotifikasi = {
   jumlahBelumDibaca: number,
-  notifikasi: Notifikasi[]
+  notifikasi: Notifikasi[],
+  adaLebihBanyak: boolean,
 }
