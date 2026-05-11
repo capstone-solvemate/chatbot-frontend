@@ -6,6 +6,8 @@ export function dtoToChat(dto: Record<string, any>): Chat {
     String(dto.id),
     dto.subjek,
     new Date(dto.tanggalDibuat),
+    dto.sedangDiproses ?? false,
+    dto.dialihkanKeTiket ?? false,
   );
 }
 
@@ -15,5 +17,6 @@ export function dtoToPesanChat(dto: Record<string, any>): PesanChat {
     dto.pesan,
     dto.chatAsisten,
     new Date(dto.tanggalDibuat),
+    dto.gagal ?? false,
   );
 }

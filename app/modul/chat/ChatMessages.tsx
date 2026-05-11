@@ -8,6 +8,7 @@ type Props = {
   daftarPesanChat: PesanChat[];
   isSending: boolean;
   chat: Chat | null;
+  showTicketAction: boolean;
 };
 
 function formatTime(date: Date): string {
@@ -21,6 +22,7 @@ export default function ChatMessages({
   daftarPesanChat,
   isSending,
   chat,
+  showTicketAction,
 }: Props) {
   return (
     <div className="w-full max-w-3xl mx-auto flex-1 px-8 py-6 space-y-6">
@@ -40,7 +42,6 @@ export default function ChatMessages({
         ),
       )}
 
-      {/* Typing indicator saat menunggu jawaban asisten dari WebSocket */}
       {isSending && (
         <div className="flex gap-3 items-start max-w-xl">
           <div className="w-10 h-10 shrink-0 rounded-full bg-blue-600 flex items-center justify-center text-white">
@@ -56,7 +57,7 @@ export default function ChatMessages({
         </div>
       )}
 
-      {chat && <TicketAction idChat={chat!.id} />}
+      {chat && showTicketAction && <TicketAction idChat={chat.id} />}
     </div>
   );
 }

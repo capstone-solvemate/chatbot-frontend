@@ -31,7 +31,6 @@ export default function HalamanChat() {
   const [loading, setLoading] = useState(true);
   const [daftarChat, setDaftarChat] = useState<Chat[]>([]);
 
-  // chatAktif diturunkan dari daftarChat + idDariUrl — bukan state tersendiri
   const chatAktif = idDariUrl
     ? (daftarChat.find((c) => c.id === idDariUrl) ?? null)
     : null;
@@ -63,10 +62,17 @@ export default function HalamanChat() {
     navigate("/chat");
   }
 
-  // Dipanggil oleh TampilanPesanChat saat chat baru berhasil dibuat
   function handleChatCreated(chat: Chat) {
     setDaftarChat((prev) => [chat, ...prev]);
     navigate(`/chat/${chat.id}`);
+  }
+
+  // Dipanggil TampilanPesanChat saat WS menerima jawaban/error,
+  // agar sedangDiproses di daftarChat ikut terupdate
+  function handleChatUpdated(chatBaru: Chat) {
+    setDaftarChat((prev) =>
+      prev.map((c) => (c.id === chatBaru.id ? chatBaru : c)),
+    );
   }
 
   useEffect(() => {
@@ -96,6 +102,7 @@ export default function HalamanChat() {
             chat={chatAktif}
             expandSidebar={expandSidebar}
             onChatCreated={handleChatCreated}
+            onChatUpdated={handleChatUpdated}
           />
         </div>
       </div>

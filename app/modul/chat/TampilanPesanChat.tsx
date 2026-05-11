@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { useOutletContext, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import ChatInput from "./ChatInput";
 import ChatMessages from "./ChatMessages";
 import { PesanChat } from "./PesanChat";
 import type { Chat } from "./Chat";
-import type { ContextType } from "~/dasar/ContextType";
 import { dtoToChat, dtoToPesanChat } from "./dto/converters";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
@@ -13,49 +12,57 @@ type Props = {
   expandSidebar: boolean;
   chat: Chat | null;
   onChatCreated: (chat: Chat) => void;
+  onChatUpdated: (chat: Chat) => void;
 };
 
-const PESAN_SAMBUTAN = new PesanChat(
-  "0",
-  "Hello! I'm your AI assistant. I can help you with equipment issues, technical questions, and printing problems. How can I assist you today?",
-  true,
-  new Date(),
-);
+function buatPesanSambutan(tanggal: Date): PesanChat {
+  return new PesanChat(
+    "0",
+    "Hello! I'm your AI assistant. I can help you with equipment issues, technical questions, and printing problems. How can I assist you today?",
+    true,
+    tanggal,
+    false,
+  );
+}
 
 export default function TampilanPesanChat({
   expandSidebar,
   chat,
   onChatCreated,
+  onChatUpdated,
 }: Props) {
   const konektorBackend = useKonektorBackend();
   const { setMasterError } = useMasterError();
   const navigate = useNavigate();
 
   const [daftarPesanChat, setDaftarPesanChat] = useState<PesanChat[]>([
-    PESAN_SAMBUTAN,
+    buatPesanSambutan(new Date()),
   ]);
-  const [isSending, setIsSending] = useState(false);
-  const [tiketDisarankan, setTiketDisarankan] = useState(false);
+
+  // isSending lokal: aktif saat request POST sedang berjalan (sebelum WS jawaban tiba)
+  // Digabung dengan chat.sedangDiproses agar saat load ulang halaman
+  // (chat sudah ada tapi WS belum jawab) indikator loading tetap tampil.
+  const [isSendingLokal, setIsSendingLokal] = useState(false);
+  const isSending = isSendingLokal || (chat?.sedangDiproses ?? false);
+
   const [loadingPesan, setLoadingPesan] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
-  // Scroll ke bawah tiap ada pesan baru atau saat menunggu
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [daftarPesanChat, isSending]);
 
-  // Load histori pesan dan setup WebSocket saat chat aktif berubah
   useEffect(() => {
-    // Tutup WebSocket lama jika ada
     if (wsRef.current) {
       wsRef.current.close();
       wsRef.current = null;
     }
 
     if (!chat) {
-      setDaftarPesanChat([PESAN_SAMBUTAN]);
+      setDaftarPesanChat([buatPesanSambutan(new Date())]);
+      setIsSendingLokal(false);
       return;
     }
 
@@ -67,21 +74,19 @@ export default function TampilanPesanChat({
         const pesan: PesanChat[] = (data.pesan ?? []).map((dto: any) =>
           dtoToPesanChat(dto),
         );
-        setDaftarPesanChat([PESAN_SAMBUTAN, ...pesan]);
+        setDaftarPesanChat([buatPesanSambutan(chat!.tanggalDibuat), ...pesan]);
       } catch (e: any) {
         setMasterError(e);
       } finally {
         setLoadingPesan(false);
       }
 
-      // Konek WebSocket setelah load histori
       konekWebSocket(chat!.id);
     }
 
     loadPesanDanKonekWs();
 
     return () => {
-      // Cleanup saat component unmount atau chat berganti
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
@@ -89,10 +94,13 @@ export default function TampilanPesanChat({
     };
   }, [chat?.id]);
 
+  // Saat chat.sedangDiproses berubah jadi true dari luar (e.g. navigasi ke chat
+  // yang masih diproses), pastikan isSendingLokal tidak menghalangi
   useEffect(() => {
-    setTiketDisarankan(chat !== null);
-    console.log(chat !== null);
-  }, [chat]);
+    if (!chat?.sedangDiproses) {
+      setIsSendingLokal(false);
+    }
+  }, [chat?.sedangDiproses]);
 
   function konekWebSocket(idChat: string) {
     const wsBaseUrl = (import.meta.env.VITE_SITE_URL as string)
@@ -111,21 +119,56 @@ export default function TampilanPesanChat({
             const pesanBaru = dtoToPesanChat({
               ...data.pesan,
               chatAsisten: true,
+              gagal: false,
             });
             setDaftarPesanChat((prev) => [...prev, pesanBaru]);
-            setIsSending(false);
+            setIsSendingLokal(false);
+            // Beritahu parent agar sedangDiproses = false di daftarChat
+            if (chat) {
+              onChatUpdated(
+                new (chat.constructor as any)(
+                  chat.id,
+                  chat.subjek,
+                  chat.tanggalDibuat,
+                  false,
+                  chat.dialihkanKeTiket,
+                ),
+              );
+            }
             break;
           }
           case "error": {
-            // Tampilkan pesan error sebagai pesan bot
-            const pesanError = new PesanChat(
-              `err-${Date.now()}`,
-              data.pesan,
-              true,
-              new Date(),
-            );
-            setDaftarPesanChat((prev) => [...prev, pesanError]);
-            setIsSending(false);
+            // Tandai pesan karyawan terakhir sebagai gagal
+            setDaftarPesanChat((prev) => {
+              const lastUserMsgIdx = [...prev]
+                .reverse()
+                .findIndex((p) => !p.chatAsisten);
+              if (lastUserMsgIdx === -1) return prev;
+              const realIdx = prev.length - 1 - lastUserMsgIdx;
+              return prev.map((p, i) =>
+                i === realIdx
+                  ? new PesanChat(
+                      p.id,
+                      p.pesan,
+                      p.chatAsisten,
+                      p.tanggalDibuat,
+                      true,
+                    )
+                  : p,
+              );
+            });
+            setIsSendingLokal(false);
+            if (chat) {
+              onChatUpdated(
+                new (chat.constructor as any)(
+                  chat.id,
+                  chat.subjek,
+                  chat.tanggalDibuat,
+                  false,
+                  chat.dialihkanKeTiket,
+                ),
+              );
+            }
             break;
           }
           case "session_expired": {
@@ -142,83 +185,78 @@ export default function TampilanPesanChat({
       if (event.code === 4001) {
         navigate("/login");
       }
-      // Untuk kode close lain (misal server restart), bisa tambahkan
-      // logika reconnect di sini jika diperlukan
     };
 
     ws.onerror = () => {
-      setIsSending(false);
+      setIsSendingLokal(false);
     };
   }
 
   async function handleSend(text: string) {
     if (isSending) return;
 
-    // Tambahkan pesan user ke UI segera (optimistic)
     const pesanUserOptimistic = new PesanChat(
       `temp-${Date.now()}`,
       text,
       false,
       new Date(),
+      false,
     );
     setDaftarPesanChat((prev) => [...prev, pesanUserOptimistic]);
-    setIsSending(true);
+    setIsSendingLokal(true);
 
     try {
       if (!chat) {
-        // Buat chat baru dengan pesan pertama
         const response = await konektorBackend.post("/api/chat", {
           pesan: text,
         });
         const data = await response.json();
 
-        // Ganti pesan optimistic dengan data server
         const pesanServer = new PesanChat(
           String(data.pesan.id),
           data.pesan.pesan,
           false,
           new Date(data.pesan.tanggalDibuat),
+          false,
         );
-        setDaftarPesanChat([pesanServer]);
 
-        // Buat objek Chat dari response lalu notifikasi parent
-        // GET /api/chat/:id untuk ambil data subjek
         const detailResponse = await konektorBackend.get(
           `/api/chat/${data.idChat}`,
         );
         const detailData = await detailResponse.json();
         const chatBaru = dtoToChat(detailData);
+        setDaftarPesanChat([
+          buatPesanSambutan(chatBaru.tanggalDibuat),
+          pesanServer,
+        ]);
         onChatCreated(chatBaru);
 
-        // Konek WebSocket untuk terima jawaban asisten
         konekWebSocket(data.idChat);
       } else {
-        // Kirim pesan balasan ke chat yang sudah ada
         const response = await konektorBackend.post(`/api/chat/${chat.id}`, {
           pesan: text,
         });
         const data = await response.json();
 
-        // Ganti pesan optimistic dengan data dari server
         const pesanServer = new PesanChat(
           String(data.pesan.id),
           data.pesan.pesan,
           false,
           new Date(data.pesan.tanggalDibuat),
+          false,
         );
         setDaftarPesanChat((prev) => [
           ...prev.filter((p) => p.id !== pesanUserOptimistic.id),
           pesanServer,
         ]);
 
-        // isSending tetap true — akan di-set false saat jawaban WebSocket tiba
+        // isSendingLokal tetap true — akan di-reset saat WS jawaban/error tiba
       }
     } catch (e: any) {
-      // Rollback pesan optimistic jika request gagal
       setDaftarPesanChat((prev) =>
         prev.filter((p) => p.id !== pesanUserOptimistic.id),
       );
-      setIsSending(false);
+      setIsSendingLokal(false);
       setMasterError(e);
     }
   }
@@ -234,6 +272,7 @@ export default function TampilanPesanChat({
           daftarPesanChat={daftarPesanChat}
           isSending={isSending}
           chat={chat}
+          showTicketAction={!isSending}
         />
       )}
 
