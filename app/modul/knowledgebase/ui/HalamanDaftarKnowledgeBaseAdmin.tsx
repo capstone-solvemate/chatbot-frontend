@@ -257,6 +257,7 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
           <ul className="divide-y divide-gray-100">
             {dokumens.map((dokumen) => {
               const namaKategori = getNamaKategori(dokumen.idKategori);
+              const isLocked = dokumen.isPending || dokumen.isProcessing;
               return (
                 <li
                   key={dokumen.id}
@@ -312,7 +313,13 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+                      disabled={isLocked}
+                      title={
+                        isLocked
+                          ? "Not available while document is being processed"
+                          : undefined
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <svg
                         className="w-3.5 h-3.5"
@@ -332,7 +339,13 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
                     <button
                       type="button"
                       onClick={() => setDokumenAkanDihapus(dokumen)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                      disabled={isLocked}
+                      title={
+                        isLocked
+                          ? "Not available while document is being processed"
+                          : undefined
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <svg
                         className="w-3.5 h-3.5"
