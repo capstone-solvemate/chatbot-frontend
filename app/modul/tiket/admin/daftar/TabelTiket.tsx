@@ -114,7 +114,7 @@ export default function TabelTiket({
                     </TableColAdmin>
                     <TableColAdmin>
                       <Link
-                        to={`/admin/tiket/${tiket.id}`}
+                        to={`/admin/tiket/${tiket.idChat}`}
                         className="text-sm text-blue-600 hover:underline"
                       >
                         View

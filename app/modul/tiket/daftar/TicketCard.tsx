@@ -12,6 +12,7 @@ type Props = {
   status: StatusTiket;
   created: string;
   updated: string;
+  idChat: string;
 };
 
 export default function TicketCard({
@@ -22,6 +23,7 @@ export default function TicketCard({
   status,
   created,
   updated,
+  idChat,
 }: Props) {
   function force3Digits(data: string) {
     return data.padStart(3, "0");
@@ -29,7 +31,7 @@ export default function TicketCard({
 
   return (
     <NavLink
-      to={`/tiket/${id}`}
+      to={`/tiket/${idChat}`}
       className="bg-white text-start border border-gray-200 rounded-xl p-6 shadow-sm cursor-pointer hover:border-blue-100 hover:shadow-md hover:shadow-neutral-400"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 mb-6 sm:mb-2">

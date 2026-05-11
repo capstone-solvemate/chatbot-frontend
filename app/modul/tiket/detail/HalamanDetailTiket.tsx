@@ -94,7 +94,7 @@ export default function HalamanDetailTiket() {
           <>
             <TicketDetailCard tiket={tiket} />
             <ConversationCard
-              idTiket={tiket.id}
+              idChat={tiket.idChat}
               pesanTiket={pesanTiket}
               status={tiket.status}
               onPesanTerkirim={handlePesanTerkirim}

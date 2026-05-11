@@ -12,7 +12,7 @@ import { dtoToPesanTiket } from "../daftar/dto/converters";
 import { StatusTiket } from "../StatusTiket";
 
 type Props = {
-  idTiket: string;
+  idChat: string;
   pesanTiket: PesanTiket[];
   status: StatusTiket;
   onPesanTerkirim: (pesan: PesanTiket) => void;
@@ -20,7 +20,7 @@ type Props = {
 };
 
 export default function ConversationCard({
-  idTiket,
+  idChat,
   pesanTiket,
   status,
   onPesanTerkirim,
@@ -37,7 +37,7 @@ export default function ConversationCard({
   async function handleKirim(teks: string) {
     try {
       const response = await konektorBackend.post(
-        `/api/tiket/${idTiket}/pesan`,
+        `/api/tiket/${idChat}/pesan`,
         { pesan: teks },
       );
       const body = (await response.json()) as {
@@ -51,7 +51,7 @@ export default function ConversationCard({
   }
 
   async function handleResolve() {
-    await konektorBackend.patch(`/api/tiket/${idTiket}/status`, { status: 3 });
+    await konektorBackend.patch(`/api/tiket/${idChat}/status`, { status: 3 });
     onResolved();
   }
 

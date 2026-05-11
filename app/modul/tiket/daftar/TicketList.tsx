@@ -33,6 +33,7 @@ export default function TicketList({ tikets }: Props) {
           status={tiket.status}
           created={`Created ${formatRelative(tiket.dibuatPada)}`}
           updated={`Updated ${formatRelative(tiket.diperbaruiPada)}`}
+          idChat={tiket.idChat}
         />
       ))}
     </div>
