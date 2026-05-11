@@ -64,7 +64,6 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
     const resp = await konektorBackend.get("/api/notifikasi", params);
     const respData: GetNotifikasiResponseDto = await resp.json();
-    console.log(respData.notifikasi);
     const notifikasiBaru = respData.notifikasi.map((dto) =>
       dtoToNotifikasi(dto),
     );
