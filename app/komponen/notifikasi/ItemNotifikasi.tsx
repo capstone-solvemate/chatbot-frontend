@@ -2,6 +2,8 @@ import { useNavigate } from "react-router";
 import type { Notifikasi } from "~/dasar/notifikasi/Notifikasi";
 import { NotifikasiTiket } from "~/dasar/notifikasi/NotifikasiTiket";
 import { useAppContext } from "~/dasar/hooks/useAppContext";
+import { useStateOtentikasi } from "~/dasar/hooks/useStateOtentikasi";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 
 type Props = {
   notifikasi: Notifikasi;
@@ -26,6 +28,7 @@ function formatWaktu(date: Date): string {
 export default function ItemNotifikasi({ notifikasi }: Props) {
   const navigate = useNavigate();
   const { markNotifikasiAsRead } = useAppContext();
+  const stateOtentikasi = useStateOtentikasi();
 
   const isClickable = notifikasi instanceof NotifikasiTiket;
   const sudahDibaca = notifikasi.dibacaPada !== null;
@@ -35,7 +38,11 @@ export default function ItemNotifikasi({ notifikasi }: Props) {
       await markNotifikasiAsRead(notifikasi.id);
     }
     if (notifikasi instanceof NotifikasiTiket) {
-      navigate(`/tiket/${notifikasi.idTiket}`);
+      if (stateOtentikasi.pengguna?.peran === PeranPengguna.Admin) {
+        navigate(`/admin/tiket/${notifikasi.idTiket}`);
+      } else {
+        navigate(`/tiket/${notifikasi.idTiket}`);
+      }
     }
   }
 

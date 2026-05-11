@@ -2,7 +2,7 @@ import { Notifikasi } from "./Notifikasi";
 import { NotifikasiTiket } from "./NotifikasiTiket";
 
 export function dtoToNotifikasi(dto: Record<string, any>): Notifikasi {
-  if (dto.type === 2) {
+  if (dto.type === 2 && dto.extraData?.idTiket) {
     return new NotifikasiTiket(
       BigInt(dto.id),
       dto.idPengguna,
@@ -10,7 +10,7 @@ export function dtoToNotifikasi(dto: Record<string, any>): Notifikasi {
       dto.deskripsi,
       new Date(dto.dibuatPada),
       dto.dibacaPada ? new Date(dto.dibacaPada) : null,
-      BigInt(dto.idTiket),
+      BigInt(dto.extraData.idTiket),
     );
   }
 

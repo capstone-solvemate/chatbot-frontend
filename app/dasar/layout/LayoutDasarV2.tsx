@@ -64,6 +64,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
     const resp = await konektorBackend.get("/api/notifikasi", params);
     const respData: GetNotifikasiResponseDto = await resp.json();
+    console.log(respData.notifikasi);
     const notifikasiBaru = respData.notifikasi.map((dto) =>
       dtoToNotifikasi(dto),
     );
@@ -319,13 +320,15 @@ export default function LayoutDasarV2(): React.JSX.Element {
           )}
           {/* Toast realtime dari WS */}
           <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 items-end pointer-events-none">
-            {toastList.map((notifikasi) => (
-              <ToastNotifikasi
-                key={notifikasi.id.toString()}
-                notifikasi={notifikasi}
-                onDismiss={() => dismissToast(notifikasi.id)}
-              />
-            ))}
+            {stateOtentikasi.pengguna &&
+              toastList.map((notifikasi) => (
+                <ToastNotifikasi
+                  peran={stateOtentikasi.pengguna!.peran}
+                  key={notifikasi.id.toString()}
+                  notifikasi={notifikasi}
+                  onDismiss={() => dismissToast(notifikasi.id)}
+                />
+              ))}
           </div>
         </>
       )}

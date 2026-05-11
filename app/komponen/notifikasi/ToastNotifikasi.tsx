@@ -4,15 +4,21 @@ import { NotifikasiTiket } from "~/dasar/notifikasi/NotifikasiTiket";
 import { IkonNotifikasi } from "~/komponen/ikon/IkonNotifikasi";
 import { useNavigate } from "react-router";
 import IkonTutup from "../ikon/IkonTutup";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 
 const TOAST_DURATION_MS = 5000;
 
 type Props = {
   notifikasi: Notifikasi;
   onDismiss: () => void;
+  peran: PeranPengguna;
 };
 
-export default function ToastNotifikasi({ notifikasi, onDismiss }: Props) {
+export default function ToastNotifikasi({
+  notifikasi,
+  onDismiss,
+  peran,
+}: Props) {
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [exiting, setExiting] = useState(false);
@@ -58,7 +64,11 @@ export default function ToastNotifikasi({ notifikasi, onDismiss }: Props) {
 
   const handleClick = () => {
     if (notifikasi instanceof NotifikasiTiket) {
-      navigate(`/tiket/${notifikasi.idTiket}`);
+      if (peran === PeranPengguna.Admin) {
+        navigate(`/admin/tiket/${notifikasi.idTiket}`);
+      } else {
+        navigate(`/tiket/${notifikasi.idTiket}`);
+      }
     }
     dismiss();
   };
