@@ -11,6 +11,8 @@ import KnowledgeBaseDeleteConfirmation from "./KnowledgeBaseDeleteConfirmation";
 import KnowledgeBaseUploadFormCard from "./KnowledgeBaseUploadFormCard";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Knowledge Base Management" }];
@@ -32,8 +34,8 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
   const formRef = useRef<HTMLDivElement>(null);
 
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   // — Debounce search 500ms —
   useEffect(() => {
