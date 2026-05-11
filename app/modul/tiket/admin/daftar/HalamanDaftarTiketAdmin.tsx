@@ -2,7 +2,7 @@ import type React from "react";
 import type { Route } from "./+types/HalamanDaftarTiketAdmin";
 import PageHeader from "./PageHeader";
 import TabelTiket from "./TabelTiket";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { useOutletContext } from "react-router";
@@ -11,6 +11,8 @@ import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Tiket } from "~/modul/tiket/Tiket";
 import type { GetTiketRequestDto } from "../../dto/GetTiketRequestDto";
 import { dtoToTiket } from "../../daftar/dto/converters";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Ticket Management" }];
@@ -20,8 +22,8 @@ export default function HalamanDaftarTiketAdmin(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
   const [tikets, setTikets] = useState<Tiket[]>([]);
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   // Filter state
   const [search, setSearch] = useState("");

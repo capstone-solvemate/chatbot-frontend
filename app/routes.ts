@@ -2,14 +2,8 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 
 export default [
   layout('dasar/LayoutDasar.tsx', [
-    layout('dasar/LayoutKaryawanLegacy.tsx', [
-      route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
-      route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
-    ]),
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
-      route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
-      route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
     ]),
     layout('dasar/LayoutGuest.tsx', [
       route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
@@ -25,9 +19,13 @@ export default [
       route("chat", "modul/chat/HalamanChatBaru.tsx"),
       route("chat/:id", "modul/chat/HalamanChat.tsx"),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
+      route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
+      route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
+      route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
+      route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
       route('admin/knowledge-base', 'modul/knowledgebase/ui/HalamanDaftarKnowledgeBaseAdmin.tsx'),
       layout('modul/settings/SettingsLayout.tsx', [
         route('admin/settings/kategori', 'modul/settings/kategori/ui/HalamanKategori.tsx'),

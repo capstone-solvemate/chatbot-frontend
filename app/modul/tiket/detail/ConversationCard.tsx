@@ -10,6 +10,9 @@ import type { ContextType } from "~/dasar/ContextType";
 import type { PesanTiketResponseDto } from "../daftar/dto/TiketResponseDto";
 import { dtoToPesanTiket } from "../daftar/dto/converters";
 import { StatusTiket } from "../StatusTiket";
+import { useStateOtentikasi } from "~/dasar/hooks/useStateOtentikasi";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 type Props = {
   idChat: string;
@@ -26,13 +29,9 @@ export default function ConversationCard({
   onPesanTerkirim,
   onResolved,
 }: Props) {
-  const [
-    _a,
-    stateOtentikasi,
-    konektorBackend,
-    _c,
-    setMasterError,
-  ]: ContextType = useOutletContext();
+  const stateOtentikasi = useStateOtentikasi();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   async function handleKirim(teks: string) {
     try {

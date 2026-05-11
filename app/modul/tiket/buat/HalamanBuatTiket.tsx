@@ -3,11 +3,12 @@ import TicketCard from "./TicketCard";
 import type { Route } from "./+types/HalamanBuatTiket";
 import { useEffect, useState } from "react";
 import HalamanLoading from "~/dasar/HalamanLoading";
-import { useOutletContext, useNavigate } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { BuatTiketRequestDto } from "./dto/BuatTiketRequestDto";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
+import { useNavigate } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Create Support Ticket" }];
@@ -18,8 +19,8 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
 
   useEffect(() => {
@@ -51,9 +52,8 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
   return loading ? (
     <HalamanLoading />
   ) : (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-100 px-6 pb-8 pt-28">
+    <main className="min-h-default">
+      <div className="min-h-screen bg-gray-100 px-6 py-8">
         <div className="flex justify-center px-4">
           <TicketCard
             daftarKategori={daftarKategori}
@@ -62,6 +62,6 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
           />
         </div>
       </div>
-    </>
+    </main>
   );
 }

@@ -16,6 +16,8 @@ import { dtoToTiketAdminDetail, dtoToPesanTiket } from "./dto/converters";
 import type { Route } from "./+types/HalamanDetailTiketAdmin";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Ticket Detail" }];
@@ -300,8 +302,8 @@ function SeksiHumanSupport({
 
 export default function HalamanDetailTiketAdmin() {
   const { id } = useParams<{ id: string }>();
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [tiket, setTiket] = useState<TiketAdminDetail | null>(null);
   const [loading, setLoading] = useState(true);

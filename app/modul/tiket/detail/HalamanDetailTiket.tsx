@@ -16,6 +16,8 @@ import Navbar from "~/komponen/Navbar";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import { StatusTiket } from "../StatusTiket";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Detail Tiket" }];
@@ -23,8 +25,8 @@ export function meta({}: Route.MetaArgs) {
 
 export default function HalamanDetailTiket() {
   const { idtiket } = useParams<{ idtiket: string }>();
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [tiket, setTiket] = useState<Tiket | null>(null);
   const [pesanTiket, setPesanTiket] = useState<PesanTiket[]>([]); // ← baru
@@ -85,9 +87,8 @@ export default function HalamanDetailTiket() {
   if (loading) return <HalamanLoading />;
 
   return (
-    <div className="bg-white min-h-screen">
-      <Navbar />
-      <div className="max-w-4xl mx-auto px-6 pb-8 pt-28 space-y-6">
+    <main className="bg-white min-h-default">
+      <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
         <BackToTicketsLink />
 
         {tiket && (
@@ -103,6 +104,6 @@ export default function HalamanDetailTiket() {
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }
