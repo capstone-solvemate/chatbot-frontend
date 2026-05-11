@@ -13,6 +13,8 @@ import { StatusTiket } from "../StatusTiket";
 import type { TiketResponseDto } from "./dto/TiketResponseDto";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export type FilterStatus = StatusTiket | "all";
 
@@ -21,8 +23,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function HalamanDaftarTiket() {
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [tikets, setTikets] = useState<Tiket[]>([]);
   const [loading, setLoading] = useState(true);

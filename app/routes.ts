@@ -6,9 +6,6 @@ export default [
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
     ]),
-    layout('dasar/LayoutKaryawan.tsx', [
-      route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
-    ]),
     layout('dasar/LayoutAdmin.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
       route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
@@ -28,6 +25,7 @@ export default [
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
       route("chat", "modul/chat/HalamanChatBaru.tsx"),
       route("chat/:id", "modul/chat/HalamanChat.tsx"),
+      route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
