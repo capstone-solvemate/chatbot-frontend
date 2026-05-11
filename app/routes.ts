@@ -26,7 +26,7 @@ export default [
     layout('dasar/layout/LayoutKaryawanV2.tsx', [
       index("modul/home/HalamanHome.tsx"),
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
-      route("chat", "modul/chat/HalamanChat.tsx"),
+      route("chat", "modul/chat/HalamanChatBaru.tsx"),
       route("chat/:id", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [

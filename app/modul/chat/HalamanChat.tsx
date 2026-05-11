@@ -1,6 +1,7 @@
 import PageHeader from "./PageHeader";
 import type { Route } from "./+types/HalamanChat";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import ChatSidebar from "./ChatSidebar";
 import type { Chat } from "./Chat";
 import HalamanLoading from "~/dasar/HalamanLoading";
@@ -16,6 +17,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function HalamanChat() {
+  const { id: idDariUrl } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
+
   const oldExpandSidebarConfig = localStorage.getItem(KEY_LS_EXPAND_SIDEBAR);
   const [expandSidebar, _setExpandSidebar] = useState(
     oldExpandSidebarConfig === "1",
@@ -26,7 +30,11 @@ export default function HalamanChat() {
 
   const [loading, setLoading] = useState(true);
   const [daftarChat, setDaftarChat] = useState<Chat[]>([]);
-  const [chatAktif, setChatAktif] = useState<Chat | null>(null);
+
+  // chatAktif diturunkan dari daftarChat + idDariUrl — bukan state tersendiri
+  const chatAktif = idDariUrl
+    ? (daftarChat.find((c) => c.id === idDariUrl) ?? null)
+    : null;
 
   async function getDaftarChat() {
     try {
@@ -47,10 +55,18 @@ export default function HalamanChat() {
     });
   }
 
+  function handleSelectChat(chat: Chat) {
+    navigate(`/chat/${chat.id}`);
+  }
+
+  function handleNewChat() {
+    navigate("/chat");
+  }
+
   // Dipanggil oleh TampilanPesanChat saat chat baru berhasil dibuat
   function handleChatCreated(chat: Chat) {
-    setChatAktif(chat);
     setDaftarChat((prev) => [chat, ...prev]);
+    navigate(`/chat/${chat.id}`);
   }
 
   useEffect(() => {
@@ -69,8 +85,8 @@ export default function HalamanChat() {
             daftarChat={daftarChat}
             expand={expandSidebar}
             chatAktifId={chatAktif?.id ?? null}
-            onSelectChat={(chat) => setChatAktif(chat)}
-            onNewChat={() => setChatAktif(null)}
+            onSelectChat={handleSelectChat}
+            onNewChat={handleNewChat}
           />
           <div
             className={`${expandSidebar ? "w-64" : "w-0"} shrink-0 transition-all ease-out`}
