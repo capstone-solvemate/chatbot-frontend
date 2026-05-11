@@ -282,6 +282,7 @@ export default function TampilanPesanChat({
         expandSidebar={expandSidebar}
         onSend={handleSend}
         isSending={isSending}
+        dialihkanKeTiket={chat?.dialihkanKeTiket ?? false}
       />
     </div>
   );

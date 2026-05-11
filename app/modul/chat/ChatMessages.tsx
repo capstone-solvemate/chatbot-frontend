@@ -57,7 +57,12 @@ export default function ChatMessages({
         </div>
       )}
 
-      {chat && showTicketAction && <TicketAction idChat={chat.id} />}
+      {chat && (chat.dialihkanKeTiket || showTicketAction) && (
+        <TicketAction
+          idChat={chat.id}
+          dialihkanKeTiket={chat.dialihkanKeTiket}
+        />
+      )}
     </div>
   );
 }
