@@ -42,7 +42,7 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
       const response = await konektorBackend.post("/api/tiket", payload);
       const data = await response.json();
       // Navigasi ke halaman detail tiket setelah berhasil dibuat
-      navigate(`/tiket/${data.data.id}`);
+      navigate(`/tiket/${payload.idChat}`);
     } catch (e: any) {
       setMasterError(e);
     }
