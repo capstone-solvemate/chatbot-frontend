@@ -21,6 +21,10 @@ export default function StatusKnowledgeBaseBadge({ status }: Props) {
       label: "Pending",
       className: "bg-gray-100 text-gray-600",
     },
+    [StatusKnowledgeBase.GagalDiproses]: {
+      label: "Failed",
+      className: "bg-red-100 text-red-600",
+    },
   };
 
   const { label, className } = config[status];

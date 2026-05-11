@@ -2,6 +2,7 @@ export enum StatusKnowledgeBase {
   BelumDiproses,
   SedangDiproses,
   SelesaiDiproses,
+  GagalDiproses
 }
 
 export function intToStatusKnowledgeBase(value: number): StatusKnowledgeBase {
@@ -10,6 +11,8 @@ export function intToStatusKnowledgeBase(value: number): StatusKnowledgeBase {
       return StatusKnowledgeBase.SedangDiproses;
     case 3:
       return StatusKnowledgeBase.SelesaiDiproses;
+    case 4:
+      return StatusKnowledgeBase.GagalDiproses;
     default:
       return StatusKnowledgeBase.BelumDiproses;
   }
