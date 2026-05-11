@@ -1,14 +1,13 @@
 import PageHeader from "./PageHeader";
-import Navbar from "~/komponen/Navbar";
 import type { Route } from "./+types/HalamanChat";
 import { useEffect, useState } from "react";
 import ChatSidebar from "./ChatSidebar";
-import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
 import type { Chat } from "./Chat";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import { dtoToChat } from "./dto/converters";
 import TampilanPesanChat from "./TampilanPesanChat";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
@@ -22,8 +21,8 @@ export default function HalamanChat() {
     oldExpandSidebarConfig === "1",
   );
 
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [loading, setLoading] = useState(true);
   const [daftarChat, setDaftarChat] = useState<Chat[]>([]);
@@ -61,9 +60,7 @@ export default function HalamanChat() {
   }, []);
 
   return !loading ? (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
+    <div className="min-h-default bg-gray-50">
       <div className="pb-6 pt-36">
         <PageHeader onToggleExpand={toggleExpandSidebar} />
 

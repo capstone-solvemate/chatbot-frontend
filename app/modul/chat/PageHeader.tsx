@@ -1,13 +1,12 @@
-import { useOutletContext } from "react-router";
-import ChatSidebarItem from "./ChatSidebarItem";
 import IkonPerlebar from "~/komponen/ikon/IkonPerlebar";
+import { useDevMode } from "~/dasar/hooks/useDevMode";
 
 type Props = {
   onToggleExpand: () => void;
 };
 
 export default function PageHeader({ onToggleExpand }: Props) {
-  const [devMode]: [boolean] = useOutletContext();
+  const devMode = useDevMode();
 
   return (
     <div

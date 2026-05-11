@@ -6,6 +6,8 @@ import { PesanChat } from "./PesanChat";
 import type { Chat } from "./Chat";
 import type { ContextType } from "~/dasar/ContextType";
 import { dtoToChat, dtoToPesanChat } from "./dto/converters";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 type Props = {
   expandSidebar: boolean;
@@ -25,8 +27,8 @@ export default function TampilanPesanChat({
   chat,
   onChatCreated,
 }: Props) {
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
   const navigate = useNavigate();
 
   const [daftarPesanChat, setDaftarPesanChat] = useState<PesanChat[]>([

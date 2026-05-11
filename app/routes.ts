@@ -5,7 +5,6 @@ export default [
     layout('dasar/LayoutKaryawanLegacy.tsx', [
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
-      route("chat", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/LayoutKaryawan.tsx', [
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
@@ -27,6 +26,8 @@ export default [
     layout('dasar/layout/LayoutKaryawanV2.tsx', [
       index("modul/home/HalamanHome.tsx"),
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
+      route("chat", "modul/chat/HalamanChat.tsx"),
+      route("chat/:id", "modul/chat/HalamanChat.tsx"),
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),

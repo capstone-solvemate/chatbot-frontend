@@ -1,8 +1,8 @@
 import IkonEdit from "~/komponen/ikon/IkonEdit";
 import ChatSidebarItem from "./ChatSidebarItem";
 import IkonChatBubbleBerisi from "~/komponen/ikon/IkonChatBubbleBerisi";
-import { useOutletContext } from "react-router";
 import type { Chat } from "./Chat";
+import { useDevMode } from "~/dasar/hooks/useDevMode";
 
 type Props = {
   expand: boolean;
@@ -19,12 +19,12 @@ export default function ChatSidebar({
   onSelectChat,
   onNewChat,
 }: Props) {
-  const [devMode]: [boolean] = useOutletContext();
+  const devMode = useDevMode();
 
   return (
     <div
-      className={`fixed z-40 left-0 ${expand ? "w-64" : "w-0"} overflow-y-auto overflow-x-hidden shrink-0 border-r bg-white border-gray-200 flex flex-col transition-all ease-out`}
-      style={{ height: `calc(100vh - ${devMode ? "10.75" : "9"}rem)` }}
+      className={`fixed ${devMode ? "top-40 pt-3" : "top-32 pt-4"}  z-20 left-0 ${expand ? "w-64" : "w-0"} overflow-y-auto overflow-x-hidden shrink-0 border-r bg-white border-gray-200 flex flex-col transition-all ease-out`}
+      style={{ height: `calc(100vh - ${devMode ? "10" : "8"}rem)` }}
     >
       <ChatSidebarItem
         icon={<IkonEdit className="w-5" />}
