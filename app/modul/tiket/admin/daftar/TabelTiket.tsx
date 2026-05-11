@@ -49,7 +49,7 @@ export default function TabelTiket({
   onChangeKategori,
 }: Props): React.JSX.Element {
   return (
-    <section className="mt-4">
+    <section className="mt-8">
       <CardListAdmin>
         <FilterTiket
           daftarKategori={daftarKategori}
@@ -61,71 +61,76 @@ export default function TabelTiket({
           onChangeKategori={onChangeKategori}
         />
 
-        <TableAdmin className="mt-8">
-          <TableHeaderAdmin>
-            <tr>
-              <TableHeadColAdmin>TICKET ID</TableHeadColAdmin>
-              <TableHeadColAdmin>TITLE</TableHeadColAdmin>
-              <TableHeadColAdmin>USER</TableHeadColAdmin>
-              <TableHeadColAdmin>CATEGORY</TableHeadColAdmin>
-              <TableHeadColAdmin>STATUS</TableHeadColAdmin>
-              <TableHeadColAdmin>LAST UPDATE</TableHeadColAdmin>
-              <TableHeadColAdmin>ACTIONS</TableHeadColAdmin>
-            </tr>
-          </TableHeaderAdmin>
-          <tbody>
-            {tikets.length === 0 ? (
+        <div className="mt-8 overflow-x-auto">
+          <TableAdmin>
+            <TableHeaderAdmin>
               <tr>
-                <TableColAdmin
-                  className="italic text-center text-gray-500 text-sm"
-                  colSpan={7}
-                >
-                  No Data
-                </TableColAdmin>
+                <TableHeadColAdmin>TICKET ID</TableHeadColAdmin>
+                <TableHeadColAdmin>TITLE</TableHeadColAdmin>
+                <TableHeadColAdmin>USER</TableHeadColAdmin>
+                <TableHeadColAdmin>CATEGORY</TableHeadColAdmin>
+                <TableHeadColAdmin>STATUS</TableHeadColAdmin>
+                <TableHeadColAdmin>LAST UPDATE</TableHeadColAdmin>
+                <TableHeadColAdmin>ACTIONS</TableHeadColAdmin>
               </tr>
-            ) : (
-              tikets.map((tiket) => {
-                const kategori = daftarKategori.find(
-                  (k) => k.id === tiket.idKategori,
-                );
-                return (
-                  <tr key={tiket.id} className="hover:bg-gray-50">
-                    <TableColAdmin className="text-sm font-mono text-gray-500">
-                      #{tiket.id.padStart(3, "0")}
-                    </TableColAdmin>
-                    <TableColAdmin className="text-sm font-medium max-w-xs truncate">
-                      {tiket.judul}
-                    </TableColAdmin>
-                    <TableColAdmin className="text-sm text-gray-600">
-                      {tiket.namaPembuat || ""}
-                    </TableColAdmin>
-                    <TableColAdmin className="text-sm text-gray-600">
-                      {kategori?.nama ?? "-"}
-                    </TableColAdmin>
-                    <TableColAdmin>
-                      <StatusBadge status={tiket.status} />
-                    </TableColAdmin>
-                    <TableColAdmin className="text-sm text-gray-500">
-                      {tiket.diperbaruiPada.toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </TableColAdmin>
-                    <TableColAdmin>
-                      <Link
-                        to={`/admin/tiket/${tiket.idChat}`}
-                        className="text-sm text-blue-600 hover:underline"
+            </TableHeaderAdmin>
+            <tbody>
+              {tikets.length === 0 ? (
+                <tr>
+                  <TableColAdmin
+                    className="italic text-center text-gray-500 text-sm"
+                    colSpan={7}
+                  >
+                    No Data
+                  </TableColAdmin>
+                </tr>
+              ) : (
+                tikets.map((tiket) => {
+                  const kategori = daftarKategori.find(
+                    (k) => k.id === tiket.idKategori,
+                  );
+                  return (
+                    <tr key={tiket.id} className="hover:bg-gray-50">
+                      <TableColAdmin className="text-sm font-mono text-gray-500">
+                        #{tiket.id.padStart(3, "0")}
+                      </TableColAdmin>
+                      <TableColAdmin
+                        wrap
+                        className="text-sm font-medium max-w-xs truncate"
                       >
-                        View
-                      </Link>
-                    </TableColAdmin>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </TableAdmin>
+                        {tiket.judul}
+                      </TableColAdmin>
+                      <TableColAdmin className="text-sm text-gray-600">
+                        {tiket.namaPembuat || ""}
+                      </TableColAdmin>
+                      <TableColAdmin className="text-sm text-gray-600">
+                        {kategori?.nama ?? "-"}
+                      </TableColAdmin>
+                      <TableColAdmin>
+                        <StatusBadge status={tiket.status} />
+                      </TableColAdmin>
+                      <TableColAdmin className="text-sm text-gray-500">
+                        {tiket.diperbaruiPada.toLocaleDateString("id-ID", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </TableColAdmin>
+                      <TableColAdmin>
+                        <Link
+                          to={`/admin/tiket/${tiket.idChat}`}
+                          className="text-sm text-gray-600 border border-gray-200 py-2 px-4 rounded-md hover:bg-gray-200"
+                        >
+                          View Detail
+                        </Link>
+                      </TableColAdmin>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </TableAdmin>
+        </div>
       </CardListAdmin>
     </section>
   );
