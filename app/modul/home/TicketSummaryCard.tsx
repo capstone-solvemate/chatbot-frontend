@@ -8,9 +8,11 @@ type TicketSummaryCardProps = {
   open: number;
   inProgress: number;
   resolved: number;
+  loading: boolean;
 };
 
 export default function TicketSummaryCard({
+  loading,
   open,
   inProgress,
   resolved,
@@ -22,6 +24,7 @@ export default function TicketSummaryCard({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <TicketStatItem
           value={open}
+          loading={loading}
           label="Open"
           icon={<IkonExclamationCircle />}
           color="orange"
@@ -29,6 +32,7 @@ export default function TicketSummaryCard({
 
         <TicketStatItem
           value={inProgress}
+          loading={loading}
           label="In Progress"
           icon={<IkonJam />}
           color="blue"
@@ -36,6 +40,7 @@ export default function TicketSummaryCard({
 
         <TicketStatItem
           value={resolved}
+          loading={loading}
           label="Resolved"
           icon={<IkonDone />}
           color="green"

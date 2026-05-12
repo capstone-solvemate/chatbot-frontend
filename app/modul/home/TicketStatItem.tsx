@@ -3,6 +3,7 @@ type TicketStatItemProps = {
   label: string;
   icon: React.ReactNode;
   color: "orange" | "blue" | "green";
+  loading: boolean;
 };
 
 const colorMap = {
@@ -16,6 +17,7 @@ export default function TicketStatItem({
   label,
   icon,
   color,
+  loading,
 }: TicketStatItemProps) {
   return (
     <div className="bg-gray-50 rounded-lg p-4 text-center">
@@ -25,7 +27,9 @@ export default function TicketStatItem({
         {icon}
       </div>
 
-      <div className="text-lg font-semibold text-gray-900">{value}</div>
+      <div className="text-lg font-semibold text-gray-900">
+        {loading ? "" : value}
+      </div>
 
       <div className="text-xs text-gray-500">{label}</div>
     </div>
