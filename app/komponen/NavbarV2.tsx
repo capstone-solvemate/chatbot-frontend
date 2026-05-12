@@ -35,7 +35,7 @@ export default function NavbarV2() {
 
   return (
     <header
-      className={`w-full border-b border-gray-200 bg-white fixed ${devMode ? "top-7" : "top-0"} left-0 z-40`}
+      className={`w-full border-b border-gray-200 bg-white fixed ${devMode ? "top-7" : "top-0"} left-0 z-40 print:hidden`}
     >
       <div className="mx-auto flex h-16 items-center justify-between px-6">
         {/* Left */}
@@ -79,7 +79,10 @@ export default function NavbarV2() {
                 >
                   FAQ Management
                 </NavItem>
-                <NavItem icon={<IkonBot height={16} />}>
+                <NavItem
+                  href="/admin/chatbot-monitoring"
+                  icon={<IkonBot height={16} />}
+                >
                   Chatbot Monitoring
                 </NavItem>
                 <NavItem

@@ -21,6 +21,7 @@ export default [
     ]),
     layout('dasar/layout/LayoutAdminV2.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
+      route('admin/chatbot-monitoring', 'modul/chatbot-monitoring/ui/HalamanChatbotMonitoring.tsx'),
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),
       route('admin/tiket', 'modul/tiket/admin/daftar/HalamanDaftarTiketAdmin.tsx'),
       route('admin/tiket/:id', 'modul/tiket/admin/detail/HalamanDetailTiketAdmin.tsx'),
