@@ -7,6 +7,8 @@ import IkonDeflection from "~/komponen/ikon/IkonDeflection";
 type Props = {
   totalTiket: number | null;
   tiketTerbuka: number | null;
+  deflectionRate: number | null;
+  totalSesiChat: number | null;
   isLoading: boolean;
 };
 
@@ -17,6 +19,8 @@ function formatNumber(value: number): string {
 export default function StatsGrid({
   totalTiket,
   tiketTerbuka,
+  deflectionRate,
+  totalSesiChat,
   isLoading,
 }: Props) {
   const skeleton = "—";
@@ -31,21 +35,20 @@ export default function StatsGrid({
         isLoading={isLoading}
       />
 
-      {/* Deflection Rate and Chatbot Usage are not yet from WebSocket — kept as static placeholders */}
       <StatCard
         icon={<IkonDeflection className="w-4 h-4 text-green-600" />}
         label="Deflection Rate"
-        value="—"
+        value={isLoading ? skeleton : `${deflectionRate!}%`}
         subtitle="Resolved via FAQ/AI"
-        isLoading={false}
+        isLoading={isLoading}
       />
 
       <StatCard
         icon={<IkonBot className="w-4 h-4 text-purple-600" />}
         label="Chatbot Usage"
-        value="—"
+        value={isLoading ? skeleton : formatNumber(totalSesiChat!)}
         subtitle="Sessions"
-        isLoading={false}
+        isLoading={isLoading}
       />
 
       <StatCard

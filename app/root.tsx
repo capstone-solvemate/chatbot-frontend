@@ -19,6 +19,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
 } from "chart.js";
 ChartJS.register(
   ArcElement,
@@ -28,6 +29,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
 );
 
 export const links: Route.LinksFunction = () => [

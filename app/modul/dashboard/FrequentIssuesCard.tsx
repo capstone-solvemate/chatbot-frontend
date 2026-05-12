@@ -16,7 +16,7 @@ export default function FrequentIssuesCard() {
       </p>
 
       <div className="space-y-4">
-        {issues.map((issue) => (
+        {/* {issues.map((issue) => (
           <div
             key={issue.title}
             className="flex items-center justify-between border-b border-gray-100 pb-3"
@@ -32,7 +32,7 @@ export default function FrequentIssuesCard() {
               {issue.count}
             </span>
           </div>
-        ))}
+        ))} */}
       </div>
     </section>
   );

@@ -2,7 +2,7 @@ import type { DashboardFilter, HistoryItem } from "./types/DashboardTypes";
 import { Line } from "react-chartjs-2";
 
 type Props = {
-  history: HistoryItem[];
+  historyTiket: HistoryItem[];
   filter: DashboardFilter;
   isLoading: boolean;
 };
@@ -19,15 +19,15 @@ function getFilterLabel(filter: DashboardFilter): string {
 }
 
 export default function TicketTrendsCard({
-  history,
+  historyTiket,
   filter,
   isLoading,
 }: Props) {
-  const hasData = history.length > 0 && history.some((h) => h.jumlah > 0);
+  const hasData =
+    historyTiket.length > 0 && historyTiket.some((h) => h.jumlah > 0);
 
-  // Pick a subset of x-axis labels to avoid overcrowding
-  const xLabels = history.map((item) => item.label);
-  const maxJumlah = Math.max(...history.map((h) => h.jumlah), 1);
+  const xLabels = historyTiket.map((item) => item.label);
+  const maxJumlah = Math.max(...historyTiket.map((h) => h.jumlah), 1);
 
   return (
     <section className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
@@ -62,15 +62,15 @@ export default function TicketTrendsCard({
               datasets: [
                 {
                   label: "Number of tickets created",
-                  data: history.map((item) => item.jumlah),
+                  data: historyTiket.map((item) => item.jumlah),
                   borderColor: "#2563EB",
                   backgroundColor: "#2563EB",
                   borderWidth: 2,
                   pointRadius: 4,
                   pointHoverRadius: 6,
-                  tension: 0, // garis lurus
+                  tension: 0,
                   fill: false,
-                  spanGaps: false, // null = garis putus, tidak dilanjutkan
+                  spanGaps: false,
                 },
               ],
             }}
@@ -92,7 +92,6 @@ export default function TicketTrendsCard({
                   grid: {
                     color: "rgba(0,0,0,0.08)",
                     lineWidth: 1,
-                    // dashed grid
                     //@ts-ignore
                     borderDash: [4, 4],
                   },
@@ -119,7 +118,7 @@ export default function TicketTrendsCard({
                 },
               },
             }}
-          ></Line>
+          />
         )}
       </div>
     </section>

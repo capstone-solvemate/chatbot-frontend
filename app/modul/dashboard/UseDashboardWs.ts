@@ -20,7 +20,6 @@ export function useDashboardWs(
   const [data, setData] = useState<DashboardWsPayload | null>(null);
   const [status, setStatus] = useState<WsStatus>("connecting");
 
-  // Refs so callbacks always have fresh values without triggering re-connects
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptRef = useRef(0);
   const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,16 +33,12 @@ export function useDashboardWs(
     if (filter.bulan !== undefined) {
       url.searchParams.set("bulan", String(filter.bulan));
     }
-    if (filter.bulan !== undefined && filter.minggu !== undefined) {
-      url.searchParams.set("minggu", String(filter.minggu));
-    }
     return url.toString();
   }
 
   function connect(filter: DashboardFilter) {
-    // Clean up any existing socket before opening a new one
     if (wsRef.current) {
-      wsRef.current.onclose = null; // prevent reconnect loop from old socket
+      wsRef.current.onclose = null;
       wsRef.current.close();
     }
 
@@ -55,7 +50,6 @@ export function useDashboardWs(
       setStatus("open");
       reconnectAttemptRef.current = 0;
 
-      // If a filter change arrived while we were still connecting, send it now
       if (pendingFilterRef.current) {
         ws.send(JSON.stringify({ filter: pendingFilterRef.current }));
         pendingFilterRef.current = null;
@@ -86,16 +80,13 @@ export function useDashboardWs(
     ws.addEventListener("close", (event: CloseEvent) => {
       setStatus("closed");
 
-      // Do NOT reconnect if we closed it intentionally
       if (isManuallyClosed.current) return;
 
-      // Do NOT reconnect on auth-related close codes
       if (event.code === 4001) {
         onSessionExpired();
         return;
       }
 
-      // Exponential backoff reconnect
       const attempt = reconnectAttemptRef.current;
       if (attempt >= RECONNECT_MAX_ATTEMPTS) return;
 
@@ -111,7 +102,6 @@ export function useDashboardWs(
     });
   }
 
-  // Open connection once on mount
   useEffect(() => {
     isManuallyClosed.current = false;
     connect(initialFilter);
@@ -120,8 +110,6 @@ export function useDashboardWs(
       isManuallyClosed.current = true;
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
 
-      // Delay close sedikit — menghindari Strict Mode double-invoke
-      // menutup koneksi yang legitimate
       const wsToClose = wsRef.current;
       setTimeout(() => {
         if (isManuallyClosed.current) {
@@ -131,16 +119,11 @@ export function useDashboardWs(
     };
   }, []);
 
-  /**
-   * Send a new filter to the server without reconnecting.
-   * Safe to call at any time — queues the message if socket isn't open yet.
-   */
   function sendFilter(filter: DashboardFilter) {
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ filter }));
     } else {
-      // Socket not ready yet — queue it; will be sent on open
       pendingFilterRef.current = filter;
     }
   }
