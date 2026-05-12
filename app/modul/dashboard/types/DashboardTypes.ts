@@ -6,7 +6,6 @@ export type HistoryItem = {
 export type DashboardFilter = {
   tahun: number;
   bulan?: number;
-  minggu?: number;
 };
 
 export type DashboardWsPayload = {

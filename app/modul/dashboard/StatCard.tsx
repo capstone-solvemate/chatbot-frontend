@@ -1,22 +1,24 @@
+import type React from "react";
+
 type Props = {
   label: string;
   value: string;
   subtitle: string;
-  iconColor: string;
   isLoading?: boolean;
+  icon?: React.ReactNode;
 };
 
 export default function StatCard({
   label,
   value,
   subtitle,
-  iconColor,
   isLoading = false,
+  icon,
 }: Props) {
   return (
     <article className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
       <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
-        <span className={`w-2 h-2 rounded-full ${iconColor}`} />
+        {icon && icon}
         <span>{label}</span>
       </div>
 
@@ -26,7 +28,7 @@ export default function StatCard({
         <h3 className="text-4xl font-semibold text-gray-800">{value}</h3>
       )}
 
-      <p className="text-xs text-gray-400 mt-2">{subtitle}</p>
+      <p className="text-xs text-gray-500 mt-2">{subtitle}</p>
     </article>
   );
 }
