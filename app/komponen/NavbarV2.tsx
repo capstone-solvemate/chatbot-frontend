@@ -80,6 +80,7 @@ export default function NavbarV2() {
                   FAQ Management
                 </NavItem>
                 <NavItem
+                  active={pathname.startsWith("/admin/chatbot-monitoring")}
                   href="/admin/chatbot-monitoring"
                   icon={<IkonBot height={16} />}
                 >
