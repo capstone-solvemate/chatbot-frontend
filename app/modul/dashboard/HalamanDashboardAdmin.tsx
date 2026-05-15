@@ -98,7 +98,9 @@ export default function AdminDashboardPage() {
             isLoading={isLoading}
           />
         </div>
-        <FrequentIssuesCard />
+        <FrequentIssuesCard
+          frequentIssueCategories={data?.mostFrequentIssueCategories ?? []}
+        />
       </section>
     </main>
   );

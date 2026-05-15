@@ -8,6 +8,12 @@ export type DashboardFilter = {
   bulan?: number; // 1–12
 };
 
+export type IssueCategory = {
+  idKategori: number;
+  namaKategori: string;
+  jumlah: number;
+};
+
 export type DashboardWsPayload = {
   totalTiket: number;
   tiketTerbuka: number;
@@ -16,6 +22,6 @@ export type DashboardWsPayload = {
   historyTiket: HistoryItem[];
   historySesiChat: HistoryItem[];
   avgAktivitasPerJam: HistoryItem[]; // 24 item, jam 00–23
-  mostFrequentIssues: null;          // belum tersedia dari server
+  mostFrequentIssueCategories: IssueCategory[];          // belum tersedia dari server
   filter: DashboardFilter;
 };
