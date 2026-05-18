@@ -1,9 +1,8 @@
 // modul/tiket/detail/HalamanDetailTiket.tsx
 
 import { useEffect, useRef, useState } from "react";
-import { useOutletContext, useParams } from "react-router";
+import { useParams } from "react-router";
 import type { Route } from "./+types/HalamanDetailTiket";
-import type { ContextType } from "~/dasar/ContextType";
 import type { TiketDetailResponseDto } from "../daftar/dto/TiketResponseDto";
 import { dtoToTiket, dtoToPesanTiket } from "../daftar/dto/converters";
 import type { Tiket } from "../Tiket";
@@ -12,7 +11,6 @@ import BackToTicketsLink from "./BackToTicketsLink";
 import TicketDetailCard from "./TicketDetailCard";
 import ConversationCard from "./ConversationCard";
 import HalamanLoading from "~/dasar/HalamanLoading";
-import Navbar from "~/komponen/Navbar";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
 import { StatusTiket } from "../StatusTiket";
@@ -31,6 +29,8 @@ export default function HalamanDetailTiket() {
   const [tiket, setTiket] = useState<Tiket | null>(null);
   const [pesanTiket, setPesanTiket] = useState<PesanTiket[]>([]); // ← baru
   const [loading, setLoading] = useState(true);
+
+  const refTombolResolve = useRef<HTMLButtonElement | null>(null);
 
   const mapKategori = useRef(new Map<number, Kategori>());
   function setDaftarKategori(data: Kategori[]) {
@@ -84,6 +84,17 @@ export default function HalamanDetailTiket() {
     getDaftarKategori().then(() => getTiket());
   }, [idtiket]);
 
+  useEffect(() => {
+    console.log(refTombolResolve);
+    if (!loading && pesanTiket.length > 0) {
+      if (refTombolResolve && refTombolResolve.current) {
+        refTombolResolve.current.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [loading]);
+
   if (loading) return <HalamanLoading />;
 
   return (
@@ -95,6 +106,7 @@ export default function HalamanDetailTiket() {
           <>
             <TicketDetailCard tiket={tiket} />
             <ConversationCard
+              ref={refTombolResolve}
               idChat={tiket.idChat}
               pesanTiket={pesanTiket}
               status={tiket.status}
