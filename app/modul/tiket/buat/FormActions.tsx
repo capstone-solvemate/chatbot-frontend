@@ -1,23 +1,22 @@
+import { Button, ButtonColor } from "~/komponen/Button";
+
 export default function FormActions({ submitting }: { submitting?: boolean }) {
   return (
-    <div className="flex justify-end gap-3 pt-2">
+    <div className="grid grid-cols-3 justify-end gap-3 pt-2">
       <button
         type="button"
         className="px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-600"
       >
         Cancel
       </button>
-      <button
+      <Button
         type="submit"
         disabled={submitting}
-        className={`px-4 py-2 text-sm text-white rounded-md transition-colors ${
-          submitting
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"
-        }`}
+        className={`text-sm col-span-2 transition-colors`}
+        color={ButtonColor.Blue}
       >
         {submitting ? "Submitting..." : "Submit Ticket"}
-      </button>
+      </Button>
     </div>
   );
 }
