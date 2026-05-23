@@ -1,6 +1,6 @@
 import type React from "react";
 import type { Route } from "./+types/HalamanLogin";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HttpError } from "~/dasar/KonektorBackend";
 import type { LoginDto } from "~/modul/otentikasi/login/data/LoginDto";
 import {
@@ -31,8 +31,12 @@ export default function HalamanLogin(): React.JSX.Element {
   const konektorBackend = useKonektorBackend();
   const { setMasterError } = useMasterError();
   const [peran, setPeran] = useState(PeranPengguna.Karyawan);
-  const [submitting, setSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const refPeran = useRef<PeranPengguna>(PeranPengguna.Karyawan);
+  useEffect(() => {
+    refPeran.current = peran;
+  }, [peran]);
 
   const validationSchema = yup.object({
     email: yup.string().email().required(),
@@ -45,8 +49,26 @@ export default function HalamanLogin(): React.JSX.Element {
     isValid,
     errors: fieldErrors,
   } = useForm({
-    onSubmit: async (values) => {
-      await handleSubmit(values);
+    onSubmit: async (data) => {
+      try {
+        const loginDto: LoginDto = {
+          email: data.email,
+          password: data.password,
+        };
+
+        if (refPeran.current === PeranPengguna.Karyawan) {
+          await konektorBackend.post("/api/auth/login/employee", loginDto);
+        } else {
+          await konektorBackend.post("/api/auth/login/admin", loginDto);
+        }
+        location.reload();
+      } catch (e: any) {
+        if (e instanceof HttpError && e.status === 401) {
+          setAuthError("Invalid credentials");
+        } else {
+          setMasterError(e);
+        }
+      }
     },
     extend: validator({
       schema: validationSchema,
@@ -68,33 +90,6 @@ export default function HalamanLogin(): React.JSX.Element {
     setPeran(peran);
   }
 
-  async function handleSubmit(data: any) {
-    if (submitting) return;
-    setSubmitting(true);
-
-    try {
-      const loginDto: LoginDto = {
-        email: data.email,
-        password: data.password,
-      };
-
-      if (peran === PeranPengguna.Karyawan) {
-        await konektorBackend.post("/api/auth/login/employee", loginDto);
-      } else {
-        await konektorBackend.post("/api/auth/login/admin", loginDto);
-      }
-      location.reload();
-    } catch (e: any) {
-      if (e instanceof HttpError && e.status === 401) {
-        setAuthError("Invalid credentials");
-      } else {
-        setMasterError(e);
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   function clearAuthError() {
     setAuthError(null);
   }
@@ -112,7 +107,7 @@ export default function HalamanLogin(): React.JSX.Element {
           )}
           <RoleSelector peran={peran} onSetPeran={ubahPeran} />
           <LoginForm fieldErrors={fieldErrors()} />
-          <SubmitButton disabled={submitting} formValid={isValid()} />
+          <SubmitButton disabled={isSubmitting()} formValid={isValid()} />
           <LinkOtentikasi to="/forgot-password">
             Forgot your password?
           </LinkOtentikasi>
