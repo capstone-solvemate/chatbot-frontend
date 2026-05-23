@@ -1,6 +1,5 @@
 import type React from "react";
 import type { Route } from "./+types/HalamanLogin";
-import LoginCard from "./LoginCard";
 import { useEffect, useState } from "react";
 import { HttpError } from "~/dasar/KonektorBackend";
 import type { LoginDto } from "~/modul/otentikasi/login/data/LoginDto";
@@ -11,6 +10,16 @@ import {
 } from "~/dasar/PeranPengguna";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import CardOtentikasi from "../../CardOtentikasi";
+import LoginHeader from "./LoginHeader";
+import AuthErrorNotification from "./AuthErrorNotification";
+import RoleSelector from "./RoleSelector";
+import SubmitButton from "./SubmitButton";
+import LinkOtentikasi from "../../LinkOtentikasi";
+import { useForm } from "@felte/react";
+import { validator } from "@felte/validator-yup";
+import LoginForm from "./LoginForm";
+import * as yup from "yup";
 
 const KEY_PERAN_LOGIN = "peran_login";
 
@@ -24,6 +33,25 @@ export default function HalamanLogin(): React.JSX.Element {
   const [peran, setPeran] = useState(PeranPengguna.Karyawan);
   const [submitting, setSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const validationSchema = yup.object({
+    email: yup.string().email().required(),
+    password: yup.string().min(8).required(),
+  });
+
+  const {
+    form,
+    isSubmitting,
+    isValid,
+    errors: fieldErrors,
+  } = useForm({
+    onSubmit: async (values) => {
+      await handleSubmit(values);
+    },
+    extend: validator({
+      schema: validationSchema,
+    }),
+  });
 
   useEffect(() => {
     const peranTersimpanStr = localStorage.getItem(KEY_PERAN_LOGIN);
@@ -40,7 +68,7 @@ export default function HalamanLogin(): React.JSX.Element {
     setPeran(peran);
   }
 
-  async function handleSubmit(data: LoginFormData) {
+  async function handleSubmit(data: any) {
     if (submitting) return;
     setSubmitting(true);
 
@@ -67,16 +95,29 @@ export default function HalamanLogin(): React.JSX.Element {
     }
   }
 
+  function clearAuthError() {
+    setAuthError(null);
+  }
+
   return (
     <div className="min-h-screen flex items-start sm:items-center justify-center bg-linear-to-br from-blue-50 to-gray-100 p-6 sm:p-12">
-      <LoginCard
-        peran={peran}
-        onSetPeran={(peran) => ubahPeran(peran)}
-        submitting={submitting}
-        onSubmit={(data) => handleSubmit(data)}
-        authError={authError}
-        onClearAuthError={() => setAuthError(null)}
-      />
+      <CardOtentikasi>
+        <form method="POST" ref={form} className="flex flex-col items-center">
+          <LoginHeader />
+          {authError && (
+            <AuthErrorNotification
+              message={authError}
+              onClear={clearAuthError}
+            />
+          )}
+          <RoleSelector peran={peran} onSetPeran={ubahPeran} />
+          <LoginForm fieldErrors={fieldErrors()} />
+          <SubmitButton disabled={submitting} formValid={isValid()} />
+          <LinkOtentikasi to="/forgot-password">
+            Forgot your password?
+          </LinkOtentikasi>
+        </form>
+      </CardOtentikasi>
     </div>
   );
 }
