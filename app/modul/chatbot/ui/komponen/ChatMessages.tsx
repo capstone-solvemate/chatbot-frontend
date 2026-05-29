@@ -59,7 +59,7 @@ export default function ChatMessages({
 
       {chat && (chat.dialihkanKeTiket || showTicketAction) && (
         <TicketAction
-          idChat={chat.id}
+          idChat={chat.id.toString()}
           dialihkanKeTiket={chat.dialihkanKeTiket}
         />
       )}

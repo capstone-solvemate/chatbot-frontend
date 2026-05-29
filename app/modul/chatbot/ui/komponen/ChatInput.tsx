@@ -2,33 +2,45 @@ import IkonGambar from "~/komponen/ikon/IkonGambar";
 import IkonKirim from "~/komponen/ikon/IkonKirim";
 import { useState } from "react";
 import { IkonTiket } from "~/komponen/ikon/IkonTiket";
+import type { ChatFormData } from "../parameter/ChatFormData";
+import { useForm } from "@felte/react";
+import * as yup from "yup";
+import { validator } from "@felte/validator-yup";
 
 type Props = {
   expandSidebar: boolean;
-  onSend: (text: string) => void;
+  onSubmit: (data: ChatFormData) => Promise<void>;
   disabled: boolean;
   dialihkanKeTiket: boolean;
 };
 
 export default function ChatInput({
   expandSidebar,
-  onSend,
+  onSubmit,
   disabled,
   dialihkanKeTiket,
 }: Props) {
-  const [text, setText] = useState("");
+  const skemaValidasi = yup.object({
+    pesan: yup.string().required("this field is required"),
+  });
+  const { form, isSubmitting, isValid, reset } = useForm({
+    extend: [validator({ schema: skemaValidasi })],
+    onSubmit: async (data: any) => {
+      const formData: ChatFormData = {
+        pesan: (data.pesan as string).trim(),
+        lampiran: [],
+      };
 
-  function handleSend() {
-    const trimmed = text.trim();
-    if (!trimmed || disabled || dialihkanKeTiket) return;
-    setText("");
-    onSend(trimmed);
-  }
+      reset();
+
+      await onSubmit(formData);
+    },
+  });
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      document.getElementById("form_chat_submit_btn")?.click();
     }
   }
 
@@ -43,32 +55,36 @@ export default function ChatInput({
             <span>This chat is locked. Continue through your ticket.</span>
           </div>
         ) : (
-          <>
+          <form method="POST" ref={form} className="flex w-full gap-3">
             <div className="flex-1 flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-2 bg-white">
-              <button type="button" className="cursor-pointer">
+              <button
+                type="button"
+                className="cursor-pointer"
+                disabled={disabled || isSubmitting()}
+              >
                 <IkonGambar />
               </button>
 
               <input
                 name="pesan"
                 type="text"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
                 className="flex-1 outline-none text-sm"
                 disabled={disabled}
+                autoComplete="off"
               />
             </div>
 
             <button
-              onClick={handleSend}
-              disabled={disabled || !text.trim()}
-              className="w-10 h-10 cursor-pointer rounded-lg bg-blue-600 flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              type="submit"
+              id="form_chat_submit_btn"
+              className={`w-10 h-10 cursor-pointer rounded-lg ${isValid() ? "bg-blue-600" : "bg-gray-500"} flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed transition-opacity`}
+              disabled={disabled || isSubmitting()}
             >
               <IkonKirim className="w-5" />
             </button>
-          </>
+          </form>
         )}
       </div>
     </div>

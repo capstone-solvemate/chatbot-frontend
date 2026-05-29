@@ -6,12 +6,14 @@ import { PesanChat } from "../../domain/PesanChat";
 import type { Chat } from "../../domain/Chat";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import type { ChatSendingState } from "../parameter/ChatSendingState";
 
 type Props = {
   expandSidebar: boolean;
   chat: Chat | null;
   onChatCreated: (chat: Chat) => void;
   onChatUpdated: (chat: Chat) => void;
+  sendingState: ChatSendingState;
 };
 
 function buatPesanSambutan(tanggal: Date): PesanChat {
@@ -30,11 +32,8 @@ export default function TampilanPesanChat({
   chat,
   onChatCreated,
   onChatUpdated,
+  sendingState,
 }: Props) {
-  const konektorBackend = useKonektorBackend();
-  const { setMasterError } = useMasterError();
-  const navigate = useNavigate();
-
   const [daftarPesanChat, setDaftarPesanChat] = useState<PesanChat[]>([
     buatPesanSambutan(new Date()),
   ]);
@@ -266,7 +265,7 @@ export default function TampilanPesanChat({
     <>
       {loadingPesan ? (
         <div className="w-full max-w-3xl mx-auto px-8 py-6 text-sm text-gray-400 italic">
-          Memuat pesan...
+          Loading messages...
         </div>
       ) : (
         <ChatMessages
