@@ -1,26 +1,27 @@
 import { useLocation } from "react-router";
-import IkonChat from "./ikon/IkonChat";
-import IkonFaq from "./ikon/IkonFaq";
-import IkonHome from "./ikon/IkonHome";
-import { IkonTiket } from "./ikon/IkonTiket";
-import NavItem from "./NavItem";
-import TampilanBrand from "./TampilanBrand";
-import TampilanUserProfile from "./TampilanUserProfile";
+import IkonChat from "../../../komponen/ikon/IkonChat";
+import IkonFaq from "../../../komponen/ikon/IkonFaq";
+import IkonHome from "../../../komponen/ikon/IkonHome";
+import { IkonTiket } from "../../../komponen/ikon/IkonTiket";
+import NavItem from "../../../komponen/NavItem";
+import TampilanBrand from "../../../komponen/TampilanBrand";
+import TampilanUserProfile from "../../../komponen/TampilanUserProfile";
 import { PeranPengguna } from "~/dasar/PeranPengguna";
 import { useEffect, useState } from "react";
-import IkonDashboard from "./ikon/IkonDashboard";
-import IkonKnowledgeBase from "./ikon/IkonKnowledgeBase";
-import IkonBot from "./ikon/IkonBot";
-import IkonSetting from "./ikon/IkonSetting";
-import { useDevMode } from "~/dasar/hooks/useDevMode";
+import IkonDashboard from "../../../komponen/ikon/IkonDashboard";
+import IkonKnowledgeBase from "../../../komponen/ikon/IkonKnowledgeBase";
+import IkonBot from "../../../komponen/ikon/IkonBot";
+import IkonSetting from "../../../komponen/ikon/IkonSetting";
 import { useStateOtentikasi } from "~/dasar/hooks/useStateOtentikasi";
 import { usePromptLogout } from "~/dasar/hooks/usePromptLogout";
-import TampilanNotifikasiV2 from "./TampilanNotifikasiV2";
+import TampilanNotifikasiV2 from "../../../komponen/TampilanNotifikasiV2";
+import { useEnvironment } from "~/dasar/hooks/useEnvironment";
+import { Environment } from "~/dasar/types/Environment";
 
 export default function NavbarV2() {
   const location = useLocation();
   const pathname = location.pathname;
-  const devMode = useDevMode();
+  const notProductionMode = useEnvironment() !== Environment.Production;
   const stateOtentikasi = useStateOtentikasi();
   const promptLogout = usePromptLogout();
 
@@ -35,7 +36,7 @@ export default function NavbarV2() {
 
   return (
     <header
-      className={`w-full border-b border-gray-200 bg-white fixed ${devMode ? "top-7" : "top-0"} left-0 z-40 print:hidden`}
+      className={`w-full border-b border-gray-200 bg-white fixed ${notProductionMode ? "top-7" : "top-0"} left-0 z-40 print:hidden`}
     >
       <div className="mx-auto flex h-16 items-center justify-between px-6">
         {/* Left */}

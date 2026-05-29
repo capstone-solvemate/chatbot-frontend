@@ -9,7 +9,7 @@ import {
 import HalamanLoading from "../../HalamanLoading";
 import { PeranPengguna } from "../../PeranPengguna";
 import HalamanDilarang from "../../HalamanDilarang";
-import NavbarV2 from "~/komponen/NavbarV2";
+import NavbarV2 from "~/dasar/ui/tampilan/NavbarV2";
 import { useStateOtentikasi } from "../../hooks/useStateOtentikasi";
 import { useEnvironment } from "~/dasar/hooks/useEnvironment";
 import { Environment } from "~/dasar/types/Environment";

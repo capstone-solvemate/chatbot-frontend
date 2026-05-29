@@ -5,7 +5,7 @@ import HalamanLoading from "../../HalamanLoading";
 import { PeranPengguna } from "../../PeranPengguna";
 import HalamanDilarang from "../../HalamanDilarang";
 import type { OutletContext } from "../../OutletContext";
-import NavbarV2 from "~/komponen/NavbarV2";
+import NavbarV2 from "~/dasar/ui/tampilan/NavbarV2";
 import { useEnvironment } from "~/dasar/hooks/useEnvironment";
 import { Environment } from "~/dasar/types/Environment";
 
