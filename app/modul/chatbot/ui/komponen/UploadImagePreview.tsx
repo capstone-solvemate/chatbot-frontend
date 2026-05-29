@@ -7,8 +7,8 @@ type Props = {
 
 export default function UploadImagePreview({ src, onDelete }: Props) {
   return (
-    <div className="w-16 h-16 relative">
-      <img src={src} className="w-16 h-16 rounded" />
+    <div className="w-16 h-16 relative rounded border border-gray-200">
+      <img src={src} className="w-16 h-16 rounded object-contain" />
       <button
         onClick={onDelete}
         type="button"
