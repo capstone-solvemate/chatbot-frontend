@@ -50,6 +50,7 @@ export default function ChatInput({
               </button>
 
               <input
+                name="pesan"
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
