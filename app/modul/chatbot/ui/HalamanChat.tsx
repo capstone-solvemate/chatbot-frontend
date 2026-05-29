@@ -80,17 +80,92 @@ export default function HalamanChat() {
     onIdChanged();
   }, [context.idChat]);
 
+  async function validasiLampiran(files: File[]): Promise<number[]> {
+    const checks = await Promise.all(
+      files.map(
+        (file) =>
+          new Promise<{ file: File; needsResize: boolean }>(
+            (resolve, reject) => {
+              const img = new Image();
+              const url = URL.createObjectURL(file);
+              img.onload = () => {
+                URL.revokeObjectURL(url);
+                resolve({
+                  file,
+                  needsResize: img.width > 2048 || img.height > 2048,
+                });
+              };
+              img.onerror = reject;
+              img.src = url;
+            },
+          ),
+      ),
+    );
+
+    return checks
+      .map((check, index) => (check.needsResize ? index : -1))
+      .filter((index) => index !== -1);
+  }
+
+  async function resize(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+
+        const scale = 2048 / Math.max(img.width, img.height);
+        const newWidth = Math.round(img.width * scale);
+        const newHeight = Math.round(img.height * scale);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, newWidth, newHeight);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error("Failed making blob"));
+            resolve(new File([blob], file.name, { type: file.type }));
+          },
+          file.type,
+          0.9,
+        );
+      };
+
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  async function resizeLampiran(
+    files: File[],
+    indices: number[],
+  ): Promise<File[]> {
+    const indexSet = new Set(indices);
+    return Promise.all(
+      files.map((file, index) =>
+        indexSet.has(index) ? resize(file) : Promise.resolve(file),
+      ),
+    );
+  }
+
   async function handleSubmit(data: ChatFormData) {
     setPesanChatAkanDikirim(
       new PesanChat(0n, 0n, data.pesan, new Date(), false, false),
     );
 
+    setSendingState(ChatSendingState.Preparing);
+
+    const lampiranPerluResize = await validasiLampiran(data.lampiran);
+    if (lampiranPerluResize.length > 0) {
+      setSendingState(ChatSendingState.ResizingImages);
+      data.lampiran = await resizeLampiran(data.lampiran, lampiranPerluResize);
+    }
+
     if (chat === null) {
       if (environment === Environment.Mock) {
-        if (data.lampiran.length > 0) {
-          setSendingState(ChatSendingState.ResizingImages);
-          await new Promise<void>((resolve) => setTimeout(resolve, 1000));
-        }
         setSendingState(ChatSendingState.CreatingWsConnection);
         await new Promise<void>((resolve) => setTimeout(resolve, 1000));
         setSendingState(ChatSendingState.Sending);
