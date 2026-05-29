@@ -263,7 +263,7 @@ export default function TampilanPesanChat({
   }
 
   return (
-    <div className="grow pb-16">
+    <>
       {loadingPesan ? (
         <div className="w-full max-w-3xl mx-auto px-8 py-6 text-sm text-gray-400 italic">
           Memuat pesan...
@@ -278,13 +278,6 @@ export default function TampilanPesanChat({
       )}
 
       <div ref={bottomRef} />
-
-      <ChatInput
-        expandSidebar={expandSidebar}
-        onSend={handleSend}
-        isSending={isSending}
-        dialihkanKeTiket={chat?.dialihkanKeTiket ?? false}
-      />
-    </div>
+    </>
   );
 }

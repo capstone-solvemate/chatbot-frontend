@@ -41,6 +41,9 @@ export default function LayoutDasarV2(): React.JSX.Element {
   const [logoutPrompted, setLogoutPrompted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
+  const [unauthenticatedNotification, setUnauthenticatedNotification] =
+    useState(false);
+
   // Toast realtime dari WS — bisa stack beberapa sekaligus
   const [toastList, setToastList] = useState<Notifikasi[]>([]);
 
@@ -49,10 +52,16 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
   const loading = stateOtentikasi.loading;
 
+  function handleUnauthenticatedResponse() {
+    setUnauthenticatedNotification(true);
+  }
+
   const konektorRestApi = new KonektorRestApi(() =>
     setEnvironment(Environment.Dev),
   );
-  const konektorWebsocket = new KonektorWebsocket();
+  const konektorWebsocket = new KonektorWebsocket(() => {
+    handleUnauthenticatedResponse();
+  });
 
   // — Master error —
   useEffect(() => {

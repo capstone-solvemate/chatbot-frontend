@@ -6,21 +6,21 @@ import { IkonTiket } from "~/komponen/ikon/IkonTiket";
 type Props = {
   expandSidebar: boolean;
   onSend: (text: string) => void;
-  isSending: boolean;
+  disabled: boolean;
   dialihkanKeTiket: boolean;
 };
 
 export default function ChatInput({
   expandSidebar,
   onSend,
-  isSending,
+  disabled,
   dialihkanKeTiket,
 }: Props) {
   const [text, setText] = useState("");
 
   function handleSend() {
     const trimmed = text.trim();
-    if (!trimmed || isSending || dialihkanKeTiket) return;
+    if (!trimmed || disabled || dialihkanKeTiket) return;
     setText("");
     onSend(trimmed);
   }
@@ -34,7 +34,7 @@ export default function ChatInput({
 
   return (
     <div
-      className={`fixed z-30 bottom-0 left-0 bg-gray-50 w-full ${expandSidebar ? "ps-64" : "ps-0"} transition-all ease-out`}
+      className={`fixed z-10 bottom-0 left-0 bg-gray-50 w-full ${expandSidebar ? "ps-64" : "ps-0"} transition-all ease-out`}
     >
       <div className="p-4 pt-0 flex items-center gap-3 w-full max-w-3xl mx-auto">
         {dialihkanKeTiket ? (
@@ -57,13 +57,13 @@ export default function ChatInput({
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
                 className="flex-1 outline-none text-sm"
-                disabled={isSending}
+                disabled={disabled}
               />
             </div>
 
             <button
               onClick={handleSend}
-              disabled={isSending || !text.trim()}
+              disabled={disabled || !text.trim()}
               className="w-10 h-10 cursor-pointer rounded-lg bg-blue-600 flex items-center justify-center text-white disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               <IkonKirim className="w-5" />

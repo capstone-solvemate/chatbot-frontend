@@ -75,6 +75,10 @@ export default function LayoutHalamanChat() {
     setIdTidakDitemukan(true);
   }
 
+  function aturUrlTanpaMengubahState(idChat: bigint) {
+    window.history.pushState(null, "", `/chat/${idChat.toString()}`);
+  }
+
   async function fetchDaftarChat(): Promise<void> {
     if (environment === Environment.Mock) {
       setFetchingDaftarChat(true);
@@ -152,7 +156,7 @@ export default function LayoutHalamanChat() {
             />
           )}
 
-          {!idBukanAngka && idChatAktif !== undefined && (
+          {idChatAktif !== undefined && (
             <Outlet
               context={{
                 ...appContext,

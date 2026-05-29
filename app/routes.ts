@@ -14,8 +14,7 @@ export default [
       index("modul/home/HalamanHome.tsx"),
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
       layout('modul/chatbot/ui/LayoutHalamanChatbot.tsx', [
-        route("chat", "modul/chatbot/ui/HalamanChatBaru.tsx"),
-        route("chat/:id", "modul/chatbot/ui/HalamanChat.tsx"),
+        route("chat/:id?", "modul/chatbot/ui/HalamanChat.tsx"),
       ]),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
