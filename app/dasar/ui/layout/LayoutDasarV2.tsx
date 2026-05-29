@@ -1,22 +1,33 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Outlet } from "react-router";
-import DevModeNotification from "../DevModeNotification";
-import { StateOtentikasi } from "../StateOtentikasi";
-import HalamanLoading from "../HalamanLoading";
-import { FetchError, HttpError, KonektorBackend } from "../KonektorBackend";
-import HalamanOffline from "../HalamanOffline";
-import MasterError from "../MasterError";
-import { dtoToInfoPengguna, type InfoPenggunaDto } from "../InfoPenggunaDto";
-import LogoutConfirmationView from "../LogoutConfirmationView";
-import type { StateNotifikasi } from "../notifikasi/StateNotifikasi";
-import type { GetNotifikasiResponseDto } from "../notifikasi/GetNotifikasiResponseDto";
-import { dtoToNotifikasi } from "../notifikasi/converters";
-import type { OutletContext } from "../OutletContext";
-import type { Notifikasi } from "../notifikasi/Notifikasi";
+import DevModeNotification from "../../DevModeNotification";
+import { StateOtentikasi } from "../../StateOtentikasi";
+import HalamanLoading from "../../HalamanLoading";
+import HalamanOffline from "../../HalamanOffline";
+import MasterError from "../../MasterError";
+import { dtoToInfoPengguna, type InfoPenggunaDto } from "../../InfoPenggunaDto";
+import LogoutConfirmationView from "../../LogoutConfirmationView";
+import type { StateNotifikasi } from "../../notifikasi/StateNotifikasi";
+import type { GetNotifikasiResponseDto } from "../../notifikasi/GetNotifikasiResponseDto";
+import { dtoToNotifikasi } from "../../notifikasi/converters";
+import type { OutletContext } from "../../OutletContext";
+import type { Notifikasi } from "../../notifikasi/Notifikasi";
 import ToastNotifikasi from "~/komponen/notifikasi/ToastNotifikasi";
+import { Environment } from "~/dasar/types/Environment";
+import {
+  FetchError,
+  HttpError,
+  KonektorRestApi,
+} from "~/dasar/api/rest/KonektorRestApi";
+import { InfoPengguna } from "~/dasar/InfoPengguna";
+import { PeranPengguna } from "~/dasar/PeranPengguna";
 
 export default function LayoutDasarV2(): React.JSX.Element {
-  const [devMode, setDevMode] = useState(false);
+  const [environment, setEnvironment] = useState(
+    import.meta.env.VITE_MOCK_EXTERNALS === "1"
+      ? Environment.Mock
+      : Environment.Production,
+  );
   const [stateOtentikasi, setStateOtentikasi] = useState(
     new StateOtentikasi(true),
   );
@@ -37,7 +48,9 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
   const loading = stateOtentikasi.loading;
 
-  const konektorBackend = new KonektorBackend(() => setDevMode(true));
+  const konektorRestApi = new KonektorRestApi(() =>
+    setEnvironment(Environment.Dev),
+  );
 
   // — Master error —
   useEffect(() => {
@@ -62,7 +75,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
     const params: Record<string, any> = {};
     if (cursor) params.sebelum = cursor;
 
-    const resp = await konektorBackend.get("/api/notifikasi", params);
+    const resp = await konektorRestApi.get("/api/notifikasi", params);
     const respData: GetNotifikasiResponseDto = await resp.json();
     const notifikasiBaru = respData.notifikasi.map((dto) =>
       dtoToNotifikasi(dto),
@@ -126,7 +139,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
       });
 
       try {
-        await konektorBackend.patch(`/api/notifikasi/${id}/baca`);
+        await konektorRestApi.patch(`/api/notifikasi/${id}/baca`);
       } catch (e: any) {
         // Rollback optimistic update
         setStateNotifikasi((prev) => {
@@ -142,7 +155,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
         setMasterError(e);
       }
     },
-    [konektorBackend],
+    [],
   );
 
   // — Mark all as read —
@@ -163,13 +176,13 @@ export default function LayoutDasarV2(): React.JSX.Element {
     });
 
     try {
-      await konektorBackend.patch("/api/notifikasi/baca-semua");
+      await konektorRestApi.patch("/api/notifikasi/baca-semua");
     } catch (e: any) {
       // Rollback: refetch
       await fetchNotifikasi();
       setMasterError(e);
     }
-  }, [konektorBackend]);
+  }, []);
 
   // — WebSocket —
   const connectWs = useCallback(() => {
@@ -229,27 +242,38 @@ export default function LayoutDasarV2(): React.JSX.Element {
     setToastList((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
+  async function cekSesi() {
+    if (environment === Environment.Mock) {
+      setStateOtentikasi(
+        new StateOtentikasi(
+          false,
+          new InfoPengguna(1, "Mock User", PeranPengguna.Mock),
+        ),
+      );
+      return;
+    }
+
+    try {
+      const resp = await konektorRestApi.get("/api/auth/me");
+      const dto: InfoPenggunaDto = await resp.json();
+      setStateOtentikasi(new StateOtentikasi(false, dtoToInfoPengguna(dto)));
+      await fetchNotifikasi();
+      connectWs();
+    } catch (e: any) {
+      if (e instanceof HttpError && e.status === 401) {
+        setStateOtentikasi(new StateOtentikasi(false));
+      } else if (e instanceof FetchError) {
+        setOffline(true);
+        setStateOtentikasi(new StateOtentikasi(false));
+      } else {
+        setMasterError(e);
+      }
+    }
+  }
+
   // — Otentikasi: cek sesi saat mount —
   useEffect(() => {
-    const fn = async () => {
-      try {
-        const resp = await konektorBackend.get("/api/auth/me");
-        const dto: InfoPenggunaDto = await resp.json();
-        setStateOtentikasi(new StateOtentikasi(false, dtoToInfoPengguna(dto)));
-        await fetchNotifikasi();
-        connectWs();
-      } catch (e: any) {
-        if (e instanceof HttpError && e.status === 401) {
-          setStateOtentikasi(new StateOtentikasi(false));
-        } else if (e instanceof FetchError) {
-          setOffline(true);
-          setStateOtentikasi(new StateOtentikasi(false));
-        } else {
-          setMasterError(e);
-        }
-      }
-    };
-    fn();
+    cekSesi();
 
     return () => {
       wsRef.current?.close(1000);
@@ -265,7 +289,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
     setLoggingOut(true);
     const reload = () => location.reload();
     try {
-      await konektorBackend.post("/api/auth/logout");
+      await konektorRestApi.post("/api/auth/logout");
       reload();
     } catch (e: any) {
       if (e instanceof HttpError && e.status === 401) {
@@ -281,9 +305,9 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
   // — Outlet context —
   const outletContext: OutletContext = {
-    devMode,
+    environment,
     stateOtentikasi,
-    konektorBackend,
+    konektorBackend: konektorRestApi,
     setMasterNotifikasi,
     setMasterError,
     promptLogout,
@@ -294,8 +318,12 @@ export default function LayoutDasarV2(): React.JSX.Element {
   };
 
   return (
-    <div className={`min-h-screen ${devMode && "pt-7"}`}>
-      {devMode && <DevModeNotification />}
+    <div
+      className={`min-h-screen ${environment !== Environment.Production && "pt-7"}`}
+    >
+      {environment !== Environment.Production && (
+        <DevModeNotification environment={environment} />
+      )}
       {masterErrorStr && (
         <MasterError
           message={masterErrorStr}
@@ -304,7 +332,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
         />
       )}
       {loading ? (
-        <HalamanLoading devMode={devMode} />
+        <HalamanLoading devMode={environment !== Environment.Production} />
       ) : offline ? (
         <HalamanOffline />
       ) : (

@@ -6,11 +6,13 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router";
-import HalamanLoading from "../HalamanLoading";
-import { PeranPengguna } from "../PeranPengguna";
-import HalamanDilarang from "../HalamanDilarang";
+import HalamanLoading from "../../HalamanLoading";
+import { PeranPengguna } from "../../PeranPengguna";
+import HalamanDilarang from "../../HalamanDilarang";
 import NavbarV2 from "~/komponen/NavbarV2";
-import { useStateOtentikasi } from "../hooks/useStateOtentikasi";
+import { useStateOtentikasi } from "../../hooks/useStateOtentikasi";
+import { useEnvironment } from "~/dasar/hooks/useEnvironment";
+import { Environment } from "~/dasar/types/Environment";
 
 export default function LayoutKaryawan(): React.JSX.Element {
   const location = useLocation();
@@ -20,10 +22,16 @@ export default function LayoutKaryawan(): React.JSX.Element {
   const [pass, setPass] = useState(false);
   const stateOtentikasi = useStateOtentikasi();
   const context: any = useOutletContext();
+  const environment = useEnvironment();
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  function cekPeranPengguna() {
+    if (environment === Environment.Mock) {
+      setPass(true);
+      return;
+    }
+
     if (stateOtentikasi.pengguna) {
       if (stateOtentikasi.pengguna.peran !== PeranPengguna.Karyawan) {
         if (
@@ -39,6 +47,10 @@ export default function LayoutKaryawan(): React.JSX.Element {
     } else {
       navigate("/login");
     }
+  }
+
+  useEffect(() => {
+    cekPeranPengguna();
   }, [stateOtentikasi]);
 
   return pass ? (

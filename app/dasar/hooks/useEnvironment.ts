@@ -1,6 +1,6 @@
 import { Environment } from "../types/Environment";
 import { useAppContext } from "./useAppContext";
 
-export function useDevMode(): boolean {
-  return useAppContext().environment === Environment.Dev;
+export function useEnvironment(): Environment {
+  return useAppContext().environment;
 }

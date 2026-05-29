@@ -1,11 +1,12 @@
-import type { KonektorBackend } from "./KonektorBackend"
+import type { KonektorRestApi } from "./api/rest/KonektorRestApi"
 import type { StateNotifikasi } from "./notifikasi/StateNotifikasi"
 import type { StateOtentikasi } from "./StateOtentikasi"
+import type { Environment } from "./types/Environment"
 
 export type OutletContext = {
-  devMode: boolean,
+  environment: Environment,
   stateOtentikasi: StateOtentikasi,
-  konektorBackend: KonektorBackend,
+  konektorBackend: KonektorRestApi,
   setMasterNotifikasi: (notifikasi: any | null) => void,
   setMasterError: (error: any | null) => void,
   promptLogout: () => void,

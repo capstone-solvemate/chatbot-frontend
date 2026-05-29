@@ -6,11 +6,11 @@ export default [
       route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
     ]),
   ]),
-  layout('dasar/layout/LayoutDasarV2.tsx', [
+  layout('dasar/ui/layout/LayoutDasarV2.tsx', [
     layout('dasar/layout/LayoutGuestV2.tsx', [
       route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
     ]),
-    layout('dasar/layout/LayoutKaryawanV2.tsx', [
+    layout('dasar/ui/layout/LayoutKaryawanV2.tsx', [
       index("modul/home/HalamanHome.tsx"),
       route('faq', 'modul/faq/karyawan/HalamanFaq.tsx'),
       route("chat", "modul/chat/HalamanChatBaru.tsx"),
@@ -19,7 +19,7 @@ export default [
       route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
     ]),
-    layout('dasar/layout/LayoutAdminV2.tsx', [
+    layout('dasar/ui/layout/LayoutAdminV2.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
       route('admin/chatbot-monitoring', 'modul/chatbot-monitoring/ui/HalamanChatbotMonitoring.tsx'),
       route('admin/faq', 'modul/faq/admin/daftar/HalamanDaftarFaqAdmin.tsx'),

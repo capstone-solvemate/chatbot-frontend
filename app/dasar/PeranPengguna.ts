@@ -1,6 +1,7 @@
 export enum PeranPengguna {
   Karyawan,
   Admin,
+  Mock
 }
 
 export function peranPenggunaToString(peran: PeranPengguna, bahasa: 'id' | 'en' = 'id'): string {
