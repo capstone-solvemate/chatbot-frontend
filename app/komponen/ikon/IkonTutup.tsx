@@ -10,6 +10,7 @@ export default function IkonTutup(props: IconProps): React.JSX.Element {
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <path
         d="M11.9971 3.99902L3.99902 11.9971"
