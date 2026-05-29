@@ -17,25 +17,29 @@ import { useNavigate } from "react-router";
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
 export default function LayoutHalamanChat() {
-  const [idChatAktif, setIdChatAktif] = useState<bigint | null>(null);
-
-  const [invalidIdError, setInvalidIdError] = useState<[string, string] | null>(
-    null,
+  const [idChatAktif, setIdChatAktif] = useState<bigint | null | undefined>(
+    undefined,
   );
+
+  const [idBukanAngka, setIdBukanAngka] = useState<boolean>(false);
+  const [idTidakDitemukan, setIdTidakDitemukan] = useState<boolean>(false);
+
+  function resolveIdErrors() {
+    setIdBukanAngka(false);
+    setIdTidakDitemukan(false);
+  }
 
   const { id: idDariUrl } = useParams<{ id?: string }>();
   useEffect(() => {
     try {
       if (!idDariUrl) {
         setIdChatAktif(null);
+        resolveIdErrors();
       } else {
         setIdChatAktif(BigInt(idDariUrl));
       }
     } catch (e) {
-      setInvalidIdError([
-        "Invalid Chat ID",
-        "The system detected a non-numeric chat ID in the URL.",
-      ]);
+      setIdBukanAngka(true);
     }
   }, [idDariUrl]);
 
@@ -65,6 +69,10 @@ export default function LayoutHalamanChat() {
       localStorage.setItem(KEY_LS_EXPAND_SIDEBAR, newValue ? "1" : "0");
       return newValue;
     });
+  }
+
+  function handleIdChatTidakDitemukan() {
+    setIdTidakDitemukan(true);
   }
 
   async function fetchDaftarChat(): Promise<void> {
@@ -114,31 +122,44 @@ export default function LayoutHalamanChat() {
             loading={fetchingDaftarChat}
             daftarChat={daftarChat}
             expand={expandSidebar}
-            idChatAktif={idChatAktif}
+            idChatAktif={idChatAktif ?? null}
           />
           <div
             className={`${expandSidebar ? "w-64" : "w-0"} shrink-0 transition-all ease-out`}
           />
 
-          {invalidIdError !== null && (
+          {idBukanAngka && (
             <PopupError
-              title={invalidIdError[0]}
-              message={invalidIdError[1]}
+              title="Invalid Chat ID"
+              message="The system detected a non-numeric chat ID in the URL."
               closable={true}
               onClose={() => {
                 navigate("/chat");
-                setInvalidIdError(null);
               }}
               closeCaption="Fix"
             />
           )}
 
-          {!invalidIdError && (
+          {idTidakDitemukan && (
+            <PopupError
+              title="Invalid Chat ID"
+              message={`Chat with ID '${idChatAktif}' was not found.`}
+              closable={true}
+              onClose={() => {
+                navigate("/chat");
+              }}
+              closeCaption="New Chat"
+            />
+          )}
+
+          {!idBukanAngka && idChatAktif !== undefined && (
             <Outlet
               context={{
                 ...appContext,
                 konektorBackendChatbot,
                 expandSidebar,
+                idChat: idChatAktif,
+                onIdChatTidakDitemukan: handleIdChatTidakDitemukan,
               }}
             />
           )}

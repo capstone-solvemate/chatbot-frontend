@@ -7,18 +7,19 @@ import { useMasterError } from "~/dasar/hooks/useMasterError";
 import { useEnvironment } from "~/dasar/hooks/useEnvironment";
 import { useOutletContext } from "react-router";
 import type { ContextHalamanChatbot } from "./ContextHalamanChatbot";
+import { Environment } from "~/dasar/types/Environment";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chat Support" }];
 }
 
 export default function HalamanChat() {
-  const navigate = useNavigate();
   const environment = useEnvironment();
 
   const { setMasterError } = useMasterError();
 
   const context = useOutletContext() as ContextHalamanChatbot;
+  const [fetchingPesanChat, setFetchingPesanChat] = useState(true);
 
   function handleChatCreated(chat: Chat) {
     // setDaftarChat((prev) => [chat, ...prev]);
@@ -33,11 +34,26 @@ export default function HalamanChat() {
     // );
   }
 
-  function onPageMounted() {}
+  async function fetchPesanChat(idChat: bigint) {
+    if (environment === Environment.Mock) {
+      if (idChat > 100n) {
+        context.onIdChatTidakDitemukan();
+      }
+      return;
+    }
+  }
+
+  function onPageMounted() {
+    if (context.idChat !== null) {
+      fetchPesanChat(context.idChat);
+    } else {
+      setFetchingPesanChat(false);
+    }
+  }
 
   useEffect(() => {
     onPageMounted();
-  }, []);
+  }, [context.idChat]);
 
   return (
     <TampilanPesanChat

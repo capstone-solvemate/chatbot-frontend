@@ -16,10 +16,11 @@ type Props = {
 
 function buatPesanSambutan(tanggal: Date): PesanChat {
   return new PesanChat(
-    "0",
+    0n,
+    0n,
     "Hello! I'm your AI assistant. I can help you with equipment issues, technical questions, and printing problems. How can I assist you today?",
-    true,
     tanggal,
+    true,
     false,
   );
 }
@@ -195,10 +196,11 @@ export default function TampilanPesanChat({
     if (isSending) return;
 
     const pesanUserOptimistic = new PesanChat(
-      `temp-${Date.now()}`,
+      0n,
+      0n,
       text,
-      false,
       new Date(),
+      false,
       false,
     );
     setDaftarPesanChat((prev) => [...prev, pesanUserOptimistic]);
