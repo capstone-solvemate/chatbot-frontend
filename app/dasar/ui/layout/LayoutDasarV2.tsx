@@ -21,6 +21,7 @@ import {
 } from "~/dasar/api/rest/KonektorRestApi";
 import { InfoPengguna } from "~/dasar/InfoPengguna";
 import { PeranPengguna } from "~/dasar/PeranPengguna";
+import { KonektorWebsocket } from "~/dasar/api/ws/KonektorWebsocket";
 
 export default function LayoutDasarV2(): React.JSX.Element {
   const [environment, setEnvironment] = useState(
@@ -51,6 +52,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
   const konektorRestApi = new KonektorRestApi(() =>
     setEnvironment(Environment.Dev),
   );
+  const konektorWebsocket = new KonektorWebsocket();
 
   // — Master error —
   useEffect(() => {
@@ -308,6 +310,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
     environment,
     stateOtentikasi,
     konektorBackend: konektorRestApi,
+    konektorWebsocket,
     setMasterNotifikasi,
     setMasterError,
     promptLogout,

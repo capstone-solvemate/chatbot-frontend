@@ -1,8 +1,11 @@
+import { Link } from "react-router";
+
 interface Props {
   children?: React.ReactNode;
   onClick?: () => void;
   icon?: React.ReactNode;
   active?: boolean;
+  to: string;
 }
 
 export default function ChatSidebarItem({
@@ -10,9 +13,11 @@ export default function ChatSidebarItem({
   onClick,
   icon,
   active,
+  to,
 }: Props): React.JSX.Element {
   return (
-    <button
+    <Link
+      to={to}
       className={`w-full cursor-pointer px-4 py-3 flex gap-2 text-sm items-center text-left transition-colors ${
         active
           ? "bg-blue-50 text-blue-700 font-medium"
@@ -22,6 +27,6 @@ export default function ChatSidebarItem({
     >
       {icon && <span className="shrink-0">{icon}</span>}
       {children && <span className="truncate">{children}</span>}
-    </button>
+    </Link>
   );
 }

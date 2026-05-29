@@ -1,12 +1,14 @@
 import type { KonektorRestApi } from "./api/rest/KonektorRestApi"
+import type { KonektorWebsocket } from "./api/ws/KonektorWebsocket"
 import type { StateNotifikasi } from "./notifikasi/StateNotifikasi"
 import type { StateOtentikasi } from "./StateOtentikasi"
 import type { Environment } from "./types/Environment"
 
-export type OutletContext = {
+export interface OutletContext {
   environment: Environment,
   stateOtentikasi: StateOtentikasi,
   konektorBackend: KonektorRestApi,
+  konektorWebsocket: KonektorWebsocket,
   setMasterNotifikasi: (notifikasi: any | null) => void,
   setMasterError: (error: any | null) => void,
   promptLogout: () => void,

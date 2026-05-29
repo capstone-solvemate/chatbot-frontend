@@ -1,8 +1,8 @@
 import BotMessage from "./BotMessage";
 import UserMessage from "./UserMessage";
 import TicketAction from "./TicketAction";
-import type { PesanChat } from "./PesanChat";
-import type { Chat } from "./Chat";
+import type { PesanChat } from "../../domain/PesanChat";
+import type { Chat } from "../../domain/Chat";
 
 type Props = {
   daftarPesanChat: PesanChat[];

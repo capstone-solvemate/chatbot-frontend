@@ -1,16 +1,17 @@
 import IkonPerlebar from "~/komponen/ikon/IkonPerlebar";
-import { useDevMode } from "~/dasar/hooks/useDevMode";
+import { useEnvironment } from "~/dasar/hooks/useEnvironment";
+import { Environment } from "~/dasar/types/Environment";
 
 type Props = {
   onToggleExpand: () => void;
 };
 
 export default function PageHeader({ onToggleExpand }: Props) {
-  const devMode = useDevMode();
+  const notProductionMode = useEnvironment() !== Environment.Production;
 
   return (
     <div
-      className={`flex border-y border-gray-200 py-4 gap-2 fixed ${devMode ? "top-23" : "top-16"} bg-white z-30 h-20 w-full`}
+      className={`flex border-y border-gray-200 py-4 gap-2 fixed ${notProductionMode ? "top-23" : "top-16"} bg-white z-30 h-20 w-full`}
     >
       <button
         className="cursor-pointer px-4 py-3 flex gap-2 text-sm items-center text-left text-gray-600"

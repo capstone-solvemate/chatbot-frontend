@@ -1,11 +1,12 @@
-import { Chat } from "../Chat";
-import { PesanChat } from "../PesanChat";
+import { Chat } from "../../domain/Chat";
+import { PesanChat } from "../../domain/PesanChat";
 
 export function dtoToChat(dto: Record<string, any>): Chat {
   return new Chat(
-    String(dto.id),
-    dto.subjek,
+    BigInt(dto.id),
+    1,
     new Date(dto.tanggalDibuat),
+    dto.subjek,
     dto.sedangDiproses ?? false,
     dto.dialihkanKeTiket ?? false,
   );
@@ -13,10 +14,11 @@ export function dtoToChat(dto: Record<string, any>): Chat {
 
 export function dtoToPesanChat(dto: Record<string, any>): PesanChat {
   return new PesanChat(
-    String(dto.id),
+    BigInt(dto.id),
+    BigInt(1),
     dto.pesan,
-    dto.chatAsisten,
     new Date(dto.tanggalDibuat),
+    dto.chatAsisten,
     dto.gagal ?? false,
   );
 }
