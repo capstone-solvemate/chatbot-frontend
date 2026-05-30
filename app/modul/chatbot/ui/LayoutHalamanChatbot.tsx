@@ -16,7 +16,7 @@ import { useNavigate } from "react-router";
 
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
-export default function LayoutHalamanChat() {
+export default function LayoutHalamanChatbot() {
   const [idChatAktif, setIdChatAktif] = useState<bigint | null | undefined>(
     undefined,
   );
