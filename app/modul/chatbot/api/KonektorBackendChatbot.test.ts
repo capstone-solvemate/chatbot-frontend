@@ -7,6 +7,7 @@ import { mockKonektorWebsocket } from "~/dasar/api/ws/stub/KonektorWebsocketStub
 import { mockMessageEvent } from "~/dasar/api/ws/stub/websocket/MessageEventStub";
 import type { WsErrorResponse } from "~/dasar/api/ws/dto/WsErrorResponse";
 import { ApiErrorCodes } from "~/dasar/api/ApiErrorCodes";
+import { WsError } from "~/dasar/api/ws/dto/WsError";
 
 function buatKonektorBackendChatbot(deps: {
   konektorRestApi?: KonektorRestApi,
@@ -67,7 +68,7 @@ describe("KonektorBackendChatbot", () => {
 
       const konektorWebsocket = mockKonektorWebsocket({
         connect: (params) => {
-          params.onError(code, reason)
+          params.onError(new WsError(code, reason))
         }
       })
       const konektorBackendChatbot = buatKonektorBackendChatbot({
@@ -77,9 +78,9 @@ describe("KonektorBackendChatbot", () => {
       let collectedCode: number = 0
       let collectedReason: WsErrorResponse | null = null
 
-      const onErrorCallback = (code: number, reason: WsErrorResponse) => {
-        collectedCode = code
-        collectedReason = reason
+      const onErrorCallback = (error: WsError) => {
+        collectedCode = error.code
+        collectedReason = error.reason
       }
 
       konektorBackendChatbot.listenPesanChatBaru(() => { }, onErrorCallback)
