@@ -13,6 +13,8 @@ import { ChatSendingState } from "./parameter/ChatSendingState";
 import { PesanChat } from "../domain/PesanChat";
 import type { ChatFormData } from "./parameter/ChatFormData";
 import UserMessage from "./komponen/UserMessage";
+import { getPayloadWs } from "../api/dto/DtoConverter";
+import { PayloadIdKoneksiWsChat } from "../api/dto/PayloadIdKoneksiWsChat";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chat Support" }];
@@ -24,16 +26,28 @@ export default function HalamanChat() {
   const { setMasterError } = useMasterError();
 
   const context = useOutletContext() as ContextHalamanChatbot;
+  const konektorBackend = context.konektorBackendChatbot;
+
   const [fetchingPesanChat, setFetchingPesanChat] = useState(true);
 
   const [chat, setChat] = useState<Chat | null>(null);
   const [fetchingChat, setFetchingChat] = useState(true);
 
-  const [sendingState, setSendingState] = useState(ChatSendingState.Idle);
-  const [error, setError] = useState<string | null>(null);
+  const [sendingState, _setSendingState] = useState(ChatSendingState.Idle);
+  const sendingStateRef = useRef<ChatSendingState>(ChatSendingState.Idle);
+
+  const idKoneksiWs = useRef<string>("");
+
+  function setSendingState(state: ChatSendingState) {
+    _setSendingState(state);
+    sendingStateRef.current = state;
+  }
+
+  const [sendingError, setSendingError] = useState<string | null>(null);
 
   const [pesanChatAkanDikirim, setPesanChatAkanDikirim] =
     useState<PesanChat | null>(null);
+  const formDataAkanDikirim = useRef<ChatFormData | null>(null);
 
   const navigate = useNavigate();
 
@@ -151,30 +165,141 @@ export default function HalamanChat() {
     );
   }
 
-  async function handleSubmit(data: ChatFormData) {
-    setPesanChatAkanDikirim(
-      new PesanChat(0n, 0n, data.pesan, new Date(), false, false),
-    );
+  async function hubungkanWebsocket(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      let returned = false;
 
-    setSendingState(ChatSendingState.Preparing);
+      konektorBackend.listenPesanChatBaru(
+        (message: MessageEvent) => {
+          const payload = getPayloadWs(JSON.parse(message.data));
+          if (payload instanceof PayloadIdKoneksiWsChat) {
+            idKoneksiWs.current = payload.idKoneksi;
+            if (!returned) {
+              returned = true;
+              resolve();
+            }
+          }
+        },
+        (err) => {
+          if (!returned) {
+            returned = true;
+            reject(err);
+          }
+        },
+      );
+    });
+  }
 
-    const lampiranPerluResize = await validasiLampiran(data.lampiran);
-    if (lampiranPerluResize.length > 0) {
-      setSendingState(ChatSendingState.ResizingImages);
-      data.lampiran = await resizeLampiran(data.lampiran, lampiranPerluResize);
+  function showError(err: "ws_conn_failed") {
+    if (err === "ws_conn_failed") {
+      setSendingError("Failed to connect to the server");
+    }
+  }
+
+  async function submit() {
+    setSendingError(null);
+
+    if (!formDataAkanDikirim.current) {
+      setSendingState(ChatSendingState.Idle);
+      setPesanChatAkanDikirim(null);
+      return;
+    }
+
+    if (sendingStateRef.current === ChatSendingState.Idle) {
+      setPesanChatAkanDikirim(
+        new PesanChat(
+          0n,
+          0n,
+          formDataAkanDikirim.current.pesan,
+          new Date(),
+          false,
+          false,
+        ),
+      );
+
+      setSendingState(ChatSendingState.Preparing);
+    }
+
+    if (sendingStateRef.current === ChatSendingState.Preparing) {
+      try {
+        const lampiranPerluResize = await validasiLampiran(
+          formDataAkanDikirim.current.lampiran,
+        );
+        if (lampiranPerluResize.length > 0) {
+          setSendingState(ChatSendingState.ResizingImages);
+          formDataAkanDikirim.current.lampiran = await resizeLampiran(
+            formDataAkanDikirim.current.lampiran,
+            lampiranPerluResize,
+          );
+        }
+      } catch (e) {
+        setSendingError("Failed to validating image size or resize it");
+        console.error(e);
+        setSendingState(ChatSendingState.Preparing);
+      }
+
+      setSendingState(ChatSendingState.Prepared);
     }
 
     if (chat === null) {
       if (environment === Environment.Mock) {
         setSendingState(ChatSendingState.CreatingWsConnection);
         await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+
+        console.log(formDataAkanDikirim.current.pesan);
+        if (formDataAkanDikirim.current.pesan === "error(1)") {
+          showError("ws_conn_failed");
+          setSendingState(ChatSendingState.Prepared);
+          return;
+        }
+
         setSendingState(ChatSendingState.Sending);
         await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+
+        setPesanChatAkanDikirim(null);
+        formDataAkanDikirim.current = null;
         setSendingState(ChatSendingState.Idle);
+
         return;
+      }
+
+      if (sendingStateRef.current === ChatSendingState.Prepared) {
+        setSendingState(ChatSendingState.CreatingWsConnection);
+
+        try {
+          await hubungkanWebsocket();
+        } catch (e) {
+          showError("ws_conn_failed");
+          setSendingState(ChatSendingState.Prepared);
+        }
+      }
+
+      if (sendingStateRef.current === ChatSendingState.CreatingWsConnection) {
+        setSendingState(ChatSendingState.Sending);
+        await konektorBackend.buatChat({
+          idKoneksiWs: idKoneksiWs.current,
+          pesan: formDataAkanDikirim.current.pesan,
+          lampiran: formDataAkanDikirim.current.lampiran,
+        });
+
+        setPesanChatAkanDikirim(null);
+        formDataAkanDikirim.current = null;
+        setSendingState(ChatSendingState.Idle);
       }
     } else {
     }
+  }
+
+  function batalkanBuatPesan() {
+    formDataAkanDikirim.current = null;
+    setPesanChatAkanDikirim(null);
+    setSendingError(null);
+    setSendingState(ChatSendingState.Idle);
+  }
+
+  async function handleSubmit(data: ChatFormData) {
+    formDataAkanDikirim.current = data;
+    await submit();
   }
 
   return (
@@ -198,7 +323,10 @@ export default function HalamanChat() {
         </div>
 
         {sendingState !== ChatSendingState.Idle && (
-          <div className="text-sm italic text-gray-600 text-end mt-2">
+          <div
+            className="text-sm italic text-gray-600 text-end mt-2"
+            id="sending-status"
+          >
             {sendingState === ChatSendingState.ResizingImages &&
               "Resizing Images..."}
 
@@ -207,6 +335,26 @@ export default function HalamanChat() {
 
             {sendingState === ChatSendingState.Sending &&
               "Uploading your message..."}
+          </div>
+        )}
+
+        {sendingError && (
+          <div className="flex flex-col gap-1 items-end">
+            <div className="text-red-500 italic text-sm">{sendingError}</div>
+            <div className="flex gap-2">
+              <button
+                className="cursor-pointer rounded text-xs py-1 px-3 hover:bg-gray-200"
+                onClick={() => batalkanBuatPesan()}
+              >
+                Cancel
+              </button>
+              <button
+                className="cursor-pointer rounded text-xs py-1 px-3 text-blue-600 hover:bg-blue-100"
+                onClick={() => submit()}
+              >
+                Retry
+              </button>
+            </div>
           </div>
         )}
       </div>

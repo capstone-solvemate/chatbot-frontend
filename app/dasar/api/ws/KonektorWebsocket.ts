@@ -1,4 +1,5 @@
 import { ApiErrorCodes } from "../ApiErrorCodes";
+import { WsError } from "./dto/WsError";
 import type { WsErrorResponse } from "./dto/WsErrorResponse";
 
 export class KonektorWebsocket {
@@ -6,14 +7,14 @@ export class KonektorWebsocket {
     private onUnauthenticated: () => void
   ) { }
 
-  async connect(
+  connect(
     params: {
       path: string,
       onMessage: (event: MessageEvent) => void,
-      onError: (status: number, reason: WsErrorResponse) => void
+      onError: (err: WsError) => void
       onOpen?: () => void,
     }
-  ) {
+  ): WebSocket {
     const baseUrl: URL = new URL(import.meta.env.VITE_SITE_URL)
     const protocol = baseUrl.protocol === "https:" ? "wss" : "ws";
     const url = new URL(params.path, `${protocol}://${baseUrl.host}`);
@@ -33,9 +34,11 @@ export class KonektorWebsocket {
         if (statusCode === 4401 || reason.error === ApiErrorCodes.Unauthenticated) {
           this.onUnauthenticated()
         } else {
-          params.onError(statusCode, reason)
+          params.onError(new WsError(statusCode, reason))
         }
       }
     })
+
+    return ws
   }
 }

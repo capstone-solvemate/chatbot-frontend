@@ -123,7 +123,12 @@ export default function ChatInput({
             <span>This chat is locked. Continue through your ticket.</span>
           </div>
         ) : (
-          <form method="POST" ref={form} className="flex w-full flex-col">
+          <form
+            method="POST"
+            ref={form}
+            className="flex w-full flex-col"
+            id="form_message"
+          >
             {previewFiles.length > 0 && (
               <div className="flex mb-2 gap-4">
                 {previewFiles.map((preview, i) => (
