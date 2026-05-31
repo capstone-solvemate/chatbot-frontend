@@ -36,11 +36,15 @@ export class KonektorRestApi {
     }
 
     let contentType: string | null = null
-    let processedData: string = ''
+    let processedData: string | FormData = ''
     let urlQueryStr: string = ''
 
     if (method === HttpMethod.Post || method === HttpMethod.Put || method === HttpMethod.Patch) {
-      if (typeof data === 'object') {
+      if (data instanceof FormData) {
+        contentType = null
+        processedData = data
+      }
+      else if (typeof data === 'object') {
         contentType = 'application/json; charset=utf-8'
         processedData = JSON.stringify(data)
       }
@@ -86,7 +90,7 @@ export class KonektorRestApi {
           url + (urlQueryStr ? `?${urlQueryStr}` : ''),
           {
             method: httpMethodToString(method),
-            body: contentType ? processedData : undefined,
+            body: (contentType || processedData instanceof FormData) ? processedData : undefined,
             headers: headers
           })
         if (response.headers.get('X-Dev-Env-Alert') === '1') {

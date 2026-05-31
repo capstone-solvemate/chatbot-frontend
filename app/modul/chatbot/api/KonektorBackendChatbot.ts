@@ -31,6 +31,12 @@ export class KonektorBackendChatbot {
   }
 
   async buatChat(dto: BuatChatDto): Promise<void> {
-    await this.konektorRestApi.post("/api/chat", dto)
+    const formData = new FormData()
+    formData.append('idKoneksiWs', dto.idKoneksiWs)
+    formData.append('pesan', dto.pesan)
+    dto.lampiran.forEach((file) => {
+      formData.append('files', file)
+    })
+    await this.konektorRestApi.post("/api/chat", formData)
   }
 }
