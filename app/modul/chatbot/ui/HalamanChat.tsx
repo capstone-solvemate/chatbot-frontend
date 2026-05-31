@@ -190,9 +190,11 @@ export default function HalamanChat() {
     });
   }
 
-  function showError(err: "ws_conn_failed") {
+  function showError(err: "ws_conn_failed" | "buat_chat_fail") {
     if (err === "ws_conn_failed") {
       setSendingError("Failed to connect to the server");
+    } else if (err === "buat_chat_fail") {
+      setSendingError("Failed to sending new message");
     }
   }
 
@@ -246,7 +248,6 @@ export default function HalamanChat() {
         setSendingState(ChatSendingState.CreatingWsConnection);
         await new Promise<void>((resolve) => setTimeout(resolve, 1000));
 
-        console.log(formDataAkanDikirim.current.pesan);
         if (formDataAkanDikirim.current.pesan === "error(1)") {
           showError("ws_conn_failed");
           setSendingState(ChatSendingState.Prepared);
@@ -255,6 +256,12 @@ export default function HalamanChat() {
 
         setSendingState(ChatSendingState.Sending);
         await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+
+        if (formDataAkanDikirim.current.pesan === "error(2)") {
+          showError("buat_chat_fail");
+          setSendingState(ChatSendingState.CreatingWsConnection);
+          return;
+        }
 
         setPesanChatAkanDikirim(null);
         formDataAkanDikirim.current = null;
@@ -271,16 +278,24 @@ export default function HalamanChat() {
         } catch (e) {
           showError("ws_conn_failed");
           setSendingState(ChatSendingState.Prepared);
+          return;
         }
       }
 
       if (sendingStateRef.current === ChatSendingState.CreatingWsConnection) {
         setSendingState(ChatSendingState.Sending);
-        await konektorBackend.buatChat({
-          idKoneksiWs: idKoneksiWs.current,
-          pesan: formDataAkanDikirim.current.pesan,
-          lampiran: formDataAkanDikirim.current.lampiran,
-        });
+
+        try {
+          await konektorBackend.buatChat({
+            idKoneksiWs: idKoneksiWs.current,
+            pesan: formDataAkanDikirim.current.pesan,
+            lampiran: formDataAkanDikirim.current.lampiran,
+          });
+        } catch (e) {
+          showError("buat_chat_fail");
+          setSendingState(ChatSendingState.CreatingWsConnection);
+          return;
+        }
 
         setPesanChatAkanDikirim(null);
         formDataAkanDikirim.current = null;
@@ -322,7 +337,7 @@ export default function HalamanChat() {
           )}
         </div>
 
-        {sendingState !== ChatSendingState.Idle && (
+        {!sendingError && sendingState !== ChatSendingState.Idle && (
           <div
             className="text-sm italic text-gray-600 text-end mt-2"
             id="sending-status"
@@ -339,7 +354,7 @@ export default function HalamanChat() {
         )}
 
         {sendingError && (
-          <div className="flex flex-col gap-1 items-end">
+          <div className="flex flex-col gap-1 items-end mt-2">
             <div className="text-red-500 italic text-sm">{sendingError}</div>
             <div className="flex gap-2">
               <button
