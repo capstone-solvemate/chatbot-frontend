@@ -1,7 +1,6 @@
 import type React from "react";
 import type { Route } from "./+types/HalamanLogin";
 import { useEffect, useRef, useState } from "react";
-import { HttpError } from "~/dasar/KonektorBackend";
 import type { LoginDto } from "~/modul/otentikasi/login/data/LoginDto";
 import {
   PeranPengguna,
@@ -20,6 +19,7 @@ import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-yup";
 import LoginForm from "./LoginForm";
 import * as yup from "yup";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 const KEY_PERAN_LOGIN = "peran_login";
 

@@ -3,7 +3,7 @@ import { useKonektorRestApi } from "~/dasar/hooks/useKonektorRestApi";
 import { useKonektorWebsocket } from "~/dasar/hooks/useKonektorWebsocket";
 import { KonektorBackendChatbot } from "../api/KonektorBackendChatbot";
 import { useEffect, useRef, useState } from "react";
-import type { Chat } from "../domain/Chat";
+import { Chat } from "../domain/Chat";
 import { useEnvironment } from "~/dasar/hooks/useEnvironment";
 import { Environment } from "~/dasar/types/Environment";
 import { mockChats } from "../domain/ChatStub";
@@ -17,9 +17,16 @@ import { useNavigate } from "react-router";
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
 export default function LayoutHalamanChatbot() {
+  const [idChatAktifSidebar, setIdChatAktifSidebar] = useState<bigint | null>(
+    null,
+  );
+
   const [idChatAktif, setIdChatAktif] = useState<bigint | null | undefined>(
     undefined,
   );
+  useEffect(() => {
+    setIdChatAktifSidebar(idChatAktif ?? null);
+  }, [idChatAktif]);
 
   const [idBukanAngka, setIdBukanAngka] = useState<boolean>(false);
   const [idTidakDitemukan, setIdTidakDitemukan] = useState<boolean>(false);
@@ -79,6 +86,22 @@ export default function LayoutHalamanChatbot() {
     window.history.pushState(null, "", `/chat/${idChat.toString()}`);
   }
 
+  function handleChatBaruDibuat(chatBaru: Chat) {
+    aturUrlTanpaMengubahState(chatBaru.id);
+    setIdChatAktifSidebar(chatBaru.id);
+    setDaftarChat((prev) => [
+      new Chat(
+        chatBaru.id,
+        chatBaru.idPembuat,
+        chatBaru.tanggalDibuat,
+        chatBaru.subjek,
+        chatBaru.sedangDiproses,
+        chatBaru.dialihkanKeTiket,
+      ),
+      ...prev,
+    ]);
+  }
+
   async function fetchDaftarChat(): Promise<void> {
     if (environment === Environment.Mock) {
       setFetchingDaftarChat(true);
@@ -126,7 +149,7 @@ export default function LayoutHalamanChatbot() {
             loading={fetchingDaftarChat}
             daftarChat={daftarChat}
             expand={expandSidebar}
-            idChatAktif={idChatAktif ?? null}
+            idChatAktif={idChatAktifSidebar}
           />
           <div
             className={`${expandSidebar ? "w-64" : "w-0"} shrink-0 transition-all ease-out`}
@@ -164,6 +187,7 @@ export default function LayoutHalamanChatbot() {
                 expandSidebar,
                 idChat: idChatAktif,
                 onIdChatTidakDitemukan: handleIdChatTidakDitemukan,
+                onChatBaruDibuat: handleChatBaruDibuat,
               }}
             />
           )}

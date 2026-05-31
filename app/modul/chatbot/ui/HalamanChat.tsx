@@ -15,6 +15,8 @@ import type { ChatFormData } from "./parameter/ChatFormData";
 import UserMessage from "./komponen/UserMessage";
 import { getPayloadWs } from "../api/dto/DtoConverter";
 import { PayloadIdKoneksiWsChat } from "../api/dto/PayloadIdKoneksiWsChat";
+import { PayloadWsChatBaru } from "../api/dto/PayloadWsChatBaru";
+import { payloadWsChatBaruToChat } from "../api/dto/ConverterPayloadChatBaru";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chat Support" }];
@@ -165,11 +167,18 @@ export default function HalamanChat() {
     );
   }
 
+  function handleChatBaruDibuat(chat: Chat, pIdKoneksiWs: string) {
+    if (idKoneksiWs.current === pIdKoneksiWs) {
+      setPesanChatAkanDikirim(null);
+      context.onChatBaruDibuat(chat);
+    }
+  }
+
   async function hubungkanWebsocket(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let returned = false;
 
-      konektorBackend.listenPesanChatBaru(
+      konektorBackend.current.listenPesanChatBaru(
         (message: MessageEvent) => {
           const payload = getPayloadWs(JSON.parse(message.data));
           if (payload instanceof PayloadIdKoneksiWsChat) {
@@ -178,6 +187,9 @@ export default function HalamanChat() {
               returned = true;
               resolve();
             }
+          } else if (payload instanceof PayloadWsChatBaru) {
+            const { chat, idKoneksiWs } = payloadWsChatBaruToChat(payload);
+            handleChatBaruDibuat(chat, idKoneksiWs);
           }
         },
         (err) => {
@@ -286,7 +298,7 @@ export default function HalamanChat() {
         setSendingState(ChatSendingState.Sending);
 
         try {
-          await konektorBackend.buatChat({
+          await konektorBackend.current.buatChat({
             idKoneksiWs: idKoneksiWs.current,
             pesan: formDataAkanDikirim.current.pesan,
             lampiran: formDataAkanDikirim.current.lampiran,
@@ -297,7 +309,6 @@ export default function HalamanChat() {
           return;
         }
 
-        setPesanChatAkanDikirim(null);
         formDataAkanDikirim.current = null;
         setSendingState(ChatSendingState.Idle);
       }
