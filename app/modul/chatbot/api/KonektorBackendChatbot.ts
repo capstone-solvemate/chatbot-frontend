@@ -19,12 +19,14 @@ export class KonektorBackendChatbot {
 
   listenPesanChatBaru(
     onMessage: (event: MessageEvent) => void,
-    onError: (err: WsError) => void
+    onError: (err: WsError) => void,
+    onNormalClose?: () => void
   ): WebSocket {
     return this.konektorWebsocket.connect({
       path: '/api/ws/chat',
       onMessage: onMessage,
-      onError: onError
+      onError: onError,
+      onNormalClose: onNormalClose
     })
   }
 

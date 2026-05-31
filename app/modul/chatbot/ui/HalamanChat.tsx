@@ -25,18 +25,20 @@ export function meta({}: Route.MetaArgs) {
 export default function HalamanChat() {
   const environment = useEnvironment();
 
-  const { setMasterError } = useMasterError();
-
   const context = useOutletContext() as ContextHalamanChatbot;
   const konektorBackend = context.konektorBackendChatbot;
 
   const [fetchingPesanChat, setFetchingPesanChat] = useState(true);
+
+  const [daftarPesan, setDaftarPesan] = useState<PesanChat[]>([]);
 
   const [chat, setChat] = useState<Chat | null>(null);
   const [fetchingChat, setFetchingChat] = useState(true);
 
   const [sendingState, _setSendingState] = useState(ChatSendingState.Idle);
   const sendingStateRef = useRef<ChatSendingState>(ChatSendingState.Idle);
+
+  const [sedangDiproses, setSedangDiproses] = useState(false);
 
   const idKoneksiWs = useRef<string>("");
 
@@ -50,21 +52,6 @@ export default function HalamanChat() {
   const [pesanChatAkanDikirim, setPesanChatAkanDikirim] =
     useState<PesanChat | null>(null);
   const formDataAkanDikirim = useRef<ChatFormData | null>(null);
-
-  const navigate = useNavigate();
-
-  function handleChatCreated(chat: Chat) {
-    // setDaftarChat((prev) => [chat, ...prev]);
-    // navigate(`/chat/${chat.id}`);
-  }
-
-  // Dipanggil TampilanPesanChat saat WS menerima jawaban/error,
-  // agar sedangDiproses di daftarChat ikut terupdate
-  function handleChatUpdated(chatBaru: Chat) {
-    // setDaftarChat((prev) =>
-    //   prev.map((c) => (c.id === chatBaru.id ? chatBaru : c)),
-    // );
-  }
 
   function formatTime(date: Date): string {
     return date.toLocaleTimeString("id-ID", {
@@ -83,6 +70,8 @@ export default function HalamanChat() {
     }
   }
 
+  const ws = useRef<WebSocket | null>(null);
+
   function onIdChanged() {
     if (context.idChat !== null) {
       fetchPesanChat(context.idChat);
@@ -94,6 +83,12 @@ export default function HalamanChat() {
 
   useEffect(() => {
     onIdChanged();
+
+    return () => {
+      if (ws.current) {
+        ws.current.close();
+      }
+    };
   }, [context.idChat]);
 
   async function validasiLampiran(files: File[]): Promise<number[]> {
@@ -167,10 +162,13 @@ export default function HalamanChat() {
     );
   }
 
-  function handleChatBaruDibuat(chat: Chat, pIdKoneksiWs: string) {
+  function handleChatBaruDibuat(pChat: Chat, pIdKoneksiWs: string) {
     if (idKoneksiWs.current === pIdKoneksiWs) {
       setPesanChatAkanDikirim(null);
-      context.onChatBaruDibuat(chat);
+      context.onChatBaruDibuat(pChat);
+      setChat(pChat);
+      setSedangDiproses(pChat.sedangDiproses);
+      setDaftarPesan([...pChat.pesan]);
     }
   }
 
@@ -178,7 +176,7 @@ export default function HalamanChat() {
     return new Promise<void>((resolve, reject) => {
       let returned = false;
 
-      konektorBackend.current.listenPesanChatBaru(
+      ws.current = konektorBackend.current.listenPesanChatBaru(
         (message: MessageEvent) => {
           const payload = getPayloadWs(JSON.parse(message.data));
           if (payload instanceof PayloadIdKoneksiWsChat) {
@@ -193,10 +191,15 @@ export default function HalamanChat() {
           }
         },
         (err) => {
+          ws.current = null;
+
           if (!returned) {
             returned = true;
             reject(err);
           }
+        },
+        () => {
+          ws.current = null;
         },
       );
     });
@@ -331,11 +334,10 @@ export default function HalamanChat() {
   return (
     <div className="grow pb-16">
       <TampilanPesanChat
-        chat={null}
-        sendingState={sendingState}
-        expandSidebar={context.expandSidebar}
-        onChatCreated={handleChatCreated}
-        onChatUpdated={handleChatUpdated}
+        chat={chat}
+        processing={sedangDiproses}
+        loading={false}
+        daftarPesanChat={daftarPesan}
       />
 
       <div className="w-full max-w-3xl mx-auto flex flex-col flex-1 px-8 py-6">
