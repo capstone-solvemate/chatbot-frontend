@@ -26,7 +26,7 @@ export default function ChatInput({
   const skemaValidasi = yup.object({
     pesan: yup.string().required("this field is required"),
   });
-  const { form, errors, isSubmitting, isValid, reset } = useForm({
+  const { form, errors, isSubmitting, isValid, reset, setTouched } = useForm({
     extend: [validator({ schema: skemaValidasi })],
     onSubmit: async (data: any) => {
       const formData: ChatFormData = {
@@ -35,18 +35,12 @@ export default function ChatInput({
       };
 
       reset();
+      setTimeout(() => setTouched({ pesan: false }), 0);
       hapusSeluruhUploadFile();
 
       await onSubmit(formData);
     },
   });
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      document.getElementById("form_chat_submit_btn")?.click();
-    }
-  }
 
   const uploadFilesRef = useRef<File[]>([]);
 
@@ -165,7 +159,6 @@ export default function ChatInput({
                 <input
                   name="pesan"
                   type="text"
-                  onKeyDown={handleKeyDown}
                   placeholder="Type your message..."
                   className="flex-1 outline-none text-sm"
                   disabled={disabled}
