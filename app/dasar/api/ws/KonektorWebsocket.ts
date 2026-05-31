@@ -13,6 +13,7 @@ export class KonektorWebsocket {
       onMessage: (event: MessageEvent) => void,
       onError: (err: WsError) => void
       onOpen?: () => void,
+      onNormalClose?: (code: number) => void
     }
   ): WebSocket {
     const baseUrl: URL = new URL(import.meta.env.VITE_SITE_URL)
@@ -36,6 +37,8 @@ export class KonektorWebsocket {
         } else {
           params.onError(new WsError(statusCode, reason))
         }
+      } else {
+        params.onNormalClose?.(statusCode)
       }
     })
 
