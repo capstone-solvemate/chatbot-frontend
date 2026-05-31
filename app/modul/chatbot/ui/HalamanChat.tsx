@@ -354,18 +354,23 @@ export default function HalamanChat() {
         )}
 
         {sendingError && (
-          <div className="flex flex-col gap-1 items-end mt-2">
+          <div
+            className="flex flex-col gap-1 items-end mt-2"
+            id="sending-error-message"
+          >
             <div className="text-red-500 italic text-sm">{sendingError}</div>
             <div className="flex gap-2">
               <button
                 className="cursor-pointer rounded text-xs py-1 px-3 hover:bg-gray-200"
                 onClick={() => batalkanBuatPesan()}
+                id="btn-cancel-sending-message"
               >
                 Cancel
               </button>
               <button
                 className="cursor-pointer rounded text-xs py-1 px-3 text-blue-600 hover:bg-blue-100"
                 onClick={() => submit()}
+                id="btn-retry-sending-message"
               >
                 Retry
               </button>
