@@ -114,7 +114,7 @@ export default function TicketTrendsCard({
                   },
                   border: { display: false },
                   ticks: { color: "#888", stepSize: 55 },
-                  max: maxJumlah,
+                  max: Math.ceil(maxJumlah * 1.2),
                 },
               },
             }}

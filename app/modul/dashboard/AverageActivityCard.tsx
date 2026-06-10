@@ -119,7 +119,7 @@ export default function AverageActivityCard({
                   },
                   border: { display: false },
                   ticks: { color: "#888" },
-                  max: maxJumlah,
+                  max: Math.ceil(maxJumlah * 1.2),
                 },
               },
             }}

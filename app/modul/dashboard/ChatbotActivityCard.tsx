@@ -102,7 +102,7 @@ export default function ChatbotActivityCard({
                   },
                   border: { display: false },
                   ticks: { color: "#888" },
-                  max: maxJumlah,
+                  max: Math.ceil(maxJumlah * 1.2),
                 },
               },
             }}
