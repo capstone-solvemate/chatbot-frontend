@@ -29,6 +29,7 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
   const [dokumenAkanDihapus, setDokumenAkanDihapus] =
     useState<KnowledgeBase | null>(null);
+  const [dokumenAkanDiedit, setDokumenAkanDiedit] = useState<KnowledgeBase | null>(null);
   const [menghapus, setMenghapus] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
 
@@ -88,13 +89,14 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
 
   // Scroll ke form saat muncul
   useEffect(() => {
-    if (showUploadForm && formRef.current) {
+    if ((showUploadForm || dokumenAkanDiedit) && formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [showUploadForm]);
+  }, [showUploadForm, dokumenAkanDiedit]);
 
   function handleCloseForm(refreshRequired: boolean) {
     setShowUploadForm(false);
+    setDokumenAkanDiedit(null);
     if (refreshRequired) getDokumens();
   }
 
@@ -133,19 +135,23 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
         </p>
       </div>
 
-      {/* Upload Form Card atau tombol Upload */}
-      {showUploadForm ? (
+      {/* Upload/Edit Form Card atau tombol Upload */}
+      {showUploadForm || dokumenAkanDiedit ? (
         <div ref={formRef}>
           <KnowledgeBaseUploadFormCard
             onClose={handleCloseForm}
             konektorBackend={konektorBackend}
             setMasterError={setMasterError}
+            dokumenToEdit={dokumenAkanDiedit ?? undefined}
           />
         </div>
       ) : (
         <button
           type="button"
-          onClick={() => setShowUploadForm(true)}
+          onClick={() => {
+            setShowUploadForm(true);
+            setDokumenAkanDiedit(null);
+          }}
           className="mt-5 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors cursor-pointer"
         >
           <svg
@@ -316,6 +322,10 @@ export default function HalamanDaftarKnowledgeBaseAdmin() {
                     <button
                       type="button"
                       disabled={isLocked}
+                      onClick={() => {
+                        setDokumenAkanDiedit(dokumen);
+                        setShowUploadForm(false);
+                      }}
                       title={
                         isLocked
                           ? "Not available while document is being processed"

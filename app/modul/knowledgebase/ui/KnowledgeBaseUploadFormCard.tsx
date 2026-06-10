@@ -8,21 +8,25 @@ interface ValidationError {
   message: string;
 }
 
+import type { KnowledgeBase } from "../data/KnowledgeBase";
+
 interface Props {
   onClose: (refreshRequired: boolean) => void;
   konektorBackend: any;
   setMasterError: (e: any) => void;
+  dokumenToEdit?: KnowledgeBase;
 }
 
 export default function KnowledgeBaseUploadFormCard({
   onClose,
   konektorBackend,
   setMasterError,
+  dokumenToEdit,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [title, setTitle] = useState("");
-  const [idKategori, setIdKategori] = useState<number | "">("");
+  const [title, setTitle] = useState(dokumenToEdit?.judul ?? "");
+  const [idKategori, setIdKategori] = useState<number | "">(dokumenToEdit?.idKategori ?? "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -64,7 +68,7 @@ export default function KnowledgeBaseUploadFormCard({
     const errors: Record<string, string> = {};
     if (!title.trim()) errors.judul = "this field is required.";
     if (idKategori === "") errors.idKategori = "this field is required.";
-    if (!selectedFile) errors.file = "this field is required.";
+    if (!dokumenToEdit && !selectedFile) errors.file = "this field is required.";
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -74,7 +78,7 @@ export default function KnowledgeBaseUploadFormCard({
 
     try {
       const formData = new FormData();
-      formData.append("file", selectedFile!);
+      if (selectedFile) formData.append("file", selectedFile);
       formData.append("judul", title.trim());
       formData.append("idKategori", String(idKategori));
 
@@ -85,10 +89,15 @@ export default function KnowledgeBaseUploadFormCard({
           .find((row) => row.startsWith("csrf_token="))
           ?.split("=")[1] ?? "";
 
+      const method = dokumenToEdit ? "PUT" : "POST";
+      const url = dokumenToEdit 
+        ? `/api/admin/knowledge-base/${dokumenToEdit.id}`
+        : `/api/admin/knowledge-base/upload`;
+
       const response = await fetch(
-        baseUrl.replace(/\/$/, "") + "/api/admin/knowledge-base/upload",
+        baseUrl.replace(/\/$/, "") + url,
         {
-          method: "POST",
+          method,
           headers: { "X-CSRF-Token": csrfToken },
           body: formData,
           credentials: "include",
@@ -107,7 +116,7 @@ export default function KnowledgeBaseUploadFormCard({
 
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload?.message ?? "Upload failed");
+        throw new Error(payload?.message ?? (dokumenToEdit ? "Edit failed" : "Upload failed"));
       }
 
       onClose(true);
@@ -123,7 +132,7 @@ export default function KnowledgeBaseUploadFormCard({
       {/* Card Header */}
       <div className="px-6 py-4 border-b border-gray-100">
         <h2 className="text-sm font-semibold text-gray-800">
-          Upload New Document
+          {dokumenToEdit ? "Edit Document" : "Upload New Document"}
         </h2>
       </div>
 
@@ -207,7 +216,7 @@ export default function KnowledgeBaseUploadFormCard({
         {/* Upload File */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">
-            Upload File
+            {dokumenToEdit ? "Replace File (Optional)" : "Upload File"}
           </label>
           <div
             className={`flex items-center w-full rounded-lg border overflow-hidden cursor-pointer ${
@@ -221,7 +230,7 @@ export default function KnowledgeBaseUploadFormCard({
               Choose File
             </span>
             <span className="px-3 py-2 text-sm text-gray-500 truncate flex-1 select-none">
-              {selectedFile?.name ?? "No file chosen"}
+              {selectedFile?.name ?? (dokumenToEdit ? "Leave empty to keep current file" : "No file chosen")}
             </span>
             <input
               ref={inputRef}
@@ -262,7 +271,7 @@ export default function KnowledgeBaseUploadFormCard({
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
             />
           </svg>
-          {uploading ? "Uploading..." : "Upload Document"}
+          {uploading ? (dokumenToEdit ? "Saving..." : "Uploading...") : (dokumenToEdit ? "Save Changes" : "Upload Document")}
         </button>
         <button
           type="button"
