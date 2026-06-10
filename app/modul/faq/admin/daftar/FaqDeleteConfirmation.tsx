@@ -42,9 +42,9 @@ export default function FaqDeleteConfirmation({
 
         <div className="bg-gray-50 rounded-md p-4 flex flex-col gap-2">
           <h5 className="font-medium text-gray-900">
-            How do I reset my printer?
+            {faq.question}
           </h5>
-          <span className="text-gray-600 text-sm">Equipment</span>
+          <span className="text-gray-600 text-sm">{faq.kategori?.nama || "Uncategorized"}</span>
         </div>
 
         <div className="text-red-600 text-sm">

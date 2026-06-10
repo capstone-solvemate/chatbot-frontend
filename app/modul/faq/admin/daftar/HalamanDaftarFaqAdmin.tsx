@@ -110,6 +110,7 @@ export default function HalamanDaftarFaqAdmin() {
   }
 
   function handleHapus(faq: Faq) {
+    faq.kategori = daftarKategori.find((k) => k.id === faq.idKategori) || null;
     setFaqAkanDihapus(faq);
   }
 
