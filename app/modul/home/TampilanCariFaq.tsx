@@ -7,6 +7,7 @@ import type { GetFaqsRequestDto } from "../faq/admin/dto/GetFaqsRequestDto";
 import type { GetFaqsResponseDto } from "../faq/admin/daftar/GetFaqsResponseDto";
 import { dtoToFaq } from "../faq/admin/daftar/converters";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import DetailFaq from "../faq/karyawan/DetailFaq";
 
 export default function TampilanCariFaq() {
   const [showResult, setShowResult] = useState(false);
@@ -19,6 +20,9 @@ export default function TampilanCariFaq() {
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  const [faqDipilih, setFaqDipilih] = useState<Faq | null>(null);
+  const [jawabanSurvei, setJawabanSurvei] = useState<boolean | null>(null);
+
   const konektorBackend = useKonektorBackend();
   const { setMasterError } = useMasterError();
 
@@ -29,6 +33,21 @@ export default function TampilanCariFaq() {
       setShowResult(false);
     }
   }, [isFocus, search]);
+
+  async function handleSelectFaq(faq: Faq) {
+    setFaqDipilih(faq);
+    setJawabanSurvei(null);
+
+    konektorBackend.post(`/api/faqs/${faq.id}/lihat`).catch(() => {});
+
+    konektorBackend
+      .get(`/api/faqs/${faq.id}/survei`)
+      .then((res) => res.json())
+      .then((data: { jawaban: boolean | null }) =>
+        setJawabanSurvei(data.jawaban),
+      )
+      .catch(() => setJawabanSurvei(null));
+  }
 
   async function getFaqs() {
     if (isLoading) {
@@ -107,14 +126,21 @@ export default function TampilanCariFaq() {
               loading={isLoading}
               className="absolute left-0 top-full"
               firstSearch={firstSearch}
+              onSelectFaq={handleSelectFaq}
             />
           )}
         </div>
-
-        {/* <div className="mt-6">
-          <PopularSearches />
-        </div> */}
       </div>
+
+      {faqDipilih && (
+        <DetailFaq
+          faq={faqDipilih}
+          jawabanSurvei={jawabanSurvei}
+          onJawabanSurveiChange={setJawabanSurvei}
+          onClose={() => setFaqDipilih(null)}
+          konektorBackend={konektorBackend}
+        />
+      )}
     </section>
   );
 }

@@ -7,6 +7,7 @@ type Props = {
   foundFaqs: Faq[];
   loading: boolean;
   firstSearch: boolean;
+  onSelectFaq?: (faq: Faq) => void;
 };
 
 export default function TampilanHasilCariFaq({
@@ -14,6 +15,7 @@ export default function TampilanHasilCariFaq({
   foundFaqs,
   loading,
   firstSearch,
+  onSelectFaq,
 }: Props) {
   return (
     <div
@@ -22,7 +24,14 @@ export default function TampilanHasilCariFaq({
       <hr className="mx-4 border-gray-400" />
       <div className="flex flex-col gap-1 py-2">
         {foundFaqs.map((faq) => (
-          <button className="px-4 text-sm hover:bg-gray-100 py-0.5 text-left flex items-center gap-2">
+          <button 
+            key={faq.id}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              if (onSelectFaq) onSelectFaq(faq);
+            }}
+            className="px-4 text-sm hover:bg-gray-100 py-0.5 text-left flex items-center gap-2 cursor-pointer"
+          >
             <IkonCari className="w-4 h-4" />
             <span>{faq.question}</span>
           </button>

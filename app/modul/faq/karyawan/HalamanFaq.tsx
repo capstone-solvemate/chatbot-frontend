@@ -21,9 +21,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  const { KonektorBackend } = await import("~/dasar/KonektorBackend");
-  const konektorBackend = new KonektorBackend(() => {});
-
+  // const { KonektorBackend } = await import("~/dasar/KonektorBackend");
+  // const konektorBackend = new KonektorBackend(() => {});
+  const { KonektorRestApi } = await import("~/dasar/api/rest/KonektorRestApi");
+  const konektorBackend = new KonektorRestApi(() => {});
   const [kategorisRes, faqsRes] = await Promise.all([
     konektorBackend.get("/api/categories"),
     konektorBackend.get("/api/faqs", {} as GetFaqsRequestDto),
