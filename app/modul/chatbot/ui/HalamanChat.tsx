@@ -61,12 +61,20 @@ export default function HalamanChat() {
     });
   }
 
+  async function mockFetchPesanChat(idChat: bigint) {
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    if (idChat > 100n) {
+      context.onIdChatTidakDitemukan();
+    }
+    setFetchingPesanChat(false);
+  }
+
   async function fetchPesanChat(idChat: bigint) {
+    setFetchingPesanChat(true);
+    setDaftarPesan([]);
+
     if (environment === Environment.Mock) {
-      await new Promise<void>((resolve) => setTimeout(resolve, 1000));
-      if (idChat > 100n) {
-        context.onIdChatTidakDitemukan();
-      }
+      await mockFetchPesanChat(idChat);
       return;
     }
   }
@@ -367,7 +375,7 @@ export default function HalamanChat() {
       <TampilanPesanChat
         chat={chat}
         processing={sedangDiproses}
-        loading={false}
+        loading={fetchingPesanChat}
         daftarPesanChat={daftarPesan}
       />
 
