@@ -1,4 +1,3 @@
-import Navbar from "~/komponen/Navbar";
 import TicketCard from "./TicketCard";
 import type { Route } from "./+types/HalamanBuatTiket";
 import { useEffect, useState } from "react";
