@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Route } from "./+types/HalamanTambahPengguna";
-import { HttpError } from "~/dasar/KonektorBackend";
 import type { TambahPenggunaDto } from "../data/dto/TambahPenggunaDto";
 import PenggunaFormCard from "../../form/ui/PenggunaFormCard";
 import type { PenggunaFormData } from "../../form/data/PenggunaFormData";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Add User" }];

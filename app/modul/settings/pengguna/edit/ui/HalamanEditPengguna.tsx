@@ -3,13 +3,13 @@ import { useNavigate, useOutletContext, useParams } from "react-router";
 import type { Route } from "./+types/HalamanEditPengguna";
 import type { OutletContext } from "~/dasar/OutletContext";
 import type { Pengguna } from "~/modul/settings/pengguna/data/Pengguna";
-import { HttpError } from "~/dasar/KonektorBackend";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import type { PenggunaResponseDto } from "../../daftar/data/dto/PenggunaResponseDto";
 import { dtoToPengguna } from "../../daftar/data/dto/converters";
 import type { PenggunaFormData } from "../../form/data/PenggunaFormData";
 import PenggunaFormCard from "../../form/ui/PenggunaFormCard";
 import type { EditPenggunaDto } from "../data/dto/EditPenggunaDto";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Edit User" }];
