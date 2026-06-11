@@ -1,8 +1,9 @@
 import { Chat } from "../../domain/Chat";
 import { PesanChat } from "../../domain/PesanChat";
-import { PayloadIdKoneksiWsChat } from "./PayloadIdKoneksiWsChat";
 import type { PayloadWsChat } from "./PayloadWsChat";
 import { PayloadWsChatBaru } from "./PayloadWsChatBaru";
+import { PayloadWsChatReady } from "./PayloadWsChatReady";
+import { PayloadWsChatUpdate } from "./PayloadWsChatUpdate";
 import { TipePayloadWsChat } from "./TipePayloadWsChat";
 
 export function dtoToChat(dto: Record<string, any>): Chat {
@@ -28,11 +29,8 @@ export function dtoToPesanChat(dto: Record<string, any>): PesanChat {
 }
 
 export function getPayloadWs(data: any): PayloadWsChat {
-  if (data.tipe === TipePayloadWsChat.IdKoneksi) {
-    return new PayloadIdKoneksiWsChat(
-      data.tipe,
-      data.idKoneksi
-    )
+  if (data.tipe === TipePayloadWsChat.Ready) {
+    return new PayloadWsChatReady()
   } else if (data.tipe === TipePayloadWsChat.ChatBaru) {
     return new PayloadWsChatBaru(
       data.id,
@@ -42,8 +40,14 @@ export function getPayloadWs(data: any): PayloadWsChat {
       data.sedangDiproses,
       data.dialihkanKeTiket,
       data.pesan,
-      data.idKoneksiWs,
       data.tipe
+    )
+  } else if (data.tipe === TipePayloadWsChat.ChatUpdate) {
+    return new PayloadWsChatUpdate(
+      data.id,
+      data.sedangDiproses,
+      data.dialihkanKeTiket,
+      data.pesan,
     )
   } else {
     throw new Error("Unsupported websocket chat payload")

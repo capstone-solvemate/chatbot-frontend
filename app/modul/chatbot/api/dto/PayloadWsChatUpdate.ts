@@ -1,12 +1,9 @@
 import { PayloadWsChat } from "./PayloadWsChat.js";
-import type { TipePayloadWsChat } from "./TipePayloadWsChat.js";
+import { TipePayloadWsChat } from "./TipePayloadWsChat.js";
 
-export class PayloadWsChatBaru extends PayloadWsChat {
+export class PayloadWsChatUpdate extends PayloadWsChat {
   constructor(
     public id: string,
-    public idPembuat: number,
-    public tanggalDibuat: string,
-    public subjek: string,
     public sedangDiproses: boolean,
     public dialihkanKeTiket: boolean,
     public pesan: {
@@ -18,9 +15,8 @@ export class PayloadWsChatBaru extends PayloadWsChat {
       lampiran: {
         id: string,
       }[],
-    }[],
-    tipe: TipePayloadWsChat
+    }[]
   ) {
-    super(tipe)
+    super(TipePayloadWsChat.ChatUpdate)
   }
 } 

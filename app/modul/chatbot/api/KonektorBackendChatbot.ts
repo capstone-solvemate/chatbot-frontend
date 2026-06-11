@@ -2,8 +2,8 @@ import type { KonektorRestApi } from "~/dasar/api/rest/KonektorRestApi";
 import type { KonektorWebsocket } from "~/dasar/api/ws/KonektorWebsocket";
 import type { Chat } from "../domain/Chat";
 import { dtoToChat } from "./dto/DtoConverter";
-import type { BuatChatDto } from "./dto/BuatChatDto";
 import type { WsError } from "~/dasar/api/ws/dto/WsError";
+import type { PayloadWsBuatChat } from "./dto/PayloadWsBuatChat";
 
 export class KonektorBackendChatbot {
   constructor(
@@ -30,13 +30,7 @@ export class KonektorBackendChatbot {
     })
   }
 
-  async buatChat(dto: BuatChatDto): Promise<void> {
-    const formData = new FormData()
-    formData.append('idKoneksiWs', dto.idKoneksiWs)
-    formData.append('pesan', dto.pesan)
-    dto.lampiran.forEach((file) => {
-      formData.append('files', file)
-    })
-    await this.konektorRestApi.post("/api/chat", formData)
+  buatChat(payload: PayloadWsBuatChat, ws: WebSocket): void {
+    ws.send(JSON.stringify(payload.toPlainObject()))
   }
 }

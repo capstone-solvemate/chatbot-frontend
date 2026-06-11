@@ -14,9 +14,12 @@ import { PesanChat } from "../domain/PesanChat";
 import type { ChatFormData } from "./parameter/ChatFormData";
 import UserMessage from "./komponen/UserMessage";
 import { getPayloadWs } from "../api/dto/DtoConverter";
-import { PayloadIdKoneksiWsChat } from "../api/dto/PayloadIdKoneksiWsChat";
 import { PayloadWsChatBaru } from "../api/dto/PayloadWsChatBaru";
 import { payloadWsChatBaruToChat } from "../api/dto/ConverterPayloadChatBaru";
+import { PayloadWsChatReady } from "../api/dto/PayloadWsChatReady";
+import { PayloadWsBuatChat } from "../api/dto/PayloadWsBuatChat";
+import { PayloadWsChatUpdate } from "../api/dto/PayloadWsChatUpdate";
+import { payloadWsChatUpdateToDaftarPesanChat } from "../api/dto/ConverterPayloadChatUpdate";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chat Support" }];
@@ -39,8 +42,6 @@ export default function HalamanChat() {
   const sendingStateRef = useRef<ChatSendingState>(ChatSendingState.Idle);
 
   const [sedangDiproses, setSedangDiproses] = useState(false);
-
-  const idKoneksiWs = useRef<string>("");
 
   function setSendingState(state: ChatSendingState) {
     _setSendingState(state);
@@ -162,13 +163,26 @@ export default function HalamanChat() {
     );
   }
 
-  function handleChatBaruDibuat(pChat: Chat, pIdKoneksiWs: string) {
-    if (idKoneksiWs.current === pIdKoneksiWs) {
+  function handleChatBaruDibuat(pChat: Chat) {
+    setPesanChatAkanDikirim(null);
+    context.onChatBaruDibuat(pChat);
+    setChat(pChat);
+    setSedangDiproses(pChat.sedangDiproses);
+    setDaftarPesan([...pChat.pesan]);
+  }
+
+  function handleChatUpdate(payload: PayloadWsChatUpdate) {
+    if (payload.pesan.length > 0 && !payload.pesan[0].chatAsisten) {
       setPesanChatAkanDikirim(null);
-      context.onChatBaruDibuat(pChat);
-      setChat(pChat);
-      setSedangDiproses(pChat.sedangDiproses);
-      setDaftarPesan([...pChat.pesan]);
+      formDataAkanDikirim.current = null;
+    }
+
+    const daftarPesanBaru = payloadWsChatUpdateToDaftarPesanChat(payload);
+
+    setSedangDiproses(payload.sedangDiproses);
+
+    if (daftarPesanBaru.length > 0) {
+      setDaftarPesan((pesanLama) => [...pesanLama, ...daftarPesanBaru]);
     }
   }
 
@@ -179,15 +193,16 @@ export default function HalamanChat() {
       ws.current = konektorBackend.current.listenPesanChatBaru(
         (message: MessageEvent) => {
           const payload = getPayloadWs(JSON.parse(message.data));
-          if (payload instanceof PayloadIdKoneksiWsChat) {
-            idKoneksiWs.current = payload.idKoneksi;
+          if (payload instanceof PayloadWsChatReady) {
             if (!returned) {
               returned = true;
               resolve();
             }
           } else if (payload instanceof PayloadWsChatBaru) {
-            const { chat, idKoneksiWs } = payloadWsChatBaruToChat(payload);
-            handleChatBaruDibuat(chat, idKoneksiWs);
+            const chat = payloadWsChatBaruToChat(payload);
+            handleChatBaruDibuat(chat);
+          } else if (payload instanceof PayloadWsChatUpdate) {
+            handleChatUpdate(payload);
           }
         },
         (err) => {
@@ -301,11 +316,27 @@ export default function HalamanChat() {
         setSendingState(ChatSendingState.Sending);
 
         try {
-          await konektorBackend.current.buatChat({
-            idKoneksiWs: idKoneksiWs.current,
-            pesan: formDataAkanDikirim.current.pesan,
-            lampiran: formDataAkanDikirim.current.lampiran,
-          });
+          const daftarLampiranB64: string[] = [];
+          for (const lampiran of formDataAkanDikirim.current.lampiran) {
+            const lampiranB64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+
+              reader.onload = () => {
+                resolve(reader.result as string);
+              };
+
+              reader.onerror = reject;
+              reader.readAsDataURL(lampiran);
+            });
+            daftarLampiranB64.push(lampiranB64);
+          }
+          await konektorBackend.current.buatChat(
+            new PayloadWsBuatChat(
+              formDataAkanDikirim.current.pesan,
+              daftarLampiranB64,
+            ),
+            ws.current!,
+          );
         } catch (e) {
           showError("buat_chat_fail");
           setSendingState(ChatSendingState.CreatingWsConnection);
