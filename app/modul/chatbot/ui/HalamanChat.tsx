@@ -1,9 +1,7 @@
 import type { Route } from "./+types/HalamanChat";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router";
 import type { Chat } from "../domain/Chat";
 import TampilanPesanChat from "./komponen/TampilanPesanChat";
-import { useMasterError } from "~/dasar/hooks/useMasterError";
 import { useEnvironment } from "~/dasar/hooks/useEnvironment";
 import { useOutletContext } from "react-router";
 import type { ContextHalamanChatbot } from "./ContextHalamanChatbot";
@@ -20,6 +18,10 @@ import { PayloadWsChatReady } from "../api/dto/PayloadWsChatReady";
 import { PayloadWsBuatChat } from "../api/dto/PayloadWsBuatChat";
 import { PayloadWsChatUpdate } from "../api/dto/PayloadWsChatUpdate";
 import { payloadWsChatUpdateToDaftarPesanChat } from "../api/dto/ConverterPayloadChatUpdate";
+import { PayloadWsGetPesanChatBaru } from "../api/dto/PayloadWsGetPesanChatBaru";
+import { PayloadWsPesanChatLama } from "../api/dto/PayloadWsPesanChatLama";
+import { payloadWsPesanChatLamaToDaftarPesanChat } from "../api/dto/ConverterWsPesanChatLama";
+import type { KoneksiWsChat } from "../api/KoneksiWsChat";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chat Support" }];
@@ -42,6 +44,9 @@ export default function HalamanChat() {
   const sendingStateRef = useRef<ChatSendingState>(ChatSendingState.Idle);
 
   const [sedangDiproses, setSedangDiproses] = useState(false);
+  const [disconnected, setDisconnected] = useState(false);
+
+  const localIdChat = useRef<bigint | null>(null);
 
   function setSendingState(state: ChatSendingState) {
     _setSendingState(state);
@@ -61,7 +66,7 @@ export default function HalamanChat() {
     });
   }
 
-  async function mockFetchPesanChat(idChat: bigint) {
+  async function mockListenPesanChatLama(idChat: bigint) {
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     if (idChat > 100n) {
       context.onIdChatTidakDitemukan();
@@ -69,36 +74,15 @@ export default function HalamanChat() {
     setFetchingPesanChat(false);
   }
 
-  async function fetchPesanChat(idChat: bigint) {
-    setFetchingPesanChat(true);
-    setDaftarPesan([]);
+  const koneksiWs = useRef<KoneksiWsChat | null>(null);
 
-    if (environment === Environment.Mock) {
-      await mockFetchPesanChat(idChat);
-      return;
+  function showError(err: "ws_conn_failed" | "buat_chat_fail") {
+    if (err === "ws_conn_failed") {
+      setSendingError("Failed to connect to the server");
+    } else if (err === "buat_chat_fail") {
+      setSendingError("Failed to sending new message");
     }
   }
-
-  const ws = useRef<WebSocket | null>(null);
-
-  function onIdChanged() {
-    if (context.idChat !== null) {
-      fetchPesanChat(context.idChat);
-    } else {
-      setFetchingChat(false);
-      setFetchingPesanChat(false);
-    }
-  }
-
-  useEffect(() => {
-    onIdChanged();
-
-    return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, [context.idChat]);
 
   async function validasiLampiran(files: File[]): Promise<number[]> {
     const checks = await Promise.all(
@@ -171,6 +155,49 @@ export default function HalamanChat() {
     );
   }
 
+  function getDaftarPesanChatLama() {
+    konektorBackend.current.getDaftarPesanChatLama(koneksiWs.current!.ws);
+  }
+
+  function handleDaftarPesanChatLamaDiterima(payload: PayloadWsPesanChatLama) {
+    const daftarPesan = payloadWsPesanChatLamaToDaftarPesanChat(payload);
+    setDaftarPesan((daftarLama) => [...daftarPesan, ...daftarLama]);
+    setFetchingPesanChat(false);
+  }
+
+  function getPesanChatBaru() {
+    if (daftarPesan.length === 0) {
+      return;
+    }
+
+    const pesanTerakhir = daftarPesan[daftarPesan.length - 1];
+    const idPesanTerakhir = pesanTerakhir.id;
+
+    const payload = new PayloadWsGetPesanChatBaru(idPesanTerakhir.toString());
+    konektorBackend.current.getPesanChatBaru(payload, koneksiWs.current!.ws);
+  }
+
+  function handleServerReady(isReconnecting: boolean) {
+    if (koneksiWs.current === null) {
+      console.error("websocket connection down");
+    }
+
+    // flow chat baru
+    if (localIdChat.current === null) {
+    }
+    // flow chat lama
+    else {
+      // jika sebelumnya tidak terjadi reconnect, ambil riwayat pesan
+      if (!isReconnecting) {
+        getDaftarPesanChatLama();
+      }
+      // jika sebelumnya terjadi reconnect, ambil pesan baru yang terlewat akibat disconnect
+      else {
+        getPesanChatBaru();
+      }
+    }
+  }
+
   function handleChatBaruDibuat(pChat: Chat) {
     setPesanChatAkanDikirim(null);
     context.onChatBaruDibuat(pChat);
@@ -194,11 +221,24 @@ export default function HalamanChat() {
     }
   }
 
+  function handlePesanServerDiterima(data: any, isReconnecting: boolean) {
+    try {
+      const payload = getPayloadWs(data);
+      if (payload instanceof PayloadWsChatReady) {
+        handleServerReady(isReconnecting);
+      } else if (payload instanceof PayloadWsPesanChatLama) {
+        handleDaftarPesanChatLamaDiterima(payload);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async function hubungkanWebsocket(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let returned = false;
 
-      ws.current = konektorBackend.current.listenPesanChatBaru(
+      const ws = konektorBackend.current.listenPesanChatBaru(
         (message: MessageEvent) => {
           const payload = getPayloadWs(JSON.parse(message.data));
           if (payload instanceof PayloadWsChatReady) {
@@ -214,7 +254,7 @@ export default function HalamanChat() {
           }
         },
         (err) => {
-          ws.current = null;
+          koneksiWs.current = null;
 
           if (!returned) {
             returned = true;
@@ -222,18 +262,48 @@ export default function HalamanChat() {
           }
         },
         () => {
-          ws.current = null;
+          koneksiWs.current = null;
         },
       );
+
+      koneksiWs.current = {
+        ws,
+        idChat: null,
+      };
     });
   }
 
-  function showError(err: "ws_conn_failed" | "buat_chat_fail") {
-    if (err === "ws_conn_failed") {
-      setSendingError("Failed to connect to the server");
-    } else if (err === "buat_chat_fail") {
-      setSendingError("Failed to sending new message");
+  async function listenPesanChatLama(
+    idChat: bigint,
+    isReconnecting: boolean = false,
+  ) {
+    setDisconnected(false);
+
+    if (!isReconnecting) {
+      setFetchingPesanChat(true);
+      setDaftarPesan([]);
     }
+
+    if (environment === Environment.Mock) {
+      await mockListenPesanChatLama(idChat);
+      return;
+    }
+
+    const ws = konektorBackend.current.listenPesanChatLama(
+      idChat,
+      (message) => {
+        handlePesanServerDiterima(JSON.parse(message.data), isReconnecting);
+      },
+      (e) => {
+        console.error(e);
+      },
+      () => {},
+    );
+
+    koneksiWs.current = {
+      ws,
+      idChat: localIdChat.current,
+    };
   }
 
   async function submit() {
@@ -343,7 +413,7 @@ export default function HalamanChat() {
               formDataAkanDikirim.current.pesan,
               daftarLampiranB64,
             ),
-            ws.current!,
+            koneksiWs.current!.ws,
           );
         } catch (e) {
           showError("buat_chat_fail");
@@ -369,6 +439,31 @@ export default function HalamanChat() {
     formDataAkanDikirim.current = data;
     await submit();
   }
+
+  function handleHalamanMount() {
+    if (context.idChat !== null) {
+      listenPesanChatLama(context.idChat);
+    } else {
+      setFetchingChat(false);
+      setFetchingPesanChat(false);
+      setDaftarPesan([]);
+    }
+  }
+
+  function handleHalamanUnmount() {
+    if (koneksiWs.current) {
+      koneksiWs.current.ws.close();
+    }
+  }
+
+  useEffect(() => {
+    localIdChat.current = context.idChat;
+    handleHalamanMount();
+
+    return () => {
+      handleHalamanUnmount();
+    };
+  }, [context.idChat]);
 
   return (
     <div className="grow pb-16">

@@ -4,6 +4,7 @@ import type { PayloadWsChat } from "./PayloadWsChat";
 import { PayloadWsChatBaru } from "./PayloadWsChatBaru";
 import { PayloadWsChatReady } from "./PayloadWsChatReady";
 import { PayloadWsChatUpdate } from "./PayloadWsChatUpdate";
+import { PayloadWsPesanChatLama } from "./PayloadWsPesanChatLama";
 import { TipePayloadWsChat } from "./TipePayloadWsChat";
 
 export function dtoToChat(dto: Record<string, any>): Chat {
@@ -48,6 +49,10 @@ export function getPayloadWs(data: any): PayloadWsChat {
       data.sedangDiproses,
       data.dialihkanKeTiket,
       data.pesan,
+    )
+  } else if (data.tipe === TipePayloadWsChat.DaftarChatLama) {
+    return new PayloadWsPesanChatLama(
+      data.daftarPesan
     )
   } else {
     throw new Error("Unsupported websocket chat payload")
