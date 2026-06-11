@@ -7,21 +7,21 @@ import IkonEmail from "~/komponen/ikon/IkonEmail";
 import { Button } from "~/komponen/Button";
 import LinkOtentikasi from "../LinkOtentikasi";
 import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
-import { HttpError } from "~/dasar/KonektorBackend";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 interface Props {
   onSuccess: (email: string) => void;
 }
 
 export default function FormEmail({ onSuccess }: Props): React.JSX.Element {
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
-
+  const konektorBackend = useKonektorBackend();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const { setMasterError } = useMasterError();
 
   function startCooldown() {
     setCooldownSeconds(120);

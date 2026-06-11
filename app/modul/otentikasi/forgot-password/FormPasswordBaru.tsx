@@ -5,9 +5,10 @@ import SubJudulOtentikasi from "../SubJudulOtentikasi";
 import InputFieldOtentikasi from "../InputFieldOtentikasi";
 import { Button } from "~/komponen/Button";
 import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
-import { HttpError } from "~/dasar/KonektorBackend";
 import IkonPassword from "~/komponen/ikon/IkonPassword";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 interface Props {
   resetToken: string;
@@ -20,8 +21,8 @@ export default function FormPasswordBaru({
   onSuccess,
   onTokenExpired,
 }: Props): React.JSX.Element {
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [passwordBaru, setPasswordBaru] = useState("");
   const [konfirmasiPassword, setKonfirmasiPassword] = useState("");

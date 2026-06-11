@@ -3,9 +3,9 @@ import { useRef, useState } from "react";
 import JudulOtentikasi from "../JudulOtentikasi";
 import SubJudulOtentikasi from "../SubJudulOtentikasi";
 import { Button } from "~/komponen/Button";
-import { useOutletContext } from "react-router";
-import type { ContextType } from "~/dasar/ContextType";
-import { HttpError } from "~/dasar/KonektorBackend";
+import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 interface Props {
   email: string;
@@ -25,8 +25,8 @@ export default function FormOtp({
   onSuccess,
   onRequestNewOtp,
 }: Props): React.JSX.Element {
-  const [_a, _b, konektorBackend, _c, setMasterError]: ContextType =
-    useOutletContext();
+  const konektorBackend = useKonektorBackend();
+  const { setMasterError } = useMasterError();
 
   const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);

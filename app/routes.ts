@@ -1,14 +1,10 @@
 import { type RouteConfig, index, layout, route } from "@react-router/dev/routes";
 
 export default [
-  layout('dasar/LayoutDasar.tsx', [
-    layout('dasar/LayoutGuest.tsx', [
-      route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
-    ]),
-  ]),
   layout('dasar/ui/layout/LayoutDasarV2.tsx', [
     layout('dasar/layout/LayoutGuestV2.tsx', [
-      route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx")
+      route("login", "modul/otentikasi/login/ui/HalamanLogin.tsx"),
+      route("forgot-password", "modul/otentikasi/forgot-password/HalamanForgotPassword.tsx")
     ]),
     layout('dasar/ui/layout/LayoutKaryawanV2.tsx', [
       index("modul/home/HalamanHome.tsx"),
