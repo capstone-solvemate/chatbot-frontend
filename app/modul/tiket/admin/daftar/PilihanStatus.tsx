@@ -15,7 +15,7 @@ export default function PilihanStatus({
       <option value={0}>All Status</option>
       <option value={1}>Open</option>
       <option value={2}>In Progress</option>
-      <option value={3}>Done</option>
+      <option value={3}>Resolved</option>
     </Select>
   );
 }
