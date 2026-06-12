@@ -10,7 +10,7 @@ import SkeletonMessages from "./SkeletonMessages";
 type Props = {
   loading: boolean;
   processing: boolean;
-  chat: Chat | null;
+  idChat: bigint | null;
   daftarPesanChat: PesanChat[];
 };
 
@@ -22,7 +22,7 @@ function formatTime(date: Date): string {
 }
 
 export default function TampilanPesanChat({
-  chat,
+  idChat,
   daftarPesanChat,
   loading,
   processing,
@@ -43,7 +43,7 @@ export default function TampilanPesanChat({
         <div className="w-full max-w-3xl mx-auto flex-1 px-8 py-6 space-y-6">
           <BotMessage
             text="Hello! I'm your AI assistant. I can help you with equipment issues, technical questions, and printing problems. How can I assist you today?"
-            time={formatTime(chat?.tanggalDibuat ?? new Date())}
+            time={formatTime(new Date())}
           />
           {daftarPesanChat.map((pesanChat) =>
             pesanChat.chatAsisten ? (
@@ -63,11 +63,8 @@ export default function TampilanPesanChat({
 
           {processing && <TampilanProcessing />}
 
-          {chat && chat.dialihkanKeTiket && (
-            <TicketAction
-              idChat={chat.id.toString()}
-              dialihkanKeTiket={chat.dialihkanKeTiket}
-            />
+          {idChat && (
+            <TicketAction idChat={idChat.toString()} dialihkanKeTiket={false} />
           )}
         </div>
       )}

@@ -1,4 +1,5 @@
 import { PayloadWsChat } from "./PayloadWsChat.js";
+import type { PayloadWsObjekPesanChat } from "./PayloadWsObjekPesanChat.js";
 import { TipePayloadWsChat } from "./TipePayloadWsChat.js";
 
 export class PayloadWsChatUpdate extends PayloadWsChat {
@@ -6,16 +7,7 @@ export class PayloadWsChatUpdate extends PayloadWsChat {
     public id: string,
     public sedangDiproses: boolean,
     public dialihkanKeTiket: boolean,
-    public pesan: {
-      id: string,
-      pesan: string,
-      tanggalDibuat: string,
-      chatAsisten: boolean,
-      gagal: boolean,
-      lampiran: {
-        id: string,
-      }[],
-    }[]
+    public pesan: PayloadWsObjekPesanChat[]
   ) {
     super(TipePayloadWsChat.ChatUpdate)
   }

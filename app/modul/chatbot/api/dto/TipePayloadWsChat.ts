@@ -6,4 +6,5 @@ export enum TipePayloadWsChat {
   BuatChat = 21,
   GetDaftarChatLama = 22,
   GetDaftarChatBaru = 23,
+  BuatPesan = 24
 }

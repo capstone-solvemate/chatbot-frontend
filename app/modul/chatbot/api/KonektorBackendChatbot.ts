@@ -6,6 +6,7 @@ import type { WsError } from "~/dasar/api/ws/dto/WsError";
 import type { PayloadWsBuatChat } from "./dto/PayloadWsBuatChat";
 import { PayloadWsGetPesanChatLama } from "./dto/PayloadWsGetPesanChatLama";
 import type { PayloadWsGetPesanChatBaru } from "./dto/PayloadWsGetPesanChatBaru";
+import type { PayloadWsBuatPesanChat } from "./dto/PayloadWsBuatPesanChat";
 
 export class KonektorBackendChatbot {
   constructor(
@@ -56,6 +57,10 @@ export class KonektorBackendChatbot {
   }
 
   getPesanChatBaru(payload: PayloadWsGetPesanChatBaru, ws: WebSocket) {
+    ws.send(JSON.stringify(payload.toPlainObject()))
+  }
+
+  buatPesanChat(payload: PayloadWsBuatPesanChat, ws: WebSocket) {
     ws.send(JSON.stringify(payload.toPlainObject()))
   }
 }
