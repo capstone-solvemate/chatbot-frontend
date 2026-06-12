@@ -207,6 +207,7 @@ export default function HalamanChat() {
     context.onChatBaruDibuat(pChat);
     setSedangDiproses(pChat.sedangDiproses);
     setDaftarPesan([...pChat.pesan]);
+    setLocalIdChat(pChat.id);
   }
 
   function handleChatUpdate(payload: PayloadWsChatUpdate) {
