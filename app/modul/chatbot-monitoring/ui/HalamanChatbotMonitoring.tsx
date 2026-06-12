@@ -98,7 +98,7 @@ export default function HalamanChatbotMonitoring() {
       </section>
 
       {/* Top Unanswered Questions — topUnansweredQuestions masih null dari server */}
-      <TopUnansweredQuestionsCard questions={[]} isLoading={isLoading} />
+      {/* <TopUnansweredQuestionsCard questions={[]} isLoading={isLoading} /> */}
     </main>
   );
 }

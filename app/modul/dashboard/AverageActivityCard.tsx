@@ -19,7 +19,19 @@ export default function AverageActivityCard({
   avgAktivitasPerJam,
   isLoading,
 }: Props) {
-  const normalized = normalizeHourlyData(avgAktivitasPerJam);
+  let timezoneFixedData = [...avgAktivitasPerJam];
+  for (const avg of avgAktivitasPerJam) {
+    const jam = Number(avg.label);
+    if (!isNaN(jam)) {
+      const fixedJam = (jam + 7) % 24;
+      avg.label = String(fixedJam).padStart(2, "0");
+    }
+  }
+  timezoneFixedData = timezoneFixedData.sort(
+    (a, b) => Number(a.label) - Number(b.label),
+  );
+
+  const normalized = normalizeHourlyData(timezoneFixedData);
   const hasData = normalized.some((h) => h.jumlah > 0);
   const maxJumlah = Math.max(...normalized.map((h) => h.jumlah), 1);
 
