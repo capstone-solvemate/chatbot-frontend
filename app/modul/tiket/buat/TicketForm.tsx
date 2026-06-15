@@ -95,7 +95,7 @@ export default function TicketForm({
 
       <UploadField />
 
-      <FormActions submitting={submitting} />
+      <FormActions idChat={idChat} submitting={submitting} />
     </form>
   );
 }
