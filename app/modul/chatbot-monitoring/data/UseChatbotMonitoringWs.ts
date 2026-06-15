@@ -33,7 +33,7 @@ export function useChatbotMonitoringWs(
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     // Endpoint sesuai dokumentasi API
     const url = new URL(
-      `/api/dashboard/chatbot/ws`,
+      `/api/ws/chatbot-monitoring`,
       `${protocol}://${window.location.host}`,
     );
     url.searchParams.set("tahun", String(filter.tahun));
