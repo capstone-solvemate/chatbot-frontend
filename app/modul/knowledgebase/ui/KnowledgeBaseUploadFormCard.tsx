@@ -26,7 +26,9 @@ export default function KnowledgeBaseUploadFormCard({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(dokumenToEdit?.judul ?? "");
-  const [idKategori, setIdKategori] = useState<number | "">(dokumenToEdit?.idKategori ?? "");
+  const [idKategori, setIdKategori] = useState<number | "">(
+    dokumenToEdit?.idKategori ?? "",
+  );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -68,7 +70,8 @@ export default function KnowledgeBaseUploadFormCard({
     const errors: Record<string, string> = {};
     if (!title.trim()) errors.judul = "this field is required.";
     if (idKategori === "") errors.idKategori = "this field is required.";
-    if (!dokumenToEdit && !selectedFile) errors.file = "this field is required.";
+    if (!dokumenToEdit && !selectedFile)
+      errors.file = "this field is required.";
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -82,7 +85,7 @@ export default function KnowledgeBaseUploadFormCard({
       formData.append("judul", title.trim());
       formData.append("idKategori", String(idKategori));
 
-      const baseUrl: string = (import.meta as any).env.VITE_SITE_URL ?? "";
+      const baseUrl: string = window.location.origin;
       const csrfToken =
         document.cookie
           .split("; ")
@@ -90,19 +93,16 @@ export default function KnowledgeBaseUploadFormCard({
           ?.split("=")[1] ?? "";
 
       const method = dokumenToEdit ? "PUT" : "POST";
-      const url = dokumenToEdit 
+      const url = dokumenToEdit
         ? `/api/admin/knowledge-base/${dokumenToEdit.id}`
         : `/api/admin/knowledge-base/upload`;
 
-      const response = await fetch(
-        baseUrl.replace(/\/$/, "") + url,
-        {
-          method,
-          headers: { "X-CSRF-Token": csrfToken },
-          body: formData,
-          credentials: "include",
-        },
-      );
+      const response = await fetch(baseUrl.replace(/\/$/, "") + url, {
+        method,
+        headers: { "X-CSRF-Token": csrfToken },
+        body: formData,
+        credentials: "include",
+      });
 
       if (response.status === 422) {
         const validationErrors: ValidationError[] = await response.json();
@@ -116,7 +116,9 @@ export default function KnowledgeBaseUploadFormCard({
 
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
-        throw new Error(payload?.message ?? (dokumenToEdit ? "Edit failed" : "Upload failed"));
+        throw new Error(
+          payload?.message ?? (dokumenToEdit ? "Edit failed" : "Upload failed"),
+        );
       }
 
       onClose(true);
@@ -230,7 +232,10 @@ export default function KnowledgeBaseUploadFormCard({
               Choose File
             </span>
             <span className="px-3 py-2 text-sm text-gray-500 truncate flex-1 select-none">
-              {selectedFile?.name ?? (dokumenToEdit ? "Leave empty to keep current file" : "No file chosen")}
+              {selectedFile?.name ??
+                (dokumenToEdit
+                  ? "Leave empty to keep current file"
+                  : "No file chosen")}
             </span>
             <input
               ref={inputRef}
@@ -271,7 +276,13 @@ export default function KnowledgeBaseUploadFormCard({
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
             />
           </svg>
-          {uploading ? (dokumenToEdit ? "Saving..." : "Uploading...") : (dokumenToEdit ? "Save Changes" : "Upload Document")}
+          {uploading
+            ? dokumenToEdit
+              ? "Saving..."
+              : "Uploading..."
+            : dokumenToEdit
+              ? "Save Changes"
+              : "Upload Document"}
         </button>
         <button
           type="button"

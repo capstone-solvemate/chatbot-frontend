@@ -7,6 +7,11 @@ export class KonektorWebsocket {
     private onUnauthenticated: () => void
   ) { }
 
+  private getBaseUrl(): string {
+    const origin = window.location.origin;
+    return origin
+  }
+
   connect(
     params: {
       path: string,
@@ -16,7 +21,7 @@ export class KonektorWebsocket {
       onNormalClose?: (code: number) => void
     }
   ): WebSocket {
-    const baseUrl: URL = new URL(import.meta.env.VITE_SITE_URL)
+    const baseUrl: URL = new URL(this.getBaseUrl())
     const protocol = baseUrl.protocol === "https:" ? "wss" : "ws";
     const url = new URL(params.path, `${protocol}://${baseUrl.host}`);
 

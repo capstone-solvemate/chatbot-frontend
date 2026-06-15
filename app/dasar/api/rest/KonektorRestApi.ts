@@ -4,7 +4,10 @@ import { TestGuard } from '~/dasar/types/TestGuard'
 export class KonektorRestApi {
   constructor(private setDevMode: () => void) { }
 
-  private baseUrl: string = import.meta.env.VITE_SITE_URL
+  private getBaseUrl(): string {
+    const origin = window.location.origin;
+    return origin
+  }
 
   /**
    * send post request in unauthorized request
@@ -32,7 +35,7 @@ export class KonektorRestApi {
   private async send(endpoint: string, method: HttpMethod, data?: any, isRetrying: boolean = false): Promise<Response> {
     let url = endpoint
     if (url.startsWith('/')) {
-      url = this.baseUrl.replace(/\/$/, '') + endpoint
+      url = this.getBaseUrl().replace(/\/$/, '') + endpoint
     }
 
     let contentType: string | null = null

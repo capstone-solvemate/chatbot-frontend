@@ -197,7 +197,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
   // — WebSocket —
   const connectWs = useCallback(() => {
-    const baseUrl = import.meta.env.VITE_SITE_URL as string;
+    const baseUrl = window.location.origin as string;
     const wsUrl =
       baseUrl.replace(/^http/, "ws").replace(/\/$/, "") + "/api/notifikasi/ws";
 
