@@ -1,14 +1,24 @@
 // modul/tiket/detail/MessageInput.tsx
 
-import { useState } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import IkonGambar from "~/komponen/ikon/IkonGambar";
 import IkonKirim from "~/komponen/ikon/IkonKirim";
 
-type Props = { onKirim: (teks: string) => Promise<void> };
+type Props = {
+  onKirim: (teks: string) => Promise<void>;
+  onTambahLampiran: (daftarLampiran: File[]) => void;
+  supportedMimeLampiran: string[];
+};
 
-export default function MessageInput({ onKirim }: Props) {
+export default function MessageInput({
+  onKirim,
+  onTambahLampiran,
+  supportedMimeLampiran,
+}: Props) {
   const [teks, setTeks] = useState("");
   const [mengirim, setMengirim] = useState(false);
+
+  const inputFileElement = useRef<null | HTMLInputElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,10 +33,37 @@ export default function MessageInput({ onKirim }: Props) {
     }
   }
 
+  function handleKlikInputFile() {
+    inputFileElement.current?.click();
+  }
+
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    onTambahLampiran(files);
+
+    e.target.value = "";
+  }
+
   return (
     <form className="flex items-center gap-3" onSubmit={handleSubmit}>
       <div className="flex items-center flex-1 border border-gray-300 rounded-lg px-3 py-2 gap-2">
-        <button type="button" className="cursor-pointer">
+        <input
+          ref={inputFileElement}
+          onChange={handleInputChange}
+          type="file"
+          className="hidden"
+          name="attachment-pesan-tiket"
+          multiple
+          accept={supportedMimeLampiran.join(",")}
+        />
+
+        <button
+          type="button"
+          className="cursor-pointer"
+          onClick={handleKlikInputFile}
+        >
           <IkonGambar />
         </button>
 
