@@ -249,7 +249,12 @@ export default function HalamanDetailTiketAdmin() {
                       {tiket.lampiranIds.map((lampiranId) => {
                         const urlLampiran = `/api/tiket/${tiket.idChat}/lampiran/${lampiranId}`;
                         return (
-                          <a type="button" href={urlLampiran} target="_blank">
+                          <a
+                            type="button"
+                            href={urlLampiran}
+                            key={lampiranId}
+                            target="_blank"
+                          >
                             <div className="rounded-md overflow-hidden">
                               <img src={urlLampiran} className="w-10 h-10" />
                             </div>

@@ -34,7 +34,12 @@ export default function TicketDetailCard({ tiket }: Props) {
             {tiket.lampiranIds.map((lampiranId) => {
               const urlLampiran = `/api/tiket/${tiket.idChat}/lampiran/${lampiranId}`;
               return (
-                <a type="button" href={urlLampiran} target="_blank">
+                <a
+                  type="button"
+                  href={urlLampiran}
+                  target="_blank"
+                  key={lampiranId}
+                >
                   <div className="rounded-md overflow-hidden">
                     <img src={urlLampiran} className="w-20 h-20" />
                   </div>
