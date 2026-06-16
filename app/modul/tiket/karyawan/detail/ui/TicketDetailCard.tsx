@@ -27,6 +27,24 @@ export default function TicketDetailCard({ tiket }: Props) {
 
       <hr className="border-gray-200" />
 
+      {tiket.lampiranIds.length > 0 && (
+        <div>
+          <h3 className="font-semibold text-gray-900 mb-2">Attachments</h3>
+          <div className="flex items-center gap-3">
+            {tiket.lampiranIds.map((lampiranId) => {
+              const urlLampiran = `/api/tiket/${tiket.idChat}/lampiran/${lampiranId}`;
+              return (
+                <a type="button" href={urlLampiran} target="_blank">
+                  <div className="rounded-md overflow-hidden">
+                    <img src={urlLampiran} className="w-20 h-20" />
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <TicketMeta
         dibuatPada={tiket.dibuatPada}
         diperbaruiPada={tiket.diperbaruiPada}

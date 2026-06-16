@@ -15,6 +15,7 @@ export function dtoToTiket(dto: TiketResponseDto): Tiket {
     stringToStatusTiket(dto.status),
     new Date(dto.dibuatPada),
     new Date(dto.diperbaruiPada),
+    dto.lampiran.map((item: any) => item.id)
   );
 }
 
