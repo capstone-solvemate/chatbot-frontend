@@ -155,7 +155,7 @@ export default function HalamanDetailTiketAdmin() {
     <main className="bg-gray-50 text-gray-800 px-16 py-6 min-h-default">
       <div className="flex gap-5 items-start">
         <div className="w-72 shrink-0">
-          <div className="w-72 shrink-0 fixed z-30 top-32">
+          <div className="w-72 shrink-0 fixed z-30 top-24">
             {/* Back */}
             <Link
               to="/admin/tiket"
