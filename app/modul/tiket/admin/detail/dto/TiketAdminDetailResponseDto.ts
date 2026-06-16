@@ -31,4 +31,5 @@ export type TiketAdminDetailResponseDto = TiketResponseDto & {
   emailPembuat: string;
   pesanTiket: PesanTiketResponseDto[];
   historiChat: PesanChatResponseDto[];
+  lampiran: any[]
 };

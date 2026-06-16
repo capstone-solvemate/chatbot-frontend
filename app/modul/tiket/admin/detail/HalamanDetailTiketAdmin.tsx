@@ -238,6 +238,27 @@ export default function HalamanDetailTiketAdmin() {
                     {formatTanggalWaktu(tiket.dibuatPada)}
                   </p>
                 </div>
+
+                {/* Attachments */}
+                {tiket.lampiranIds.length > 0 && (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400 mb-0.5">
+                      Attachments
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {tiket.lampiranIds.map((lampiranId) => {
+                        const urlLampiran = `/api/tiket/${tiket.idChat}/lampiran/${lampiranId}`;
+                        return (
+                          <a type="button" href={urlLampiran} target="_blank">
+                            <div className="rounded-md overflow-hidden">
+                              <img src={urlLampiran} className="w-10 h-10" />
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </aside>
           </div>

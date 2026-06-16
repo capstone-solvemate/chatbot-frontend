@@ -48,5 +48,6 @@ export function dtoToTiketAdminDetail(dto: TiketAdminDetailResponseDto): TiketAd
     diperbaruiPada: dto.diperbaruiPada,
     pesanTiket: dto.pesanTiket.map(dtoToPesanTiket),
     historiChat: dto.historiChat.map(dtoToPesanChat),
+    lampiranIds: dto.lampiran.map(item => item.id)
   };
 }

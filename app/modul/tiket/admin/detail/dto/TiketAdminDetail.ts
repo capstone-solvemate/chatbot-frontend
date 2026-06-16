@@ -35,5 +35,6 @@ export interface TiketAdminDetail {
   diperbaruiPada: string;
   pesanTiket: PesanTiket[];
   historiChat: PesanChat[];
-  kategori?: Kategori
+  kategori?: Kategori;
+  lampiranIds: string[]
 }
