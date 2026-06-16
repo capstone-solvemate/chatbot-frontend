@@ -47,7 +47,6 @@ export default function HalamanChatbotMonitoring() {
 
   const [popupDownloadDibuka, setPopupDownloadDibuka] = useState(false);
   const [popupShareDibuka, setPopupShareDibuka] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
 
   useEffect(() => {
     sendFilter(filter);
@@ -86,7 +85,6 @@ export default function HalamanChatbotMonitoring() {
 
   async function handleShare(email: string) {
     try {
-      setIsSharing(true);
       const dto: DtoKirimReport = {
         tahun: filter.tahun,
         bulan: filter.bulan ?? undefined,
@@ -98,8 +96,6 @@ export default function HalamanChatbotMonitoring() {
       notify("Report Sent", "The report has been sent to recipient email");
     } catch (e) {
       setMasterError(e);
-    } finally {
-      setIsSharing(false);
     }
   }
 
@@ -168,11 +164,7 @@ export default function HalamanChatbotMonitoring() {
       )}
 
       {popupShareDibuka && (
-        <PopupShare
-          onBatal={handleTutupShare}
-          onShare={handleShare}
-          isSharing={isSharing}
-        />
+        <PopupShare onBatal={handleTutupShare} onShare={handleShare} />
       )}
     </main>
   );

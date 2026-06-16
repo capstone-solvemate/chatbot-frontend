@@ -6,7 +6,6 @@ import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-yup";
 
 type Props = {
-  isSharing: boolean;
   onBatal: () => void;
   onShare: (email: string) => Promise<void>;
 };
@@ -18,8 +17,8 @@ const skemaValidasi = yup.object({
     .email("This field value must be a valid email address"),
 });
 
-export default function PopupShare({ onBatal, onShare, isSharing }: Props) {
-  const { form, errors } = useForm({
+export default function PopupShare({ onBatal, onShare }: Props) {
+  const { form, errors, isSubmitting } = useForm({
     onSubmit: async (data) => {
       await onShare(data["share_email_recipient"]);
     },
@@ -53,7 +52,11 @@ export default function PopupShare({ onBatal, onShare, isSharing }: Props) {
         </div>
 
         <div className="flex items-center gap-2 mt-4">
-          <Button className="text-sm py-2! grow" type="submit">
+          <Button
+            className="text-sm py-2! grow"
+            type="submit"
+            disabled={isSubmitting()}
+          >
             Send Email
           </Button>
         </div>
