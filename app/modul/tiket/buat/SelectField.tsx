@@ -3,15 +3,13 @@ export default function SelectField({
   label,
   required,
   options,
-  value,
-  onChange,
+  name,
   error,
 }: {
   label: string;
   required?: boolean;
   options?: { value: string; label: string }[];
-  value: string;
-  onChange: (val: string) => void;
+  name: string;
   error?: string;
 }) {
   return (
@@ -21,8 +19,7 @@ export default function SelectField({
       </label>
       <div className="relative">
         <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
+          name={name}
           className={`w-full mt-1 px-3 py-2 border rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
             error ? "border-red-400" : "border-gray-300"
           }`}

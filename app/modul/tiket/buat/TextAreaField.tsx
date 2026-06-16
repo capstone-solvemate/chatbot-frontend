@@ -2,14 +2,12 @@
 export default function TextareaField({
   label,
   required,
-  value,
-  onChange,
+  name,
   error,
 }: {
   label: string;
   required?: boolean;
-  value: string;
-  onChange: (val: string) => void;
+  name: string;
   error?: string;
 }) {
   return (
@@ -20,8 +18,7 @@ export default function TextareaField({
       <textarea
         rows={4}
         placeholder="Provide detailed information about your issue..."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        name={name}
         className={`w-full mt-1 px-3 py-2 border rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 ${
           error ? "border-red-400" : "border-gray-300"
         }`}
