@@ -11,7 +11,7 @@ import type { StateNotifikasi } from "../../notifikasi/StateNotifikasi";
 import type { GetNotifikasiResponseDto } from "../../notifikasi/GetNotifikasiResponseDto";
 import { dtoToNotifikasi } from "../../notifikasi/converters";
 import type { OutletContext } from "../../OutletContext";
-import type { Notifikasi } from "../../notifikasi/Notifikasi";
+import { Notifikasi } from "../../notifikasi/Notifikasi";
 import ToastNotifikasi from "~/komponen/notifikasi/ToastNotifikasi";
 import { Environment } from "~/dasar/types/Environment";
 import {
@@ -37,7 +37,6 @@ export default function LayoutDasarV2(): React.JSX.Element {
   const [offline, setOffline] = useState(false);
   const [masterError, setMasterError] = useState<any | null>(null);
   const [masterErrorStr, setMasterErrorStr] = useState<string | null>(null);
-  const [masterNotifikasi, setMasterNotifikasi] = useState<any | null>(null);
   const [logoutPrompted, setLogoutPrompted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -46,6 +45,11 @@ export default function LayoutDasarV2(): React.JSX.Element {
 
   // Toast realtime dari WS — bisa stack beberapa sekaligus
   const [toastList, setToastList] = useState<Notifikasi[]>([]);
+
+  const notify = (title: string, body: string): void => {
+    const notifikasi = new Notifikasi(0n, 0, title, body, new Date(), null);
+    setToastList((prev) => [...prev, notifikasi]);
+  };
 
   const loadingMoreRef = useRef(false);
   const wsRef = useRef<WebSocket | null>(null);
@@ -320,7 +324,7 @@ export default function LayoutDasarV2(): React.JSX.Element {
     stateOtentikasi,
     konektorBackend: konektorRestApi,
     konektorWebsocket,
-    setMasterNotifikasi,
+    notify,
     setMasterError,
     promptLogout,
     stateNotifikasi,

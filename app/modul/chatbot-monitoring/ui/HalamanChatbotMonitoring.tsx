@@ -14,6 +14,7 @@ import type { DtoKirimReport } from "../api/dto/DtoKirimReport";
 import { useKonektorRestApi } from "~/dasar/hooks/useKonektorRestApi";
 import { KonektorChatbotMonitoring } from "../api/KonektorChatbotMonitoring";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import { useNotifikasi } from "~/dasar/hooks/useNotifikasi";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chatbot Monitoring" }];
@@ -29,6 +30,7 @@ export default function HalamanChatbotMonitoring() {
     konektorRestApi,
   );
   const { setMasterError } = useMasterError();
+  const { notify } = useNotifikasi();
 
   const [filter, setFilter] = useState<ChatbotMonitoringFilter>({
     tahun: CURRENT_YEAR,
@@ -93,6 +95,7 @@ export default function HalamanChatbotMonitoring() {
       };
       await konektorChatbotMonitoring.share(dto);
       setPopupShareDibuka(false);
+      notify("Report Sent", "The report has been sent to recipient email");
     } catch (e) {
       setMasterError(e);
     } finally {

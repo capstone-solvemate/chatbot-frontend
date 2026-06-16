@@ -9,7 +9,7 @@ export interface OutletContext {
   stateOtentikasi: StateOtentikasi,
   konektorBackend: KonektorRestApi,
   konektorWebsocket: KonektorWebsocket,
-  setMasterNotifikasi: (notifikasi: any | null) => void,
+  notify: (title: string, body: string) => void,
   setMasterError: (error: any | null) => void,
   promptLogout: () => void,
   stateNotifikasi: StateNotifikasi | null,
