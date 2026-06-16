@@ -1,17 +1,17 @@
 // modul/tiket/detail/ConversationCard.tsx
 
 import ConversationHeader from "./ConversationHeader";
-import MessageItem from "./MessageItem";
 import MessageInput from "./MessageInput";
 import ResolveButton from "./ResolveButton";
-import type { PesanTiket } from "../PesanTiket";
-import type { PesanTiketResponseDto } from "../daftar/dto/TiketResponseDto";
-import { dtoToPesanTiket } from "../daftar/dto/converters";
-import { StatusTiket } from "../StatusTiket";
 import { useStateOtentikasi } from "~/dasar/hooks/useStateOtentikasi";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
 import React from "react";
+import type { PesanTiket } from "~/modul/tiket/PesanTiket";
+import type { PesanTiketResponseDto } from "~/modul/tiket/daftar/dto/TiketResponseDto";
+import { dtoToPesanTiket } from "~/modul/tiket/daftar/dto/converters";
+import MessageItem from "./MessageItem";
+import { StatusTiket } from "~/modul/tiket/StatusTiket";
 
 type Props = {
   idChat: string;

@@ -1,7 +1,7 @@
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
-import ChipKategori from "../ChipKategori";
-import ChipStatusTiket from "../ChipStatusTiket";
-import type { StatusTiket } from "../StatusTiket";
+import ChipKategori from "~/modul/tiket/ChipKategori";
+import ChipStatusTiket from "~/modul/tiket/ChipStatusTiket";
+import type { StatusTiket } from "~/modul/tiket/StatusTiket";
 
 type Props = {
   status: StatusTiket;

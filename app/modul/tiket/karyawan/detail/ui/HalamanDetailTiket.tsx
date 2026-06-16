@@ -3,19 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import type { Route } from "./+types/HalamanDetailTiket";
-import type { TiketDetailResponseDto } from "../daftar/dto/TiketResponseDto";
-import { dtoToTiket, dtoToPesanTiket } from "../daftar/dto/converters";
-import type { Tiket } from "../Tiket";
-import type { PesanTiket } from "../PesanTiket";
+import type { TiketDetailResponseDto } from "../../../daftar/dto/TiketResponseDto";
+import { dtoToTiket, dtoToPesanTiket } from "../../../daftar/dto/converters";
 import BackToTicketsLink from "./BackToTicketsLink";
 import TicketDetailCard from "./TicketDetailCard";
 import ConversationCard from "./ConversationCard";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
-import { StatusTiket } from "../StatusTiket";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
+import type { Tiket } from "~/modul/tiket/Tiket";
+import type { PesanTiket } from "~/modul/tiket/PesanTiket";
+import { StatusTiket } from "~/modul/tiket/StatusTiket";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Detail Tiket" }];
@@ -85,7 +85,6 @@ export default function HalamanDetailTiket() {
   }, [idtiket]);
 
   useEffect(() => {
-    console.log(refTombolResolve);
     if (!loading && pesanTiket.length > 0) {
       if (refTombolResolve && refTombolResolve.current) {
         refTombolResolve.current.scrollIntoView({

@@ -1,7 +1,7 @@
-import type { Tiket } from "../Tiket";
 import TicketStatusBadges from "./TicketStatusBadges";
 import TicketDescription from "./TicketDescription";
 import TicketMeta from "./TicketMeta";
+import type { Tiket } from "~/modul/tiket/Tiket";
 
 type Props = { tiket: Tiket };
 

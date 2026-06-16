@@ -14,7 +14,7 @@ export default [
       ]),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
       route("tiket/create/:idchat", "modul/tiket/karyawan/buat/ui/HalamanBuatTiket.tsx"),
-      route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
+      route("tiket/:idtiket", "modul/tiket/karyawan/detail/ui/HalamanDetailTiket.tsx"),
     ]),
     layout('dasar/ui/layout/LayoutAdminV2.tsx', [
       route('admin/dashboard', 'modul/dashboard/HalamanDashboardAdmin.tsx'),
