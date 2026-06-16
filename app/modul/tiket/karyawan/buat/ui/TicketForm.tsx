@@ -5,7 +5,7 @@ import TextareaField from "./TextAreaField";
 import UploadField from "./UploadField";
 import FormActions from "./FormActions";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
-import type { BuatTiketRequestDto } from "./dto/BuatTiketRequestDto";
+import type { BuatTiketRequestDto } from "../../api/dto/BuatTiketRequestDto";
 import { useForm } from "@felte/react";
 import * as yup from "yup";
 import { validator } from "@felte/validator-yup";

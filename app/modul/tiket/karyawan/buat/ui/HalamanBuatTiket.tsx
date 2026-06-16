@@ -1,13 +1,16 @@
 import TicketCard from "./TicketCard";
-import type { Route } from "./+types/HalamanBuatTiket";
 import { useEffect, useState } from "react";
 import HalamanLoading from "~/dasar/HalamanLoading";
 import { Kategori } from "~/modul/settings/kategori/Kategori";
 import { dtoToKategori } from "~/modul/settings/kategori/data/converters";
-import type { BuatTiketRequestDto } from "./dto/BuatTiketRequestDto";
+import type { BuatTiketRequestDto } from "../../api/dto/BuatTiketRequestDto";
 import { useKonektorBackend } from "~/dasar/hooks/useKonektorBackend";
 import { useMasterError } from "~/dasar/hooks/useMasterError";
 import { useNavigate } from "react-router";
+import type { Route } from "../+types/HalamanBuatTiket";
+import { useKonektorRestApi } from "~/dasar/hooks/useKonektorRestApi";
+import { KonektorBackendTiketKaryawan } from "../../api/KonektorBackendTiketKaryawan";
+import { HttpError } from "~/dasar/api/rest/KonektorRestApi";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Create Support Ticket" }];
@@ -18,14 +21,19 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const konektorBackend = useKonektorBackend();
+
+  const konektorRestApi = useKonektorRestApi();
+  const konektorBackendTiketKaryawan = new KonektorBackendTiketKaryawan(
+    konektorRestApi,
+  );
+
   const { setMasterError } = useMasterError();
   const [daftarKategori, setDaftarKategori] = useState<Kategori[]>([]);
 
   useEffect(() => {
     const getDaftarKategoriFn = async () => {
       try {
-        const response = await konektorBackend.get("/api/categories");
+        const response = await konektorRestApi.get("/api/categories");
         const dto: any[] = await response.json();
         const daftarKategoriBaru = dto.map((item) => dtoToKategori(item));
         setDaftarKategori(daftarKategoriBaru);
@@ -39,12 +47,17 @@ export default function HalamanBuatTiket({ params }: Route.ComponentProps) {
 
   async function handleSubmit(payload: BuatTiketRequestDto) {
     try {
-      const response = await konektorBackend.post("/api/tiket", payload);
-      const data = await response.json();
+      await konektorBackendTiketKaryawan.buatTiket(payload);
       // Navigasi ke halaman detail tiket setelah berhasil dibuat
       navigate(`/tiket/${payload.idChat}`);
     } catch (e: any) {
-      setMasterError(e);
+      if (e instanceof HttpError && e.status === 409) {
+        setMasterError(
+          new Error("This chat has already been escalated to a ticket."),
+        );
+      } else {
+        setMasterError(e);
+      }
     }
   }
 

@@ -13,7 +13,7 @@ export default [
         route("chat/:id?", "modul/chatbot/ui/HalamanChat.tsx"),
       ]),
       route("tiket", "modul/tiket/daftar/HalamanDaftarTiket.tsx"),
-      route("tiket/create/:idchat", "modul/tiket/buat/HalamanBuatTiket.tsx"),
+      route("tiket/create/:idchat", "modul/tiket/karyawan/buat/ui/HalamanBuatTiket.tsx"),
       route("tiket/:idtiket", "modul/tiket/detail/HalamanDetailTiket.tsx"),
     ]),
     layout('dasar/ui/layout/LayoutAdminV2.tsx', [

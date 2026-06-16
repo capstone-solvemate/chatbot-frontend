@@ -1,7 +1,7 @@
 import type React from "react";
 import TicketForm from "./TicketForm";
 import type { Kategori } from "~/modul/settings/kategori/Kategori";
-import type { BuatTiketRequestDto } from "./dto/BuatTiketRequestDto";
+import type { BuatTiketRequestDto } from "../../api/dto/BuatTiketRequestDto";
 
 interface Props {
   daftarKategori: Kategori[];
