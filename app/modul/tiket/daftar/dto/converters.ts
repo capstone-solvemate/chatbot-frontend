@@ -26,5 +26,6 @@ export function dtoToPesanTiket(dto: PesanTiketResponseDto): PesanTiket {
     dto.idPembuat,
     dto.pesan,
     new Date(dto.dibuatPada),
+    dto.lampiran.map((item) => item.id)
   );
 }

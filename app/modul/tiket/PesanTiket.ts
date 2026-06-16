@@ -5,5 +5,6 @@ export class PesanTiket {
     public idPembuat: number,
     public pesan: string,
     public dibuatPada: Date,
+    public lampiranIds: string[] = []
   ) { }
 }

@@ -77,6 +77,7 @@ const ConversationCard = React.forwardRef<HTMLButtonElement, Props>(
           <div className="space-y-4">
             {pesanTiket.map((pesan) => (
               <MessageItem
+                idChat={idChat}
                 key={pesan.id}
                 pesan={pesan}
                 isOwn={pesan.idPembuat === stateOtentikasi.pengguna?.id}

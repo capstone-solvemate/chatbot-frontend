@@ -4,6 +4,7 @@ export type PesanTiketResponseDto = {
   idPembuat: number;
   pesan: string;
   dibuatPada: string;
+  lampiran: any[]
 };
 
 export type TiketResponseDto = {

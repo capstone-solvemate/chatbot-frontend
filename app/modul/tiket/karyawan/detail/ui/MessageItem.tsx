@@ -1,8 +1,9 @@
-import type { PesanTiket } from "../PesanTiket";
+import type { PesanTiket } from "~/modul/tiket/PesanTiket";
 
 type Props = {
   pesan: PesanTiket;
   isOwn: boolean;
+  idChat: string;
 };
 
 const formatDate = (date: Date) =>
@@ -15,7 +16,7 @@ const formatDate = (date: Date) =>
     hour12: true,
   });
 
-export default function MessageItem({ pesan, isOwn }: Props) {
+export default function MessageItem({ pesan, isOwn, idChat }: Props) {
   const avatar = (
     <div
       className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-white text-xs font-semibold ${
@@ -44,7 +45,25 @@ export default function MessageItem({ pesan, isOwn }: Props) {
   return (
     <div className={`flex gap-3 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
       {avatar}
-      {bubble}
+      <div>
+        {pesan.lampiranIds.length > 0 && (
+          <div
+            className={`flex items-center gap-3 mb-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+          >
+            {pesan.lampiranIds.map((lampiranId) => {
+              const urlLampiran = `/api/tiket/${idChat}/pesan/${pesan.id}/lampiran/${lampiranId}`;
+              return (
+                <a type="button" href={urlLampiran} target="_blank">
+                  <div className="rounded-md overflow-hidden">
+                    <img src={urlLampiran} className="w-20 h-20" />
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        )}
+        {bubble}
+      </div>
     </div>
   );
 }
