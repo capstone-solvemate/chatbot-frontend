@@ -30,6 +30,7 @@ export function dtoToPesanTiket(dto: PesanTiketResponseDto): PesanTiket {
     idPembuat: dto.idPembuat,
     isi: dto.pesan,
     waktu: dto.dibuatPada,
+    lampiranIds: dto.lampiran.map((item) => item.id)
   };
 }
 

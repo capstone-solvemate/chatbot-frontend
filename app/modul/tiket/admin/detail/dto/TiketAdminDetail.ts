@@ -19,6 +19,7 @@ export interface PesanTiket {
   idPembuat: number;
   isi: string;
   waktu: string; // ISO 8601
+  lampiranIds: string[]
 }
 
 export interface TiketAdminDetail {

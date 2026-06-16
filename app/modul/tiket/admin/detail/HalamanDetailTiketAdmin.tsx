@@ -274,6 +274,7 @@ export default function HalamanDetailTiketAdmin() {
           <div className="pt-1 min-w-0 space-y-5">
             <BagianHistoryChatbot historiChat={tiket.historiChat} />
             <BagianHumanSupport
+              idChat={tiket.idChat}
               pesanTiket={tiket.pesanTiket}
               idPembuatTiket={tiket.idPembuat}
               onKirimBalasan={handleKirimBalasan}

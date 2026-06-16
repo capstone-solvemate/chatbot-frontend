@@ -4,11 +4,13 @@ import BubblePesanTiket from "./BubblePesanTiket";
 import IkonUser from "~/komponen/ikon/IkonUser";
 
 export default function BagianHumanSupport({
+  idChat,
   pesanTiket,
   idPembuatTiket,
   onKirimBalasan,
   mengirim,
 }: {
+  idChat: string;
   pesanTiket: PesanTiket[];
   idPembuatTiket: number;
   onKirimBalasan: (teks: string) => Promise<void>;
@@ -60,6 +62,7 @@ export default function BagianHumanSupport({
         ) : (
           pesanTiket.map((p) => (
             <BubblePesanTiket
+              idChat={idChat}
               key={p.id}
               pesan={p}
               idPembuatTiket={idPembuatTiket}

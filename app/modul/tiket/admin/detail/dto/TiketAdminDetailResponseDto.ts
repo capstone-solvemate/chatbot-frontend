@@ -12,6 +12,7 @@ export type PesanTiketResponseDto = {
   idPembuat: number;
   pesan: string;
   dibuatPada: string; // ISO 8601
+  lampiran: any[]
 };
 
 export type TiketResponseDto = {
