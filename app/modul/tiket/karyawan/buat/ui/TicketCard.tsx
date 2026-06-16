@@ -7,12 +7,22 @@ interface Props {
   daftarKategori: Kategori[];
   idChat: string;
   onSubmit: (payload: BuatTiketRequestDto) => Promise<void>;
+  droppingFile: boolean;
+  daftarLampiran: File[];
+  supportedMimeLampiran: string[];
+  onTambahLampiran: (daftarLampiran: File[]) => void;
+  onHapusLampiran: (index: number) => void;
 }
 
 export default function TicketCard({
   daftarKategori,
   idChat,
   onSubmit,
+  droppingFile,
+  daftarLampiran,
+  supportedMimeLampiran,
+  onTambahLampiran,
+  onHapusLampiran,
 }: Props): React.JSX.Element {
   return (
     <div className="w-full max-w-2xl bg-white rounded-xl shadow-md p-6">
@@ -28,6 +38,11 @@ export default function TicketCard({
           daftarKategori={daftarKategori}
           idChat={idChat}
           onSubmit={onSubmit}
+          droppingFile={droppingFile}
+          daftarLampiran={daftarLampiran}
+          onTambahLampiran={onTambahLampiran}
+          onHapusLampiran={onHapusLampiran}
+          supportedMimeLampiran={supportedMimeLampiran}
         />
       </div>
     </div>

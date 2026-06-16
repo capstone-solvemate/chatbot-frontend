@@ -3,4 +3,5 @@ export interface BuatTiketRequestDto {
   deskripsi: string;
   idChat: string;
   idKategori: number;
+  daftarLampiran: File[]
 }

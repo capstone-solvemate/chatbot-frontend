@@ -15,6 +15,11 @@ interface Props {
   daftarKategori: Kategori[];
   idChat: string;
   onSubmit: (payload: BuatTiketRequestDto) => Promise<void>;
+  droppingFile: boolean;
+  daftarLampiran: File[];
+  supportedMimeLampiran: string[];
+  onTambahLampiran: (daftarLampiran: File[]) => void;
+  onHapusLampiran: (index: number) => void;
 }
 
 const skemaValidasi = yup.object({
@@ -27,6 +32,11 @@ export default function TicketForm({
   daftarKategori,
   idChat,
   onSubmit,
+  droppingFile,
+  daftarLampiran,
+  supportedMimeLampiran,
+  onTambahLampiran,
+  onHapusLampiran,
 }: Props): React.JSX.Element {
   const { form, errors, isSubmitting } = useForm({
     onSubmit: async (data) => {
@@ -50,7 +60,6 @@ export default function TicketForm({
         name="judul"
         error={errors().judul?.[0]}
       />
-
       <SelectField
         label="Category"
         required
@@ -61,16 +70,19 @@ export default function TicketForm({
         name="kategori"
         error={errors().kategori?.[0]}
       />
-
       <TextareaField
         label="Description"
         required
         name="deskripsi"
         error={errors().deskripsi?.[0]}
       />
-
-      <UploadField />
-
+      <UploadField
+        droppingFile={droppingFile}
+        daftarLampiran={daftarLampiran}
+        onTambahLampiran={onTambahLampiran}
+        onHapusLampiran={onHapusLampiran}
+        supportedMimeLampiran={supportedMimeLampiran}
+      />
       <FormActions idChat={idChat} submitting={isSubmitting()} />
     </form>
   );
