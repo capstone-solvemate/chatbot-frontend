@@ -7,8 +7,13 @@ import ChatbotMonitoringHeader from "./ChatbotMonitoringHeader";
 import ChatbotMonitoringStatsGrid from "./ChatbotMonitoringStatsGrid";
 import ActivityTrendsCard from "./ActivityTrendsCard";
 import AvgSessionPerHourCard from "./AvgSessionPerHourCard";
-import TopUnansweredQuestionsCard from "./TopUnansweredQuestionsCard";
 import DashboardFilterPanel from "~/modul/dashboard/DashboardFilterPanel";
+import PopupDownload from "./PopupDownload";
+import PopupShare from "./PopupShare";
+import type { DtoKirimReport } from "../api/dto/DtoKirimReport";
+import { useKonektorRestApi } from "~/dasar/hooks/useKonektorRestApi";
+import { KonektorChatbotMonitoring } from "../api/KonektorChatbotMonitoring";
+import { useMasterError } from "~/dasar/hooks/useMasterError";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Chatbot Monitoring" }];
@@ -19,6 +24,11 @@ const AVAILABLE_YEARS = [CURRENT_YEAR - 2, CURRENT_YEAR - 1, CURRENT_YEAR];
 
 export default function HalamanChatbotMonitoring() {
   const navigate = useNavigate();
+  const konektorRestApi = useKonektorRestApi();
+  const konektorChatbotMonitoring = new KonektorChatbotMonitoring(
+    konektorRestApi,
+  );
+  const { setMasterError } = useMasterError();
 
   const [filter, setFilter] = useState<ChatbotMonitoringFilter>({
     tahun: CURRENT_YEAR,
@@ -33,6 +43,10 @@ export default function HalamanChatbotMonitoring() {
     handleSessionExpired,
   );
 
+  const [popupDownloadDibuka, setPopupDownloadDibuka] = useState(false);
+  const [popupShareDibuka, setPopupShareDibuka] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+
   useEffect(() => {
     sendFilter(filter);
     // sendFilter is stable (ref-based), safe to omit from deps
@@ -46,9 +60,49 @@ export default function HalamanChatbotMonitoring() {
   const isLoading = data === null;
   const activeFilter = data?.filter ?? filter;
 
+  function handleDownload() {
+    setPopupDownloadDibuka(false);
+    window.print();
+  }
+
+  function handleTutupDownload() {
+    setPopupDownloadDibuka(false);
+  }
+
+  function handleOpenDownload() {
+    setPopupDownloadDibuka(true);
+  }
+
+  function handleOpenShare() {
+    setPopupDownloadDibuka(false);
+    setPopupShareDibuka(true);
+  }
+
+  function handleTutupShare() {
+    setPopupShareDibuka(false);
+  }
+
+  async function handleShare(email: string) {
+    try {
+      setIsSharing(true);
+      const dto: DtoKirimReport = {
+        tahun: filter.tahun,
+        bulan: filter.bulan ?? undefined,
+        emailTujuan: email,
+        zonaWaktu: new Date().getTimezoneOffset(),
+      };
+      await konektorChatbotMonitoring.share(dto);
+      setPopupShareDibuka(false);
+    } catch (e) {
+      setMasterError(e);
+    } finally {
+      setIsSharing(false);
+    }
+  }
+
   return (
     <main className="bg-gray-50 min-h-default p-8 space-y-4 print:p-4 print:space-y-3">
-      <ChatbotMonitoringHeader />
+      <ChatbotMonitoringHeader onOpenDownload={handleOpenDownload} />
 
       {/* Connection status banners */}
       {status === "connecting" && (
@@ -99,6 +153,24 @@ export default function HalamanChatbotMonitoring() {
 
       {/* Top Unanswered Questions — topUnansweredQuestions masih null dari server */}
       {/* <TopUnansweredQuestionsCard questions={[]} isLoading={isLoading} /> */}
+
+      {popupDownloadDibuka && (
+        <PopupDownload
+          onBatal={handleTutupDownload}
+          onDownload={handleDownload}
+          tahun={filter.tahun}
+          bulan={filter.bulan ?? null}
+          onShare={handleOpenShare}
+        />
+      )}
+
+      {popupShareDibuka && (
+        <PopupShare
+          onBatal={handleTutupShare}
+          onShare={handleShare}
+          isSharing={isSharing}
+        />
+      )}
     </main>
   );
 }

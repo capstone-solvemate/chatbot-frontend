@@ -1,10 +1,10 @@
 import { Button } from "~/komponen/Button";
 
-export default function ChatbotMonitoringHeader() {
-  function handleDownload() {
-    window.print();
-  }
+type Props = {
+  onOpenDownload: () => void;
+};
 
+export default function ChatbotMonitoringHeader({ onOpenDownload }: Props) {
   return (
     <header className="flex items-start justify-between gap-4 flex-wrap">
       <div>
@@ -17,7 +17,7 @@ export default function ChatbotMonitoringHeader() {
       </div>
 
       <Button
-        onClick={handleDownload}
+        onClick={() => onOpenDownload()}
         className="text-sm! ps-3! pe-4! py-2! gap-2! print:hidden"
       >
         <svg
