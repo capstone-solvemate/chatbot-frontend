@@ -6,7 +6,7 @@ import type { Chat } from "../domain/Chat";
 export interface ContextHalamanChatbot extends OutletContext {
   konektorBackendChatbot: React.RefObject<KonektorBackendChatbot>;
   expandSidebar: boolean;
-  idChat: bigint | null;
+  chat: Chat | null;
   onIdChatTidakDitemukan: () => void;
   onChatBaruDibuat: (chat: Chat) => void
 }

@@ -13,6 +13,7 @@ import ChatSidebar from "./komponen/ChatSidebar";
 import { useParams } from "react-router";
 import PopupError from "~/dasar/ui/tampilan/PopupError";
 import { useNavigate } from "react-router";
+import type { ContextHalamanChatbot } from "./ContextHalamanChatbot";
 
 const KEY_LS_EXPAND_SIDEBAR = "expand_sidebar_chat_karyawan";
 
@@ -21,6 +22,7 @@ export default function LayoutHalamanChatbot() {
     null,
   );
 
+  const [chatAktif, setChatAktif] = useState<Chat | null>(null);
   const [idChatAktif, setIdChatAktif] = useState<bigint | null | undefined>(
     undefined,
   );
@@ -57,7 +59,9 @@ export default function LayoutHalamanChatbot() {
   const konektorRestApi = useKonektorRestApi();
   const konektorWebsocket = useKonektorWebsocket();
 
-  const konektorBackendChatbot = useRef<KonektorBackendChatbot | null>(null);
+  const konektorBackendChatbot = useRef<KonektorBackendChatbot>(
+    new KonektorBackendChatbot(konektorRestApi, konektorWebsocket),
+  );
 
   const [daftarChat, setDaftarChat] = useState<Chat[]>([]);
   const [fetchingDaftarChat, setFetchingDaftarChat] = useState(true);
@@ -125,15 +129,16 @@ export default function LayoutHalamanChatbot() {
   }
 
   function onPageMounted() {
-    if (!konektorBackendChatbot.current) {
-      konektorBackendChatbot.current = new KonektorBackendChatbot(
-        konektorRestApi,
-        konektorWebsocket,
-      );
-    }
-
     fetchDaftarChat();
   }
+
+  useEffect(() => {
+    if (idChatAktif === undefined || idChatAktif === null) {
+      setChatAktif(null);
+    } else {
+      setChatAktif(daftarChat.find((chat) => chat.id === idChatAktif) ?? null);
+    }
+  }, [idChatAktif, daftarChat]);
 
   useEffect(() => {
     onPageMounted();
@@ -181,14 +186,16 @@ export default function LayoutHalamanChatbot() {
 
           {idChatAktif !== undefined && (
             <Outlet
-              context={{
-                ...appContext,
-                konektorBackendChatbot,
-                expandSidebar,
-                idChat: idChatAktif,
-                onIdChatTidakDitemukan: handleIdChatTidakDitemukan,
-                onChatBaruDibuat: handleChatBaruDibuat,
-              }}
+              context={
+                {
+                  ...appContext,
+                  konektorBackendChatbot,
+                  expandSidebar,
+                  chat: chatAktif,
+                  onIdChatTidakDitemukan: handleIdChatTidakDitemukan,
+                  onChatBaruDibuat: handleChatBaruDibuat,
+                } satisfies ContextHalamanChatbot
+              }
             />
           )}
         </div>

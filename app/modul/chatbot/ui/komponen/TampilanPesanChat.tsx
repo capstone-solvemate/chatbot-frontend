@@ -12,6 +12,7 @@ type Props = {
   processing: boolean;
   idChat: bigint | null;
   daftarPesanChat: PesanChat[];
+  dialihkanKeTiket: boolean;
 };
 
 function formatTime(date: Date): string {
@@ -26,6 +27,7 @@ export default function TampilanPesanChat({
   daftarPesanChat,
   loading,
   processing,
+  dialihkanKeTiket,
 }: Props) {
   let bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,7 +66,10 @@ export default function TampilanPesanChat({
           {processing && <TampilanProcessing />}
 
           {idChat && (
-            <TicketAction idChat={idChat.toString()} dialihkanKeTiket={false} />
+            <TicketAction
+              idChat={idChat.toString()}
+              dialihkanKeTiket={dialihkanKeTiket}
+            />
           )}
         </div>
       )}

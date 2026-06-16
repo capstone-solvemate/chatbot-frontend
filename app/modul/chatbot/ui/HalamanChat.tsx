@@ -484,8 +484,8 @@ export default function HalamanChat() {
   }
 
   function handleHalamanMount() {
-    if (context.idChat !== null) {
-      listenPesanChatLama(context.idChat);
+    if ((context.chat?.id ?? null) !== null) {
+      listenPesanChatLama(context.chat!.id);
     } else {
       setFetchingPesanChat(false);
       setDaftarPesan([]);
@@ -499,13 +499,13 @@ export default function HalamanChat() {
   }
 
   useEffect(() => {
-    setLocalIdChat(context.idChat);
+    setLocalIdChat(context.chat?.id ?? null);
     handleHalamanMount();
 
     return () => {
       handleHalamanUnmount();
     };
-  }, [context.idChat]);
+  }, [context.chat]);
 
   return (
     <div className="grow pb-16">
@@ -514,6 +514,7 @@ export default function HalamanChat() {
         processing={sedangDiproses}
         loading={fetchingPesanChat}
         daftarPesanChat={daftarPesan}
+        dialihkanKeTiket={context.chat?.dialihkanKeTiket ?? false}
       />
       <div className="w-full max-w-3xl mx-auto flex flex-col flex-1 px-8 py-6">
         <div>
@@ -571,7 +572,7 @@ export default function HalamanChat() {
         expandSidebar={context.expandSidebar}
         onSubmit={handleSubmit}
         disabled={fetchingPesanChat || sendingState !== ChatSendingState.Idle}
-        dialihkanKeTiket={false}
+        dialihkanKeTiket={context.chat?.dialihkanKeTiket ?? false}
       />
     </div>
   );
