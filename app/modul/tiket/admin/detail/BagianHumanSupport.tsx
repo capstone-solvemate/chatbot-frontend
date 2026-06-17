@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import type { PesanTiket } from "./dto/TiketAdminDetail";
 import BubblePesanTiket from "./BubblePesanTiket";
 import IkonUser from "~/komponen/ikon/IkonUser";
+import IkonGambar from "~/komponen/ikon/IkonGambar";
+import PreviewLampiran from "./PreviewLampiran";
 
 export default function BagianHumanSupport({
   idChat,
@@ -9,15 +11,24 @@ export default function BagianHumanSupport({
   idPembuatTiket,
   onKirimBalasan,
   mengirim,
+  onTambahLampiran,
+  supportedMimeLampiran,
+  daftarLampiran,
+  onHapusLampiran,
 }: {
   idChat: string;
   pesanTiket: PesanTiket[];
   idPembuatTiket: number;
   onKirimBalasan: (teks: string) => Promise<void>;
   mengirim: boolean;
+  onTambahLampiran: (daftarLampiran: File[]) => void;
+  supportedMimeLampiran: string[];
+  daftarLampiran: File[];
+  onHapusLampiran: (index: number) => void;
 }) {
   const [balasan, setBalasan] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const inputFileElement = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,6 +45,19 @@ export default function BagianHumanSupport({
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       handleKirim();
     }
+  }
+
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    onTambahLampiran(files);
+
+    e.target.value = "";
+  }
+
+  function handleKlikInputFile() {
+    inputFileElement.current?.click();
   }
 
   return (
@@ -74,9 +98,31 @@ export default function BagianHumanSupport({
 
       <div className="px-5 py-4 border-t border-gray-100">
         <p className="text-xs font-medium text-gray-500 mb-2">Send Response</p>
+        {daftarLampiran.length > 0 && (
+          <PreviewLampiran
+            daftarLampiran={daftarLampiran}
+            onHapusLampiran={onHapusLampiran}
+          />
+        )}
+        <input
+          ref={inputFileElement}
+          onChange={handleInputChange}
+          type="file"
+          className="hidden"
+          name="attachment-pesan-tiket"
+          multiple
+          accept={supportedMimeLampiran.join(",")}
+        />
         <div className="relative">
+          <button
+            type="button"
+            className="cursor-pointer absolute left-2 top-2"
+            onClick={handleKlikInputFile}
+          >
+            <IkonGambar />
+          </button>
           <textarea
-            className="w-full border border-gray-200 bg-gray-50 rounded-lg px-3 py-2.5 pr-36 text-sm text-gray-700 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            className="w-full pl-10 border border-gray-200 bg-gray-50 rounded-lg px-3 py-2.5 pr-36 text-sm text-gray-700 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             rows={3}
             placeholder="Type your response to the user..."
             value={balasan}
