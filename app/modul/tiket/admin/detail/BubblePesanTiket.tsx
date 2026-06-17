@@ -60,12 +60,14 @@ export default function BubblePesanTiket({
   // Admin → kanan, biru + avatar
   return (
     <div className="flex justify-end items-end gap-2">
-      {elemenLampiran()}
-      <div className="max-w-[72%]">
-        <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm">
-          {pesan.isi}
+      <div className="flex flex-col items-end">
+        {elemenLampiran()}
+        <div className="max-w-[72%]">
+          <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm">
+            {pesan.isi}
+          </div>
+          <p className="text-[11px] text-gray-400 mt-1 text-right">{waktu}</p>
         </div>
-        <p className="text-[11px] text-gray-400 mt-1 text-right">{waktu}</p>
       </div>
       <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0 mb-5">
         You
